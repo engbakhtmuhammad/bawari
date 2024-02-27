@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "44944540825",
+    "project_id": "bawari-1",
+    "storage_bucket": "bawari-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44944540825:android:aa3f27bd662bd5db436408",
+        "android_client_info": {
+          "package_name": "com.example.bawari"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCptCfH6FodiF9LMTw1e82LBxJdxchFZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
