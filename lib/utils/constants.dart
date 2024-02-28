@@ -4,6 +4,7 @@ import 'Colors.dart';
 
 int defaultElevation = 4;
 double defaultRadius = 8.0;
+double defaultIconsSize = 24.0;
 double defaultHorizontalPadding = 20;
 double defaultPadding = 10.0;
 double defaultBlurRadius = 4.0;
