@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(33, 158, 188, 1)),
         useMaterial3: true,
-        textTheme: GoogleFonts.almaraiTextTheme(), // Set Almarai as the default font family
+        textTheme: GoogleFonts.almaraiTextTheme(), 
       ),
       home: const DashboardScrreen(),
     );
