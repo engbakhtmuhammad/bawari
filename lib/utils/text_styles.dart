@@ -24,7 +24,6 @@ TextStyle boldTextStyle({
     fontSize: size != null ? size.toDouble() : textBoldSizeGlobal,
     color: color ?? textPrimaryColorGlobal,
     fontWeight: weight ?? fontWeightBoldGlobal,
-    fontFamily: fontFamily ?? fontFamilyBoldGlobal,
     letterSpacing: letterSpacing,
     fontStyle: fontStyle,
     decoration: decoration,

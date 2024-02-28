@@ -1,5 +1,6 @@
 import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +12,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(33, 158, 188, 1)),
         useMaterial3: true,
+        textTheme: GoogleFonts.almaraiTextTheme(), // Set Almarai as the default font family
       ),
       home: const DashboardScrreen(),
     );
