@@ -1,5 +1,6 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/constants.dart';
+import 'package:bawari/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -30,7 +31,7 @@ class CustomButton extends StatelessWidget {
         children: [
           Image.asset(icon??"assets/icons/right.png",width: defaultIconsSize,height: defaultIconsSize,),
           SizedBox(width: label!=null?8:0),
-          Text(label??""),
+          Text(label??"",style: boldTextStyle(color: whiteColor),),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 
 import 'package:bawari/utils/constants.dart';
 import 'package:bawari/view/purchase/purchase.dart';
+import 'package:bawari/view/sell/sell.dart';
 import 'package:bawari/view/widgets/dashboard_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class DashboardScrreen extends StatelessWidget {
           child:  Column(
             children: [
               DashboardWidget(title: "سامان خرید",imgPath: "assets/icons/purchase.png",onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>PurchaseScreen())),),
-              DashboardWidget(title: "سامان فروخت",imgPath: "assets/icons/sell.png",),
+              DashboardWidget(title: "سامان فروخت",imgPath: "assets/icons/sell.png",onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>SellScreen())),),
               DashboardWidget(title: "ورباندی کهاته",imgPath: "assets/icons/invoice.png",),
               DashboardWidget(title: "دوا لوم",imgPath: "assets/icons/bag.png",),
               DashboardWidget(title: "لوی گراک نوم",imgPath: "assets/icons/customer.png",),

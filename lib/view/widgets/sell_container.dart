@@ -10,9 +10,8 @@ class SellContainerWidget extends StatelessWidget {
   final int? bill;
   final int? remaining;
   final String? btnTitle;
-  const SellContainerWidget({
-    super.key, this.bill,this.cortonCount,this.remaining,this.btnTitle
-  });
+  const SellContainerWidget(
+      {super.key, this.bill, this.cortonCount, this.remaining, this.btnTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -26,33 +25,59 @@ class SellContainerWidget extends StatelessWidget {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-            SizedBox(
-            width: MediaQuery.of(context).size.width*.3,
-            child: Text("کارٹن تعداد",style: boldTextStyle(color: whiteColor),)),
-          Text(cortonCount.toString(),style: primaryTextStyle(color: whiteColor),),
-          ],),
+              Text(
+                cortonCount.toString(),
+                style: primaryTextStyle(color: whiteColor),
+              ),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width * .3,
+                  child: Text(
+                    "کارٹن تعداد",
+                    style: boldTextStyle(color: whiteColor),
+                  )),
+            ],
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-            SizedBox(
-            width: MediaQuery.of(context).size.width*.3,
-            child: Text("ٹوٹل بل",style: boldTextStyle(color: whiteColor),)),
-          Text(bill.toString(),style: primaryTextStyle(color: whiteColor),),
-          ],),
+              Text(
+                bill.toString(),
+                style: primaryTextStyle(color: whiteColor),
+              ),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width * .3,
+                  child: Text(
+                    "ٹوٹل بل",
+                    style: boldTextStyle(color: whiteColor),
+                  )),
+            ],
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-            SizedBox(
-            width: MediaQuery.of(context).size.width*.3,
-            child: Text("بقايا",style: boldTextStyle(color: whiteColor),)),
-          Text(remaining.toString(),style: primaryTextStyle(color: whiteColor),),
-          ],),
-          CustomButton(onPressed: (){},label: btnTitle,backgroundColor: secondaryColor,)
-          
+              Text(
+                remaining.toString(),
+                style: primaryTextStyle(color: whiteColor),
+              ),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width * .3,
+                  child: Text(
+                    "بقايا",
+                    style: boldTextStyle(color: whiteColor),
+                  )),
+              
+            ],
+          ),
+          CustomButton(
+            onPressed: () {},
+            label: btnTitle,
+            backgroundColor: secondaryColor,
+          )
         ],
       ),
     );
