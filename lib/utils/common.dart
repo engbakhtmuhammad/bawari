@@ -1,13 +1,15 @@
 import 'package:bawari/utils/colors.dart';
+import 'package:bawari/view/Expense/expense.dart';
+import 'package:bawari/view/dashboard/dashboard.dart';
+import 'package:bawari/view/loan/loan_info.dart';
+import 'package:bawari/view/loan/on_people_Loan.dart';
+import 'package:bawari/view/purchase/purchase_info.dart';
+import 'package:bawari/view/sell/sell.dart';
+import 'package:bawari/view/stock/stock.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
 import 'text_styles.dart';
-
-class AppScaffoldKey {
-  static final GlobalKey<ScaffoldState> scaffoldKey =
-      GlobalKey<ScaffoldState>();
-}
 
 Widget emptyWidget({String? text}) {
   return Center(
@@ -26,8 +28,8 @@ Widget errorWidget({String? text}) {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.error_outline),
-        SizedBox(
+        const Icon(Icons.error_outline),
+        const SizedBox(
           height: 16,
         ),
         Text(text ?? "somethingWentWrong", style: primaryTextStyle()),
@@ -38,79 +40,186 @@ Widget errorWidget({String? text}) {
 
 Widget drawerWidget(BuildContext context) {
   return Drawer(
-    child: ListView(
-      padding: const EdgeInsets.all(0),
+    child: Column(
       children: [
-        const DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.green,
-          ), //BoxDecoration
-          child: UserAccountsDrawerHeader(
-            decoration: BoxDecoration(color: Colors.green),
-            accountName: Text(
-              "Abhishek Mishra",
-              style: TextStyle(fontSize: 18),
+        Container(
+          height: 80,
+          width: double.infinity,
+          color: primaryColor,
+          child: Center(
+            child: Text(
+              "Logo Here",
+              style: boldTextStyle(size: 24, color: whiteColor),
             ),
-            accountEmail: Text("abhishekm977@gmail.com"),
-            currentAccountPictureSize: Size.square(50),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Color.fromARGB(255, 165, 255, 137),
+          ),
+        ),
+        ListTile(
+          trailing: Image.asset(
+            "assets/icons/cortons.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
               child: Text(
-                "A",
-                style: TextStyle(fontSize: 30.0, color: Colors.blue),
-              ), //Text
-            ), //circleAvatar
-          ), //UserAccountDrawerHeader
-        ), //DrawerHeader
-        ListTile(
-          leading: const Icon(Icons.person),
-          title: const Text(' My Profile '),
+                "گودام سٹاک",
+                style: boldTextStyle(),
+              )),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const StockScreen()),
+                (route) => false);
           },
         ),
+        const Divider(),
         ListTile(
-          leading: const Icon(Icons.book),
-          title: const Text(' My Course '),
+          trailing: Image.asset(
+            "assets/icons/recieve.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "پہ خلکو باندے",
+                style: boldTextStyle(),
+              )),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoanScreen()),
+                (route) => false);
           },
         ),
+        const Divider(),
         ListTile(
-          leading: const Icon(Icons.workspace_premium),
-          title: const Text(' Go Premium '),
+          trailing: Image.asset(
+            "assets/icons/expense.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "ده خرچے معلومات",
+                style: boldTextStyle(),
+              )),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const ExpenseInfoScreen()),
+                (route) => false);
           },
         ),
+        const Divider(),
         ListTile(
-          leading: const Icon(Icons.video_label),
-          title: const Text(' Saved Videos '),
+          trailing: Image.asset(
+            "assets/icons/profits.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "منافع / بچت",
+                style: boldTextStyle(),
+              )),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const SellScreen()),
+                (route) => false);
           },
         ),
+        const Divider(),
         ListTile(
-          leading: const Icon(Icons.edit),
-          title: const Text(' Edit Profile '),
+          trailing: Image.asset(
+            "assets/icons/discount.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "خریداری معلومات",
+                style: boldTextStyle(),
+              )),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const PurchaseInfoScreen()),
+                (route) => false);
           },
         ),
+        const Divider(),
         ListTile(
-          leading: const Icon(Icons.logout),
-          title: const Text('LogOut'),
+          trailing: Image.asset(
+            "assets/icons/sell_info.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "فروخت معلومات",
+                style: boldTextStyle(),
+              )),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const SellScreen()),
+                (route) => false);
           },
         ),
+        const Divider(),
+        ListTile(
+          trailing: Image.asset(
+            "assets/icons/budget.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "نقد ريو معلومات",
+                style: boldTextStyle(),
+              )),
+          onTap: () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const SellScreen()),
+                (route) => false);
+          },
+        ),
+        const Divider(),
+        ListTile(
+          trailing: Image.asset(
+            "assets/icons/search.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "پور معلومات",
+                style: boldTextStyle(),
+              )),
+          onTap: () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoanInfoScreen()),
+                (route) => false);
+          },
+        ),
+        const Divider(),
       ],
     ),
   );
 }
 
 PreferredSizeWidget appBarWidget(
-    {BuildContext? context, String? title, VoidCallback? onPressed}) {
+    {required BuildContext context, String? title, VoidCallback? onPressed}) {
   return AppBar(
       title: Text(
         title!,
@@ -120,9 +229,7 @@ PreferredSizeWidget appBarWidget(
       backgroundColor: primaryColor,
       leading: IconButton(
           onPressed: () {
-            print("Button Pressed");
-            print(AppScaffoldKey.scaffoldKey.currentState); // Check i
-            AppScaffoldKey.scaffoldKey.currentState?.openDrawer();
+            DashboardScrreen.scaffoldKey.currentState?.openDrawer();
           },
           icon: Image.asset(
             "assets/icons/menu.png",
@@ -130,7 +237,7 @@ PreferredSizeWidget appBarWidget(
           )),
       actions: [
         IconButton(
-            onPressed: () => Navigator.pop(context!),
+            onPressed: () => Navigator.pop(context),
             icon: Image.asset(
               "assets/icons/back.png",
               width: 24,
@@ -138,125 +245,186 @@ PreferredSizeWidget appBarWidget(
       ]);
 }
 
+Widget backContainerWidget({required Widget child}) {
+  return Container(
+    width: double.infinity,
+    margin: EdgeInsets.all(defaultHorizontalPadding),
+    padding: EdgeInsets.all(defaultPadding),
+    decoration: BoxDecoration(
+      color: whiteColor,
+      borderRadius: BorderRadius.circular(defaultRadius),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.5),
+          spreadRadius: defaultSpreadRadius,
+          blurRadius: defaultBlurRadius,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: child,
+  );
+}
 
-  Container billAndDateWidget({TextEditingController? billController, TextEditingController? dateController}) {
-    return Container(
-          height: 150,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(defaultRadius), bottomRight: Radius.circular(defaultRadius)),
-            color: primaryColor,
-          ),
-          
-          child: Padding(
-            padding:  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(defaultRadius * 2),
-                  ),
-                  child: TextField(
-                    controller: billController,
-                    textAlign: TextAlign.right,
-                    decoration: InputDecoration(
-                      suffixIcon: SizedBox(
-                        width: 100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const Text("بل نمبر"),
-                            const SizedBox(
-                              width: 3,
-                            ),
-                            Image.asset(
-                              "assets/icons/invoice.png",
-                              width: defaultIconsSize,
-                              height: defaultIconsSize,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            )
-                          ],
-                        ),
+Container billAndDateWidget(
+    {TextEditingController? billController,
+    TextEditingController? dateController,String? imgPath, String? imgPath2,String? title, String? title2}) {
+  return Container(
+    height: 150,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(defaultRadius),
+          bottomRight: Radius.circular(defaultRadius)),
+      color: primaryColor,
+    ),
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(defaultRadius * 2),
+            ),
+            child: TextField(
+              controller: billController,
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                suffixIcon: SizedBox(
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                       Text(title??"بل نمبر"),
+                      const SizedBox(
+                        width: 3,
                       ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(defaultRadius * 2),
+                      Image.asset(
+                        imgPath??"assets/icons/invoice.png",
+                        width: defaultIconsSize,
+                        height: defaultIconsSize,
                       ),
-                    ),
+                      const SizedBox(
+                        width: 10,
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(height: defaultPadding,),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(defaultRadius * 2),
-                  ),
-                  child: TextField(
-                    controller: dateController,
-                    textAlign: TextAlign.right,
-                    decoration: InputDecoration(
-                      suffixIcon: SizedBox(
-                        width: 100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const Text("تاريخ"),
-                            const SizedBox(
-                              width: 3,
-                            ),
-                            Image.asset(
-                              "assets/icons/calendar.png",
-                              width: defaultIconsSize,
-                              height: defaultIconsSize,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            )
-                          ],
-                        ),
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(defaultRadius * 2),
-                      ),
-                    ),
-                  ),
-                )
-              ],
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(defaultRadius * 2),
+                ),
+              ),
             ),
           ),
-        );
-  }
+          SizedBox(
+            height: defaultPadding,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(defaultRadius * 2),
+            ),
+            child: TextField(
+              controller: dateController,
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                suffixIcon: SizedBox(
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                       Text(title2??"تاريخ"),
+                      const SizedBox(
+                        width: 3,
+                      ),
+                      Image.asset(
+                        imgPath??"assets/icons/invoice.png",
+                        width: defaultIconsSize,
+                        height: defaultIconsSize,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      )
+                    ],
+                  ),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(defaultRadius * 2),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    ),
+  );
+}
 
 Widget textFieldWidget(
     {TextEditingController? controller,
     required String label,
     required String imgPath,
+    bool? isSearch = false,
     int? maxLine}) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: defaultPadding/2.5),
+    padding:
+        EdgeInsets.symmetric(vertical: isSearch! ? 0 : defaultPadding / 2.5),
     child: TextField(
       controller: controller,
       textAlign: TextAlign.right,
-      maxLines: maxLine??1,
+      maxLines: maxLine ?? 1,
+      decoration: InputDecoration(
+        suffixIcon: isSearch!
+            ? const Icon(Icons.search)
+            : Image.asset(
+                imgPath,
+                width: defaultIconsSize,
+                height: defaultIconsSize,
+              ),
+        hintText: label,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(defaultRadius),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget dropDownTextFieldWidget(
+    {required String label,
+    required String imgPath,
+    List<DropdownMenuItem<String>>? dropDownList}) {
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: defaultPadding / 2.5),
+    child: DropdownButtonFormField(
+      alignment: Alignment.centerRight,
       decoration: InputDecoration(
         suffixIcon: Image.asset(
           imgPath,
           width: defaultIconsSize,
           height: defaultIconsSize,
         ),
+        alignLabelWithHint: true,
+        prefix: Icon(Icons.arrow_drop_down),
         hintText: label,
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        
+        hintTextDirection: TextDirection.rtl,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(defaultRadius * 2),
+          borderRadius: BorderRadius.circular(defaultRadius),
         ),
       ),
+      items: dropDownList,
+      onChanged: (Object? value) {},
     ),
   );
 }

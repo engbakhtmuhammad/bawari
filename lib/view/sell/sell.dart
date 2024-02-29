@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
 import '../widgets/sell_container.dart';
+import '../widgets/table_widget.dart';
 
 class SellScreen extends StatelessWidget {
   const SellScreen({super.key});
@@ -13,38 +14,35 @@ class SellScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Example data, you can replace it with your dynamic data
-  List<List<String>> tableData = [
-    ['A1', 'B1', 'C1', 'D1', 'E1', 'F1'],
-    ['A2', 'B2', 'C2', 'D2', 'E2', 'F2'],
-    // Add more rows as needed
-  ];
+    List<String> tableColumns = [
+      "سامان",
+      "پیس تعداد",
+      "کارتن تعداد",
+      "في كارتن تعداد",
+      "مکمل تعداد",
+      "في تعدادقيمت",
+    ];
+    List<List<String>> tableRows = [
+      ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
+      ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
+    ];
     return Scaffold(
-      appBar: appBarWidget(title: "سامان فروخت"),
+      
+      appBar: appBarWidget(title: "سامان فروخت",context: context),
       drawer: drawerWidget(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
             billAndDateWidget(),
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.all(defaultHorizontalPadding),
-              padding: EdgeInsets.all(defaultPadding),
-              decoration: BoxDecoration(
-                color: whiteColor,
-                borderRadius: BorderRadius.circular(defaultRadius),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: defaultSpreadRadius,
-                    blurRadius: defaultBlurRadius,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
+            backContainerWidget(
               child: Column(
                 children: [
-                  textFieldWidget(label: "نام", imgPath: "assets/icons/name.png"),
-                  textFieldWidget(label: "نوٹ", imgPath: "assets/icons/note.png",maxLine: 4),
+                  textFieldWidget(
+                      label: "نام", imgPath: "assets/icons/name.png"),
+                  textFieldWidget(
+                      label: "نوٹ",
+                      imgPath: "assets/icons/note.png",
+                      maxLine: 4),
                   textFieldWidget(
                       label: "سامان نمبر", imgPath: "assets/icons/number.png"),
                   textFieldWidget(
@@ -60,40 +58,25 @@ class SellScreen extends StatelessWidget {
                 ],
               ),
             ),
-          SizedBox(
-  height: 130,
-  width: double.infinity,
-  child: ListView(
-    shrinkWrap: true,
-    scrollDirection: Axis.horizontal,
-    padding: EdgeInsets.all(5.0),
-    children: <Widget>[
-      DataTable(
-                columns: [
-                  for (var i = 0; i < 6; i++)
-                    DataColumn(
-                      label: Text('Column $i'),
-                    ),
-                ],
-                rows: [
-                  for (var row in tableData)
-                    DataRow(
-                      cells: [
-                        for (var cell in row)
-                          DataCell(
-                            Text(cell),
-                          ),
-                      ],
-                    ),
-                ],
-              ),
-      
-    ],
-  ),
-),
-
-
-            const SellContainerWidget(btnTitle: "نقد وصولي",bill: 400,cortonCount: 2,remaining: 3,)
+            TableWidget(tableRows: tableRows, tableColumns: tableColumns), 
+            const SizedBox(
+              height: 20,
+            ),
+            const SellContainerWidget(
+              btnTitle: "نقد وصولي",
+              bill: 400,
+              cortonCount: 2,
+              remaining: 3,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const SellContainerWidget(
+              btnTitle: "نقد وصولي",
+              bill: 400,
+              cortonCount: 2,
+              remaining: 3,
+            )
           ],
         ),
       ),
@@ -101,17 +84,3 @@ class SellScreen extends StatelessWidget {
   }
 }
 
-// Create a separate widget for table cells to make the code cleaner
-class TableCellWidget extends StatelessWidget {
-  final String data;
-
-  TableCellWidget(this.data);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: Text(data),
-    );
-  }
-}
