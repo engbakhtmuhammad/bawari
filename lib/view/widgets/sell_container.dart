@@ -36,9 +36,12 @@ class SellContainerWidget extends StatelessWidget {
               ),
               SizedBox(
                   width: MediaQuery.of(context).size.width * .3,
-                  child: Text(
-                    "کارٹن تعداد",
-                    style: boldTextStyle(color: whiteColor),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      "کارٹن تعداد",
+                      style: boldTextStyle(color: whiteColor),
+                    ),
                   )),
             ],
           ),
@@ -51,9 +54,12 @@ class SellContainerWidget extends StatelessWidget {
               ),
               SizedBox(
                   width: MediaQuery.of(context).size.width * .3,
-                  child: Text(
-                    "ٹوٹل بل",
-                    style: boldTextStyle(color: whiteColor),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      "ٹوٹل بل",
+                      style: boldTextStyle(color: whiteColor),
+                    ),
                   )),
             ],
           ),
@@ -66,9 +72,12 @@ class SellContainerWidget extends StatelessWidget {
               ),
               SizedBox(
                   width: MediaQuery.of(context).size.width * .3,
-                  child: Text(
-                    "بقايا",
-                    style: boldTextStyle(color: whiteColor),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      "بقايا",
+                      style: boldTextStyle(color: whiteColor),
+                    ),
                   )),
               
             ],

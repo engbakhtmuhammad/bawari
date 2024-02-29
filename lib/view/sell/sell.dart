@@ -12,6 +12,12 @@ class SellScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Example data, you can replace it with your dynamic data
+  List<List<String>> tableData = [
+    ['A1', 'B1', 'C1', 'D1', 'E1', 'F1'],
+    ['A2', 'B2', 'C2', 'D2', 'E2', 'F2'],
+    // Add more rows as needed
+  ];
     return Scaffold(
       appBar: appBarWidget(title: "سامان فروخت"),
       drawer: drawerWidget(context),
@@ -54,6 +60,39 @@ class SellScreen extends StatelessWidget {
                 ],
               ),
             ),
+          SizedBox(
+  height: 130,
+  width: double.infinity,
+  child: ListView(
+    shrinkWrap: true,
+    scrollDirection: Axis.horizontal,
+    padding: EdgeInsets.all(5.0),
+    children: <Widget>[
+      DataTable(
+                columns: [
+                  for (var i = 0; i < 6; i++)
+                    DataColumn(
+                      label: Text('Column $i'),
+                    ),
+                ],
+                rows: [
+                  for (var row in tableData)
+                    DataRow(
+                      cells: [
+                        for (var cell in row)
+                          DataCell(
+                            Text(cell),
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+      
+    ],
+  ),
+),
+
+
             const SellContainerWidget(btnTitle: "نقد وصولي",bill: 400,cortonCount: 2,remaining: 3,)
           ],
         ),
@@ -62,3 +101,17 @@ class SellScreen extends StatelessWidget {
   }
 }
 
+// Create a separate widget for table cells to make the code cleaner
+class TableCellWidget extends StatelessWidget {
+  final String data;
+
+  TableCellWidget(this.data);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      child: Text(data),
+    );
+  }
+}
