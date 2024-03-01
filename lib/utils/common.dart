@@ -6,6 +6,7 @@ import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
 import 'package:bawari/view/sell/sell.dart';
 import 'package:bawari/view/stock/stock.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -108,7 +109,8 @@ Widget drawerWidget(BuildContext context) {
           onTap: () {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => const ExpenseInfoScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const ExpenseInfoScreen()),
                 (route) => false);
           },
         ),
@@ -148,7 +150,8 @@ Widget drawerWidget(BuildContext context) {
           onTap: () {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => const PurchaseInfoScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const PurchaseInfoScreen()),
                 (route) => false);
           },
         ),
@@ -219,7 +222,10 @@ Widget drawerWidget(BuildContext context) {
 }
 
 PreferredSizeWidget appBarWidget(
-    {required BuildContext context, String? title, VoidCallback? onPressed}) {
+    {required BuildContext context,
+    String? title,
+    VoidCallback? onPressed,
+    bool? isDashboard = false}) {
   return AppBar(
       title: Text(
         title!,
@@ -237,7 +243,38 @@ PreferredSizeWidget appBarWidget(
           )),
       actions: [
         IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => isDashboard!
+                ? showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'ایا تاسو ډاډه یاست چې بهر شئ؟',
+                          textAlign: TextAlign.right,
+                          style: boldTextStyle(size: 24),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pop(false); // User does not want to exit
+                            },
+                            child: Text('نه',
+                                style: boldTextStyle(color: primaryColor)),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pop(true); // User wants to exit
+                            },
+                            child: Text('هو',
+                                style: boldTextStyle(color: primaryColor)),
+                          ),
+                        ],
+                      );
+                    },
+                  )
+                : Navigator.pop(context),
             icon: Image.asset(
               "assets/icons/back.png",
               width: 24,
@@ -268,7 +305,15 @@ Widget backContainerWidget({required Widget child}) {
 
 Container billAndDateWidget(
     {TextEditingController? billController,
-    TextEditingController? dateController,String? imgPath, String? imgPath2,String? title, String? title2}) {
+    TextEditingController? dateController,
+    String? imgPath,
+    String? imgPath2,
+    String? title,
+    String? title2,
+    VoidCallback? onPressed,
+    VoidCallback? onPressed2,
+    TextInputType? inputType,
+    TextInputType? inputType2}) {
   return Container(
     height: 150,
     width: double.infinity,
@@ -289,27 +334,31 @@ Container billAndDateWidget(
               borderRadius: BorderRadius.circular(defaultRadius * 2),
             ),
             child: TextField(
+              keyboardType: inputType ?? TextInputType.number,
               controller: billController,
               textAlign: TextAlign.right,
               decoration: InputDecoration(
                 suffixIcon: SizedBox(
                   width: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                       Text(title??"بل نمبر"),
-                      const SizedBox(
-                        width: 3,
-                      ),
-                      Image.asset(
-                        imgPath??"assets/icons/invoice.png",
-                        width: defaultIconsSize,
-                        height: defaultIconsSize,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      )
-                    ],
+                  child: GestureDetector(
+                    onTap: onPressed ?? () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(title ?? "بل نمبر"),
+                        const SizedBox(
+                          width: 3,
+                        ),
+                        Image.asset(
+                          imgPath ?? "assets/icons/invoice.png",
+                          width: defaultIconsSize,
+                          height: defaultIconsSize,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 contentPadding:
@@ -329,27 +378,31 @@ Container billAndDateWidget(
               borderRadius: BorderRadius.circular(defaultRadius * 2),
             ),
             child: TextField(
+              keyboardType: inputType2 ?? TextInputType.datetime,
               controller: dateController,
               textAlign: TextAlign.right,
               decoration: InputDecoration(
                 suffixIcon: SizedBox(
                   width: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                       Text(title2??"تاريخ"),
-                      const SizedBox(
-                        width: 3,
-                      ),
-                      Image.asset(
-                        imgPath??"assets/icons/invoice.png",
-                        width: defaultIconsSize,
-                        height: defaultIconsSize,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      )
-                    ],
+                  child: GestureDetector(
+                    onTap: onPressed2 ?? () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(title2 ?? "تاريخ"),
+                        const SizedBox(
+                          width: 3,
+                        ),
+                        Image.asset(
+                          imgPath ?? "assets/icons/calendar.png",
+                          width: defaultIconsSize,
+                          height: defaultIconsSize,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 contentPadding:
@@ -366,11 +419,23 @@ Container billAndDateWidget(
   );
 }
 
+// Future<DateTime> selectDate({required BuildContext context,required DateTime initialDate}) async {
+//     final DateTime? picked = await showDatePicker(
+//       context: context,
+//       initialDate: initialDate,
+//       firstDate: DateTime(2000),
+//       lastDate: DateTime(2101),
+//     );
+
+//     return picked ?? initialDate;
+//   }
+
 Widget textFieldWidget(
     {TextEditingController? controller,
     required String label,
     required String imgPath,
     bool? isSearch = false,
+    TextInputType? inputType,
     int? maxLine}) {
   return Padding(
     padding:
@@ -379,8 +444,9 @@ Widget textFieldWidget(
       controller: controller,
       textAlign: TextAlign.right,
       maxLines: maxLine ?? 1,
+      keyboardType: inputType ?? TextInputType.text,
       decoration: InputDecoration(
-        suffixIcon: isSearch!
+        suffixIcon: isSearch
             ? const Icon(Icons.search)
             : Image.asset(
                 imgPath,
@@ -415,7 +481,6 @@ Widget dropDownTextFieldWidget(
         alignLabelWithHint: true,
         prefix: Icon(Icons.arrow_drop_down),
         hintText: label,
-        
         hintTextDirection: TextDirection.rtl,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -427,6 +492,10 @@ Widget dropDownTextFieldWidget(
       onChanged: (Object? value) {},
     ),
   );
+}
+
+void log(Object? value) {
+  if (!kReleaseMode || forceEnableDebug) print(value);
 }
 
 // Widget loaderWidget() {

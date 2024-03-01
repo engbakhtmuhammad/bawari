@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'Colors.dart';
 
 int defaultElevation = 4;
+int billNumber = 100;
 double defaultRadius = 8.0;
 double defaultIconsSize = 24.0;
 double defaultHorizontalPadding = 20;
