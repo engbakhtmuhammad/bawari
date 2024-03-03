@@ -148,56 +148,16 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 },
                               ),
                               cells: [
+                                //8
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].name
+                                    purchaseController.purchaseList[row].date
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                DataCell(
-                                  Text(
-                                    purchaseController.purchaseList[row].billNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    purchaseController.purchaseList[row].note
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    purchaseController
-                                        .purchaseList[row].cartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    purchaseController
-                                        .purchaseList[row].perCartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    purchaseController.purchaseList[row].price
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
+                                //7
                                 DataCell(
                                   Text(
                                     purchaseController
@@ -207,9 +167,58 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
+                                //6
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].date
+                                    purchaseController.purchaseList[row].price
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                //5
+                                DataCell(
+                                  Text(
+                                    purchaseController
+                                        .purchaseList[row].perCartonCount
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                //4
+                                DataCell(
+                                  Text(
+                                    purchaseController
+                                        .purchaseList[row].cartonCount
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                //3
+                                DataCell(
+                                  Text(
+                                    purchaseController.purchaseList[row].note
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+
+                                //2
+                                DataCell(
+                                  Text(
+                                    purchaseController.purchaseList[row].billNo
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                //1
+                                DataCell(
+                                  Text(
+                                    purchaseController.purchaseList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -262,13 +271,39 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    "ٹوٹل بل",
-                    style: primaryTextStyle(color: whiteColor),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${purchaseController.getTotalPrice()}",
+                        style: primaryTextStyle(color: whiteColor),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .3,
+                        child: Text(
+                          "ٹوٹل بل",
+                          textAlign: TextAlign.end,
+                          style: boldTextStyle(color: whiteColor),
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "کارٹن تعداد",
-                    style: primaryTextStyle(color: whiteColor),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${purchaseController.getTotalCartonCount()}",
+                        style: primaryTextStyle(color: whiteColor),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .3,
+                        child: Text(
+                          "کارٹن تعداد",
+                          textAlign: TextAlign.end,
+                          style: boldTextStyle(color: whiteColor),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

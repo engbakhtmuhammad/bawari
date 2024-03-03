@@ -110,7 +110,7 @@ Widget drawerWidget(BuildContext context) {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const ExpenseInfoScreen()),
+                    builder: (context) => const PurchaseInfoScreen()),
                 (route) => false);
           },
         ),
