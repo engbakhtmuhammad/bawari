@@ -40,7 +40,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     if (picked != null && picked != purchaseController.date) {
       setState(() {
-        purchaseController.date.text = DateFormat('MM/dd/yyyy').format(picked);
+        purchaseController.date.text = DateFormat('dd MMM yyyy').format(picked);
       });
     }
   }

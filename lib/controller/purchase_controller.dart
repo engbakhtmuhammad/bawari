@@ -9,10 +9,12 @@ import 'package:intl/intl.dart';
 class PurchaseController extends GetxController {
   int autoBillNo = 1;
   TextEditingController bill = TextEditingController();
-  TextEditingController startDate = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
-  TextEditingController endDate = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime(2024, 3, 3)));
+  TextEditingController startDate = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  TextEditingController endDate = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime(2024, 3, 3)));
   TextEditingController date = TextEditingController(
-      text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController name = TextEditingController();
   TextEditingController note = TextEditingController();
   TextEditingController goodsNo = TextEditingController();
@@ -46,13 +48,16 @@ class PurchaseController extends GetxController {
         totalCount: int.tryParse(totalCount.text) ?? 0,
         price: int.tryParse(price.text) ?? 0,
         billNo: int.tryParse(bill.text) ?? 0,
-        date: DateFormat('MM/dd/yyyy').parse(date.text),
+        date: DateFormat('yyyy-MM-dd').parse(date.text),
       );
 
-      await db.collection("purchases").add(purchase.toJson()).whenComplete(() async {
+      await db
+          .collection("purchases")
+          .add(purchase.toJson())
+          .whenComplete(() async {
         print("Purchase Added");
-    
-       await getPurchases();
+
+        await getPurchases();
 
         // Show GetX Snackbar for success
         Get.snackbar('Success', 'Purchase added successfully!',
@@ -85,15 +90,14 @@ class PurchaseController extends GetxController {
   }
 
   Future<void> getPurchases() async {
-  var purchases = await db.collection("purchases").get();
-  purchaseList.clear();
-  for (var purchase in purchases.docs) {
-    purchaseList.add(PurchaseModel.fromJson(purchase.data()));
+    var purchases = await db.collection("purchases").get();
+    purchaseList.clear();
+    for (var purchase in purchases.docs) {
+      purchaseList.add(PurchaseModel.fromJson(purchase.data()));
+    }
+    update();
+    print("$purchaseList >>>>>>>. Purchases List");
   }
-  update();
-  print("$purchaseList >>>>>>>. Purchases List");
-}
-
 
   int getTotalBill() {
     return purchaseList.fold(0, (sum, purchase) => sum + purchase.billNo!);
@@ -102,15 +106,22 @@ class PurchaseController extends GetxController {
   int getTotalCartonCount() {
     return purchaseList.fold(0, (sum, purchase) => sum + purchase.cartonCount!);
   }
+
   int getTotalPrice() {
     return purchaseList.fold(0, (sum, purchase) => sum + purchase.price!);
   }
 
   List<PurchaseModel> getPurchasesBetweenDates() {
+    // print("Start Date >>>>>>>>>>>> ${startDate.text}");
+    // print("Start end >>>>>>>>>>>> ${endDate.text}");
+    // print("Purchase 0 >>>>>>>>>>>> ${purchaseList[0].date}");
+    // print("Purchase 1 >>>>>>>>>>>> ${purchaseList[1].date}");
     return purchaseList
         .where((purchase) =>
-            purchase.date!.isAfter(DateFormat('MM/dd/yyyy').parse(startDate.text)) && purchase.date!.isBefore(DateFormat('MM/dd/yyyy').parse(endDate.text)))
+            purchase.date!
+                .isAfter(DateFormat('yyyy-MM-dd').parse(startDate.text)) &&
+            purchase.date!
+                .isBefore(DateFormat('yyyy-MM-dd').parse(endDate.text)))
         .toList();
   }
-  
 }
