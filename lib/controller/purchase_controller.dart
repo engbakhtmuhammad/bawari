@@ -29,7 +29,8 @@ class PurchaseController extends GetxController {
     super.onInit();
   }
 
-  void addPurchase() async {
+void addPurchase() async {
+  try {
     var purchase = PurchaseModel(
       name: name.text,
       note: note.text,
@@ -44,9 +45,10 @@ class PurchaseController extends GetxController {
 
     await db.collection("purchases").add(purchase.toJson()).whenComplete(() {
       print("Purchase Added");
+    
       getPurchases();
 
-      // Show GetX Snackbar
+      // Show GetX Snackbar for success
       Get.snackbar('Success', 'Purchase added successfully!',
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
@@ -65,7 +67,16 @@ class PurchaseController extends GetxController {
       autoBillNo++;
       bill.text = autoBillNo.toString();
     });
+  } catch (e) {
+    print('Error adding purchase: $e');
+
+    // Show GetX Snackbar for error
+    Get.snackbar('Error', 'Failed to add purchase. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red);
   }
+}
 
   void getPurchases() async {
     var purchases = await db.collection("purchases").get();
@@ -74,6 +85,7 @@ class PurchaseController extends GetxController {
       purchaseList.add(PurchaseModel.fromJson(purchase.data()));
       
     }
+    update();
     print("$purchaseList >>>>>>>. Purchases List");
   }
 }

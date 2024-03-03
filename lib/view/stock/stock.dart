@@ -1,3 +1,4 @@
+import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/view/widgets/table_widget.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _StockScreenState extends State<StockScreen> {
           children: [
             TableWidget(tableRows: tableRows, tableColumns: tableColumns),
             
-            
+           
           ],
         ),
       ),
