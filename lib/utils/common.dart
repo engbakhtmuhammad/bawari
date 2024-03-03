@@ -498,7 +498,7 @@ void log(Object? value) {
   if (!kReleaseMode || forceEnableDebug) print(value);
 }
 
-// Widget loaderWidget() {
-//   return Center(child: Lottie.asset(loader, height: 60, width: 60));
-// }
+Widget loaderWidget(bool isLoad) {
+  return isLoad? const Center(child: CircularProgressIndicator()):const SizedBox();
+}
 

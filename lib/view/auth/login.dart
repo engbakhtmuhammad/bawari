@@ -1,11 +1,12 @@
 import 'package:bawari/utils/colors.dart';
-import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
 import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/widgets/custom_btn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../controller/auth_controller.dart';
 import '../../utils/constants.dart';
 import 'forgot_password.dart';
 
@@ -20,58 +21,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  var email = "";
-  var password = "";
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  userLoginScreen() async {
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const DashboardScrreen(),
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: primaryColor,
-            content: Text(
-              "No User Found for that Email",
-              style: boldTextStyle(),
-            ),
-          ),
-        );
-      } else if (e.code == 'wrong-password') {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: primaryColor,
-            content: Text(
-              "Wrong Password Provided by User",
-              style: boldTextStyle(),
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    LoginController loginController = Get.put(LoginController());
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -97,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: defaultPadding / 2.5),
                     child: TextFormField(
-                      controller: emailController,
+                      controller: loginController.email,
                       textAlign: TextAlign.right,
                       decoration: InputDecoration(
                         errorStyle:
@@ -129,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextFormField(
                       autofocus: false,
                       obscureText: true,
-                      controller: passwordController,
+                      controller: loginController.password,
                       textAlign: TextAlign.right,
                       decoration: InputDecoration(
                         errorStyle:
@@ -172,13 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding:  EdgeInsets.symmetric(vertical: defaultPadding),
                     child: CustomButton(
                       onPressed: () {
-                        // Validate returns true if the form is valid, otherwise false.
                         if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            email = emailController.text;
-                            password = passwordController.text;
-                          });
-                          userLoginScreen();
+                          loginController.userLogin();
                         }
                       },
                       label: "د ننه کیدل",

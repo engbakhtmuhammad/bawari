@@ -1,6 +1,4 @@
 import 'package:bawari/utils/common.dart';
-import 'package:bawari/utils/text_styles.dart';
-import 'package:bawari/view/widgets/custom_btn.dart';
 import 'package:bawari/view/widgets/table_widget.dart';
 import 'package:flutter/material.dart';
 

@@ -44,6 +44,9 @@ dependencies:
   firebase_core: ^2.25.5
   firebase_auth: ^4.17.6
 
+  # State Management
+  get: ^4.6.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

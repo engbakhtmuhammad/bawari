@@ -1,16 +1,11 @@
 import 'package:bawari/firebase_options.dart';
+import 'package:bawari/utils/routes.dart';
 import 'package:bawari/view/auth/login.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'services/purchase_service.dart';
-// Firebase database variable
-FirebaseFirestore db = FirebaseFirestore.instance;
-
-// Services
-PurchaseService purchaseService = PurchaseService();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +22,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -35,7 +30,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.almaraiTextTheme(), 
       ),
-      home:  LoginScreen(),
+      getPages: pages,
+      home:  const DashboardScrreen(),
     );
   }
 }
