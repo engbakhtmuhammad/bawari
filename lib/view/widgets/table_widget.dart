@@ -99,18 +99,3 @@ class TableWidget extends StatelessWidget {
     );
   }
 }
-
-// Create a separate widget for table cells to make the code cleaner
-class TableCellWidget extends StatelessWidget {
-  final String data;
-
-  TableCellWidget(this.data);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: Text(data),
-    );
-  }
-}

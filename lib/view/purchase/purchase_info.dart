@@ -34,7 +34,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
         child: Column(
           children: [
             billAndDateWidget(title: "ابتدائی",imgPath: "assets/icons/calendar.png",title2: "اختتامي",imgPath2: "assets/icons/calendar.png"),
-            TableWidget(tableRows: tableRows, tableColumns: tableColumns),
+            // TableWidget(tableRows: tableRows, tableColumns: tableColumns),
             
             
           ],
