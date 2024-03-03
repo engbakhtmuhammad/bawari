@@ -267,45 +267,47 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                   EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
               width: double.infinity,
               color: secondaryColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "${purchaseController.getTotalPrice()}",
-                        style: primaryTextStyle(color: whiteColor),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .3,
-                        child: Text(
-                          "ٹوٹل بل",
-                          textAlign: TextAlign.end,
-                          style: boldTextStyle(color: whiteColor),
+              child: Obx(
+                ()=> Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${purchaseController.getTotalPrice()}",
+                          style: primaryTextStyle(color: whiteColor),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "${purchaseController.getTotalCartonCount()}",
-                        style: primaryTextStyle(color: whiteColor),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .3,
-                        child: Text(
-                          "کارٹن تعداد",
-                          textAlign: TextAlign.end,
-                          style: boldTextStyle(color: whiteColor),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .3,
+                          child: Text(
+                            "ٹوٹل بل",
+                            textAlign: TextAlign.end,
+                            style: boldTextStyle(color: whiteColor),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${purchaseController.getTotalCartonCount()}",
+                          style: primaryTextStyle(color: whiteColor),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .3,
+                          child: Text(
+                            "کارٹن تعداد",
+                            textAlign: TextAlign.end,
+                            style: boldTextStyle(color: whiteColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )
           ],

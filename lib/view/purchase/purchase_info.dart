@@ -1,8 +1,8 @@
 import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/utils/common.dart';
-import 'package:bawari/view/widgets/table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/constants.dart';
@@ -18,8 +18,8 @@ class PurchaseInfoScreen extends StatefulWidget {
 class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
   //  String? selectedValue;
-   // Example data, you can replace it with your dynamic data
-   List<String> tableColumns = [
+  // Example data, you can replace it with your dynamic data
+  List<String> tableColumns = [
     "سامان",
     "پیس تعداد",
     "کارتن تعداد",
@@ -29,27 +29,51 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
     "مکمل تعداد",
     "في تعدادقيمت",
   ];
-    List<List<String>> tableRows = [
-      ["1","محمد صادق لشکرگاه","12453"],
-      ["2","با خان لشکرقا","12453"],
-      ["3","عبد الغفار كرئش","12453"],
-      ["4","حاجی محمد جان","12453"],
-      ["5","جیلانی لشکرگاه","12453"],
-    ];
+  List<List<String>> tableRows = [
+    ["1", "محمد صادق لشکرگاه", "12453"],
+    ["2", "با خان لشکرقا", "12453"],
+    ["3", "عبد الغفار كرئش", "12453"],
+    ["4", "حاجی محمد جان", "12453"],
+    ["5", "جیلانی لشکرگاه", "12453"],
+  ];
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != purchaseController.date) {
+      setState(() {
+        purchaseController.date.text = DateFormat('MM/dd/yyyy').format(picked);
+      });
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: appBarWidget(title: "خریداری معلومات", context: context),
       drawer: drawerWidget(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            billAndDateWidget(title: "ابتدائی",imgPath: "assets/icons/calendar.png",title2: "اختتامي",imgPath2: "assets/icons/calendar.png"),
+            billAndDateWidget(
+                title: "ابتدائی",
+                imgPath: "assets/icons/calendar.png",
+                title2: "اختتامي",
+                imgPath2: "assets/icons/calendar.png",
+                dateController: purchaseController.endDate,onPressed2: () => _selectDate(context),
+                billController: purchaseController.startDate,onPressed: () => _selectDate(context),),
             // TableWidget(tableRows: tableRows, tableColumns: tableColumns),
-            SizedBox(height: defaultPadding,),
+            SizedBox(
+              height: defaultPadding,
+            ),
+            
             Obx(() {
-              purchaseController.getPurchases();
+              purchaseController.getPurchasesBetweenDates();
               return SizedBox(
                   height: purchaseController.purchaseList.length * 50 + 60,
                   width: double.infinity,
@@ -180,8 +204,16 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
               color: primaryColor,
               child: Center(
                 child: ListTile(
-                  trailing: Text("توثل ",style: boldTextStyle(color: whiteColor),),
-                  leading: Text(purchaseController.getTotalPrice().toString(),style: primaryTextStyle(color: whiteColor),),
+                  trailing: Text(
+                    "توثل ",
+                    style: boldTextStyle(color: whiteColor),
+                  ),
+                  leading: Obx(
+                    ()=> Text(
+                      purchaseController.getTotalPrice().toString(),
+                      style: primaryTextStyle(color: whiteColor),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -211,8 +243,6 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                 ],
               ),
             ),
-            
-            
           ],
         ),
       ),
