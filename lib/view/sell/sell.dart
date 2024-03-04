@@ -34,11 +34,17 @@ class _SellScreenState extends State<SellScreen> {
     "في كارتن تعداد",
     "مکمل تعداد",
     "في تعدادقيمت",
+    "مکمل تعداد",
+    "مکمل تعداد",
+    "مکمل تعداد",
+    "في تعدادقيمت",
+    "في تعدادقيمت",
+
   ];
-  List<List<String>> tableRows = [
-    ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
-    ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
-  ];
+  // List<List<String>> tableRows = [
+  //   ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
+  //   ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
+  // ];
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       
@@ -309,20 +315,69 @@ class _SellScreenState extends State<SellScreen> {
             const SizedBox(
               height: 20,
             ),
-            const SellContainerWidget(
-              btnTitle: "نقد وصولي",
-              bill: 400,
-              cortonCount: 2,
-              remaining: 3,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const SellContainerWidget(
-              btnTitle: "نقد وصولي",
-              bill: 400,
-              cortonCount: 2,
-              remaining: 3,
+            // const SellContainerWidget(
+            //   btnTitle: "نقد وصولي",
+            //   bill: 400,
+            //   cortonCount: 2,
+            //   remaining: 3,
+            // ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
+            // const SellContainerWidget(
+            //   btnTitle: "نقد وصولي",
+            //   bill: 400,
+            //   cortonCount: 2,
+            //   remaining: 3,
+            // )
+            Container(
+              height: 70,
+              padding:
+              EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+              width: double.infinity,
+              color: secondaryColor,
+              child: Obx(
+                    ()=> Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${saleController.getTotalPrice()}",
+                          style: primaryTextStyle(color: whiteColor),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .3,
+                          child: Text(
+                            "ٹوٹل بل",
+                            textAlign: TextAlign.end,
+                            style: boldTextStyle(color: whiteColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${saleController.getTotalCartonCount()}",
+                          style: primaryTextStyle(color: whiteColor),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .3,
+                          child: Text(
+                            "کارٹن تعداد",
+                            textAlign: TextAlign.end,
+                            style: boldTextStyle(color: whiteColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             )
           ],
         ),

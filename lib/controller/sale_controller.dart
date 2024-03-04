@@ -9,6 +9,10 @@ import 'package:intl/intl.dart';
 class SaleController extends GetxController {
   int autoBillNo = 1;
   TextEditingController bill = TextEditingController();
+  TextEditingController startDate = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  TextEditingController endDate = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime(2024, 3, 3)));
   TextEditingController date = TextEditingController(
       text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
   TextEditingController name = TextEditingController();
@@ -79,5 +83,32 @@ class SaleController extends GetxController {
     }
     print("$saleList >>>>>>>. Sales List");
   }
+
+int getTotalBill() {
+  return saleList.fold(0, (sum, purchase) => sum + purchase.billNo!);
 }
+
+int getTotalCartonCount() {
+  return saleList.fold(0, (sum, purchase) => sum + purchase.cartonCount!);
+}
+
+int getTotalPrice() {
+  return saleList.fold(0, (sum, purchase) => sum + purchase.price!);
+}
+
+List<SaleModel> getPurchasesBetweenDates() {
+  // print("Start Date >>>>>>>>>>>> ${startDate.text}");
+  // print("Start end >>>>>>>>>>>> ${endDate.text}");
+  // print("Purchase 0 >>>>>>>>>>>> ${saleList[0].date}");
+  // print("Purchase 1 >>>>>>>>>>>> ${saleList[1].date}");
+  return saleList
+      .where((purchase) =>
+  purchase.date!
+      .isAfter(DateFormat('yyyy-MM-dd').parse(startDate.text)) &&
+      purchase.date!
+          .isBefore(DateFormat('yyyy-MM-dd').parse(endDate.text)))
+      .toList();
+}
+}
+
 
