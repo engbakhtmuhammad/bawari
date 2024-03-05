@@ -1,12 +1,9 @@
 import 'package:bawari/controller/customer_controller.dart';
 import 'package:bawari/model/dues_controller.dart';
-import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
-import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/widgets/table_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
@@ -69,6 +66,7 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
+    fetchCustomers();
     return Scaffold(
       appBar: appBarWidget(
         title: "را باندی",
@@ -93,6 +91,7 @@ void initState() {
                   onChanged: (value) {
                     // Update the expenseType in the ExpenseController
                     duesController.customerName = value;
+                    duesController.customerId.text=customerController.getCustomerIdByName(value)!;
                   },
                 ),
                 textFieldWidget(

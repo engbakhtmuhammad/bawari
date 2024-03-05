@@ -108,8 +108,8 @@ void addCustomer() async {
   List<String?> getCustomerNames() {
   return customerList.map((customer) => customer.name).toList();
 }
-String? getCustomerIdByName(List<CustomerModel> customers, String customerName) {
-  for (var customer in customers) {
+String? getCustomerIdByName(String customerName) {
+  for (var customer in customerList) {
     if (customer.name == customerName) {
       return customer.id; // Assuming `id` is the field representing the ID in CustomerModel
     }

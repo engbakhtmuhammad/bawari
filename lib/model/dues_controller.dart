@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../utils/colors.dart';
 import 'dues_model.dart';
 
 class DuesController extends GetxController {
@@ -24,54 +25,55 @@ class DuesController extends GetxController {
     super.onInit();
   }
 
-Future<void> addDuesEntry() async {
-  try {
-    // Validate input before parsing
-    int duesAmount = int.tryParse(dues.text) ?? 0;
-    int receivedAmount = int.tryParse(received.text) ?? 0;
+  Future<void> addDuesEntry() async {
+    try {
+      // Validate input before parsing
+      int duesAmount = int.tryParse(dues.text) ?? 0;
+      int receivedAmount = int.tryParse(received.text) ?? 0;
 
-    var duesEntry = DuesModel(
-      date:  DateFormat('yyyy-MM-dd').parse(date.text),
-      customerId: customerId.text,
-      customerName: customerName,
-      dues: duesAmount,
-      received: receivedAmount,
-      address: address.text,
-    );
+      var duesEntry = DuesModel(
+        date: DateFormat('yyyy-MM-dd').parse(date.text),
+        customerId: customerId.text,
+        customerName: customerName,
+        dues: duesAmount,
+        received: receivedAmount,
+        address: address.text,
+      );
 
-    DocumentReference documentReference =
-        await db.collection("dues").add(duesEntry.toJson());
+      DocumentReference documentReference =
+          await db.collection("dues").add(duesEntry.toJson());
 
-    // Get the auto-generated ID
-    String duesId = documentReference.id;
+      // Get the auto-generated ID
+      String duesId = documentReference.id;
 
-    // Update the dues model with the ID
-    duesEntry.id = duesId;
+      // Update the dues model with the ID
+      duesEntry.id = duesId;
 
-    await db.collection("dues").doc(duesId).update({'id': duesId});
+      await db.collection("dues").doc(duesId).update({'id': duesId});
 
-    getDuesEntries();
+      getDuesEntries();
+      Get.snackbar('Success', 'Customer added successfully!',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          backgroundColor: primaryColor);
 
-    // Clear the text editing controllers after adding the entry
-    date.clear();
-    customerId.clear();
-    customerName="";
-    dues.clear();
-    received.clear();
-    address.clear();
-
-    // Any additional logic or feedback after adding the entry
-    // ...
-
-  } catch (e) {
-    print('Error adding dues entry: $e');
-    // Handle the error
+      // Clear the text editing controllers after adding the entry
+      date.clear();
+      customerId.clear();
+      customerName = "";
+      dues.clear();
+      received.clear();
+      address.clear();
+    } catch (e) {
+      print('Error adding dues entry: $e');
+      // Handle the error
+    }
+    update();
   }
-}
-
 
   Future<void> getDuesEntries() async {
-    var duesEntries = await db.collection("dues").orderBy("date", descending: true).get();
+    var duesEntries =
+        await db.collection("dues").orderBy("date", descending: true).get();
     duesList.clear();
     for (var duesEntry in duesEntries.docs) {
       duesList.add(DuesModel.fromJson(duesEntry.data()));
