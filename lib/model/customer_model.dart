@@ -39,7 +39,7 @@ class CustomerModel {
     data["name"] = name;
     data["address"] = address;
     data["phone"] = phone;
-    data["isActive"];
+    data["isActive"]=isActive;
     return data;
   }
 }

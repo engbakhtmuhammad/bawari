@@ -17,7 +17,7 @@ class CustomerScreen extends StatefulWidget {
 
 class _CustomerScreenState extends State<CustomerScreen> {
   CustomerController customerController = Get.put(CustomerController());
-  bool? isActive;
+  bool isActive=true;
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "کسٹمر کا نمبر",
@@ -75,8 +75,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       tristate: true,
                       onChanged: (value) {
                         setState(() {
-                          isActive = value;
-                          customerController.isActive =value??false;
+                          isActive = value!;
+                          customerController.isActive = value;
                         });
                       },
                     ),
@@ -107,6 +107,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                             (states) => greyColor),
                         columnSpacing: 10.0,
                         columns: [
+                          
                           for (var i = tableColumns.length; i > 0; i--)
                             DataColumn(
                               numeric: true,
@@ -116,7 +117,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 style: boldTextStyle(color: whiteColor),
                               ),
                             ),
+                            const DataColumn(
+                            label: SizedBox
+                                .shrink(), // Empty space for the trash icon
+                          ),
                         ],
+
+// Inside your DataRow
                         rows: [
                           for (var row = 0;
                               row < customerController.customerList.length;
@@ -134,10 +141,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 },
                               ),
                               cells: [
+                               
                                 //8
                                 DataCell(
                                   Text(
-                                    customerController.customerList[row].isActive
+                                    customerController
+                                        .customerList[row].isActive
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -146,8 +155,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    customerController
-                                        .customerList[row].price
+                                    customerController.customerList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -165,8 +173,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 //5
                                 DataCell(
                                   Text(
-                                    customerController
-                                        .customerList[row].address
+                                    customerController.customerList[row].address
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -175,8 +182,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 //4
                                 DataCell(
                                   Text(
-                                    customerController
-                                        .customerList[row].name
+                                    customerController.customerList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -185,14 +191,31 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 //3
                                 DataCell(
                                   Text(
-                                    customerController.customerList[row].customerNo
+                                    customerController
+                                        .customerList[row].customerNo
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-
-                                
+                                 // Trash icon cell
+                                DataCell(
+                                  Center(
+                                    child: GestureDetector(
+                                      child: Padding(
+                                        padding:  EdgeInsets.only(left: defaultPadding),
+                                        child: Image.asset("assets/icons/trash.png"),
+                                      ),
+                                      onTap: () {
+                                        // Add your delete logic here using customerController
+                                        customerController.deleteCustomer(
+                                            customerController
+                                                .customerList[row].id
+                                                .toString());
+                                      },
+                                    )
+                                  ),
+                                ),
                               ],
                             ),
                         ],

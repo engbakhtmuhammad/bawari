@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,46 +24,58 @@ class CustomerController extends GetxController {
     super.onInit();
   }
 
-  void addCustomer() async {
-    try {
-      var customer = CustomerModel(
-        customerNo: int.parse(customerNo.text),
-        price: int.tryParse(price.text) ?? 0,
-        name: name.text,
-        address: address.text,
-        phone: phone.text,
-        isActive: isActive,
-      );
+void addCustomer() async {
+  try {
+    var customer = CustomerModel(
+      customerNo: int.parse(customerNo.text),
+      price: int.tryParse(price.text) ?? 0,
+      name: name.text,
+      address: address.text,
+      phone: phone.text,
+      isActive: isActive,
+    );
 
-      await db.collection("customers").add(customer.toJson()).whenComplete(() {
-        print("Customer Added");
-        getCustomers();
+    DocumentReference documentReference =
+        await db.collection("customers").add(customer.toJson());
 
-        Get.snackbar('Success', 'Customer added successfully!',
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 3),
-            backgroundColor: primaryColor);
+    // Get the auto-generated ID
+    String customerId = documentReference.id;
 
-        // Increment autoCustomerNo
-        autoCustomerNo++;
-        
-        customerNo.clear();
-        price.clear();
-        name.clear();
-        address.clear();
-        phone.clear();
-        isActive = true;
-        customerNo.text=autoCustomerNo.toString();
-      });
-    } catch (e) {
-      print('Error adding customer: $e');
+    // Update the customer model with the ID
+    customer.id = customerId;
 
-      Get.snackbar('Error', 'Failed to add customer. Please try again.',
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
-          backgroundColor: Colors.red);
-    }
+    await db
+        .collection("customers")
+        .doc(customerId) // Use the obtained ID
+        .update({'id': customerId}); // Update the document with the ID field
+
+    getCustomers();
+
+    Get.snackbar('Success', 'Customer added successfully!',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: primaryColor);
+
+    // Increment autoCustomerNo
+    autoCustomerNo++;
+
+    customerNo.clear();
+    price.clear();
+    name.clear();
+    address.clear();
+    phone.clear();
+    isActive = true;
+    customerNo.text = autoCustomerNo.toString();
+  } catch (e) {
+    print('Error adding customer: $e');
+
+    Get.snackbar('Error', 'Failed to add customer. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red);
   }
+}
+
 
   Future<void> getCustomers() async {
     var customers = await db.collection("customers").get();
@@ -72,5 +85,25 @@ class CustomerController extends GetxController {
     }
     update();
     print("$customerList >>>>>>>. Customers List");
+  }
+  void deleteCustomer(String customerId) async {
+    try {
+      await db.collection("customers").doc(customerId).delete();
+      print("Customer Deleted");
+
+      Get.snackbar('Success', 'Customer deleted successfully!',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          backgroundColor: primaryColor);
+    } catch (e) {
+      print('Error deleting customer: $e');
+
+      Get.snackbar('Error', 'Failed to delete customer. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red);
+    }
+    getCustomers();
+    update();
   }
 }

@@ -28,7 +28,7 @@ class PurchaseController extends GetxController {
 
   @override
   void onInit() async {
-    bill.text = autoBillNo.toString(); // Assign autoBillNo to bill controller
+    bill.text = autoBillNo.toString(); // Assign autoBillNo to the bill controller
     await getPurchases();
     getTotalBill();
     getTotalCartonCount();
@@ -40,6 +40,7 @@ class PurchaseController extends GetxController {
   void addPurchase() async {
     try {
       var purchase = PurchaseModel(
+        id: null, // Initially set to null, will be updated after adding to Firestore
         name: name.text,
         note: note.text,
         goodsNo: int.tryParse(goodsNo.text) ?? 0,
@@ -51,33 +52,40 @@ class PurchaseController extends GetxController {
         date: DateFormat('yyyy-MM-dd').parse(date.text),
       );
 
+      DocumentReference documentReference =
+          await db.collection("purchases").add(purchase.toJson());
+
+      // Get the auto-generated ID
+      String purchaseId = documentReference.id;
+
+      // Update the purchase model with the ID
+      purchase.id = purchaseId;
+
       await db
           .collection("purchases")
-          .add(purchase.toJson())
-          .whenComplete(() async {
-        print("Purchase Added");
+          .doc(purchaseId) // Use the obtained ID
+          .update({'id': purchaseId}); // Update the document with the ID field
 
-        await getPurchases();
+      await getPurchases();
 
-        // Show GetX Snackbar for success
-        Get.snackbar('Success', 'Purchase added successfully!',
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 3),
-            backgroundColor: primaryColor);
+      // Show GetX Snackbar for success
+      Get.snackbar('Success', 'Purchase added successfully!',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          backgroundColor: primaryColor);
 
-        // Clear all controllers except date and bill
-        name.clear();
-        note.clear();
-        goodsNo.clear();
-        cartonCount.clear();
-        perCartonCount.clear();
-        totalCount.clear();
-        price.clear();
+      // Clear all controllers except date and bill
+      name.clear();
+      note.clear();
+      goodsNo.clear();
+      cartonCount.clear();
+      perCartonCount.clear();
+      totalCount.clear();
+      price.clear();
 
-        // Update bill controller value by adding 1
-        autoBillNo++;
-        bill.text = autoBillNo.toString();
-      });
+      // Update bill controller value by adding 1
+      autoBillNo++;
+      bill.text = autoBillNo.toString();
     } catch (e) {
       print('Error adding purchase: $e');
 
@@ -112,10 +120,6 @@ class PurchaseController extends GetxController {
   }
 
   List<PurchaseModel> getPurchasesBetweenDates() {
-    // print("Start Date >>>>>>>>>>>> ${startDate.text}");
-    // print("Start end >>>>>>>>>>>> ${endDate.text}");
-    // print("Purchase 0 >>>>>>>>>>>> ${purchaseList[0].date}");
-    // print("Purchase 1 >>>>>>>>>>>> ${purchaseList[1].date}");
     return purchaseList
         .where((purchase) =>
             purchase.date!
