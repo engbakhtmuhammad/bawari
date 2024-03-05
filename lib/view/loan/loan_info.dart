@@ -28,8 +28,8 @@ class _LoanInfoScreenState extends State<LoanInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       
-      appBar: appBarWidget(title: "پور معلومات", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "پور معلومات",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [

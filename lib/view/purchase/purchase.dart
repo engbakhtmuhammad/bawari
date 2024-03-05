@@ -30,31 +30,17 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     "مکمل تعداد",
     "في تعدادقيمت",
   ];
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (picked != null && picked != purchaseController.date) {
-      setState(() {
-        purchaseController.date.text = DateFormat('dd MMM yyyy').format(picked);
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "سامان خرید", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "سامان خرید",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
             billAndDateWidget(
-                onPressed2: () => _selectDate(context),
+                onPressed2: () => selectDate(purchaseController.date),
                 dateController: purchaseController.date,
                 billController: purchaseController.bill),
             backContainerWidget(

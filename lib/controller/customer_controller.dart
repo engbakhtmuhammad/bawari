@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -106,4 +105,16 @@ void addCustomer() async {
     getCustomers();
     update();
   }
+  List<String?> getCustomerNames() {
+  return customerList.map((customer) => customer.name).toList();
+}
+String? getCustomerIdByName(List<CustomerModel> customers, String customerName) {
+  for (var customer in customers) {
+    if (customer.name == customerName) {
+      return customer.id; // Assuming `id` is the field representing the ID in CustomerModel
+    }
+  }
+  return ''; // Return an empty string if no matching customer found
+}
+
 }

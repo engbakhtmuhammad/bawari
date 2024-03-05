@@ -28,8 +28,8 @@ class _SellInfoScreenState extends State<SellInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       
-      appBar: appBarWidget(title: "فروخت معلومات", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "فروخت معلومات",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [

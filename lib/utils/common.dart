@@ -8,6 +8,8 @@ import 'package:bawari/view/sell/sell.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart' as intl;
 
 import 'constants.dart';
 import 'text_styles.dart';
@@ -39,7 +41,7 @@ Widget errorWidget({String? text}) {
   );
 }
 
-Widget drawerWidget(BuildContext context) {
+Widget drawerWidget() {
   return Drawer(
     child: Column(
       children: [
@@ -66,12 +68,7 @@ Widget drawerWidget(BuildContext context) {
                 "گودام سٹاک",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const StockScreen()),
-                (route) => false);
-          },
+          onTap: () =>Get.to(StockScreen())
         ),
         const Divider(),
         ListTile(
@@ -86,12 +83,7 @@ Widget drawerWidget(BuildContext context) {
                 "پہ خلکو باندے",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoanScreen()),
-                (route) => false);
-          },
+          onTap: () =>Get.to(LoanScreen())
         ),
         const Divider(),
         ListTile(
@@ -106,13 +98,7 @@ Widget drawerWidget(BuildContext context) {
                 "ده خرچے معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const PurchaseInfoScreen()),
-                (route) => false);
-          },
+          onTap: ()=>Get.to(ExpenseInfoScreen())
         ),
         const Divider(),
         ListTile(
@@ -127,12 +113,7 @@ Widget drawerWidget(BuildContext context) {
                 "منافع / بچت",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const SellScreen()),
-                (route) => false);
-          },
+          onTap: ()=>Get.to(SellScreen())
         ),
         const Divider(),
         ListTile(
@@ -147,13 +128,7 @@ Widget drawerWidget(BuildContext context) {
                 "خریداری معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const PurchaseInfoScreen()),
-                (route) => false);
-          },
+          onTap: () =>Get.to(PurchaseInfoScreen())
         ),
         const Divider(),
         ListTile(
@@ -168,12 +143,7 @@ Widget drawerWidget(BuildContext context) {
                 "فروخت معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const SellScreen()),
-                (route) => false);
-          },
+          onTap: ()=>Get.to(SellScreen())
         ),
         const Divider(),
         ListTile(
@@ -188,12 +158,7 @@ Widget drawerWidget(BuildContext context) {
                 "نقد ريو معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const SellScreen()),
-                (route) => false);
-          },
+          onTap: () =>Get.to(SellScreen())
         ),
         const Divider(),
         ListTile(
@@ -208,12 +173,7 @@ Widget drawerWidget(BuildContext context) {
                 "پور معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoanInfoScreen()),
-                (route) => false);
-          },
+          onTap: ()=>Get.to(LoanInfoScreen())
         ),
         const Divider(),
       ],
@@ -222,7 +182,7 @@ Widget drawerWidget(BuildContext context) {
 }
 
 PreferredSizeWidget appBarWidget(
-    {required BuildContext context,
+    {required ,
     String? title,
     VoidCallback? onPressed,
     bool? isDashboard = false}) {
@@ -245,7 +205,7 @@ PreferredSizeWidget appBarWidget(
         IconButton(
             onPressed: () => isDashboard!
                 ? showDialog<bool>(
-                    context: context,
+                    context: Get.context!,
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text(
@@ -274,7 +234,7 @@ PreferredSizeWidget appBarWidget(
                       );
                     },
                   )
-                : Navigator.pop(context),
+                : Get.back(),
             icon: Image.asset(
               "assets/icons/back.png",
               width: 24,
@@ -419,7 +379,7 @@ Container billAndDateWidget(
   );
 }
 
-// Future<DateTime> selectDate({required BuildContext context,required DateTime initialDate}) async {
+// Future<DateTime> selectDate({required ,required DateTime initialDate}) async {
 //     final DateTime? picked = await showDatePicker(
 //       context: context,
 //       initialDate: initialDate,
@@ -436,6 +396,7 @@ Widget textFieldWidget(
     required String imgPath,
     bool? isSearch = false,
     TextInputType? inputType,
+    VoidCallback? onPressed,
     int? maxLine}) {
   return Padding(
     padding:
@@ -448,11 +409,14 @@ Widget textFieldWidget(
       decoration: InputDecoration(
         suffixIcon: isSearch
             ? const Icon(Icons.search)
-            : Image.asset(
-                imgPath,
-                width: defaultIconsSize,
-                height: defaultIconsSize,
-              ),
+            : GestureDetector(
+              onTap: onPressed??(){},
+              child: Image.asset(
+                  imgPath,
+                  width: defaultIconsSize,
+                  height: defaultIconsSize,
+                ),
+            ),
         hintText: label,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -464,10 +428,12 @@ Widget textFieldWidget(
   );
 }
 
-Widget dropDownTextFieldWidget(
-    {required String label,
-    required String imgPath,
-    List<DropdownMenuItem<String>>? dropDownList}) {
+Widget dropDownTextFieldWidget({
+  required String label,
+  required String imgPath,
+  required List<DropdownMenuItem<String>> dropDownList,
+   Function(String)? onChanged, // Pass a callback function
+}) {
   return Padding(
     padding: EdgeInsets.symmetric(vertical: defaultPadding / 2.5),
     child: DropdownButtonFormField(
@@ -479,9 +445,8 @@ Widget dropDownTextFieldWidget(
           height: defaultIconsSize,
         ),
         alignLabelWithHint: true,
-        prefix: Icon(Icons.arrow_drop_down),
         hintText: label,
-        hintTextDirection: TextDirection.rtl,
+        // hintTextDirection: TextDirection.rtl,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         border: OutlineInputBorder(
@@ -489,10 +454,15 @@ Widget dropDownTextFieldWidget(
         ),
       ),
       items: dropDownList,
-      onChanged: (Object? value) {},
+      onChanged: (Object? value) {
+        // Call the callback function with the selected value
+        onChanged!(value.toString());
+      },
     ),
   );
 }
+
+
 
 void log(Object? value) {
   if (!kReleaseMode || forceEnableDebug) print(value);
@@ -501,4 +471,17 @@ void log(Object? value) {
 Widget loaderWidget(bool isLoad) {
   return isLoad? const Center(child: CircularProgressIndicator()):const SizedBox();
 }
+ Future<bool?> selectDate(TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: Get.context!,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != controller) {
+      controller.text = intl.DateFormat('dd MMM yyyy').format(picked);
+    }
+    return true;
+  }
 

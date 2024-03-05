@@ -1,9 +1,11 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
+import 'package:bawari/view/dues/add_dues.dart';
 import 'package:bawari/view/widgets/table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
@@ -40,16 +42,14 @@ class DueScreen extends StatelessWidget {
     ];
     return Scaffold(
       
-      appBar: appBarWidget(title: "را باندی", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "را باندی",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
             backContainerWidget(
                 child: Column(
               children: [
-                textFieldWidget(
-                    label: "تمبر", imgPath: "assets/icons/invoice.png"),
                 textFieldWidget(
                     label: "تاریخ", imgPath: "assets/icons/calendar.png"),
                 dropDownTextFieldWidget(
@@ -58,18 +58,7 @@ class DueScreen extends StatelessWidget {
                     dropDownList: dropDownList),
                 textFieldWidget(
                     label: "حوالا ادرس", imgPath: "assets/icons/price.png"),
-              ],
-            )),
-            Align(alignment: Alignment.centerRight, child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-              child: Text("راناندی کهاته",style: boldTextStyle(),),
-            )),
-            TableWidget(tableRows: tableRows, tableColumns: tableColumns),
-            
-            backContainerWidget(
-                child: Column(
-              children: [
-                textFieldWidget(label: "را باندی", imgPath: "assets/icons/dues.png"),
+                    textFieldWidget(label: "را باندی", imgPath: "assets/icons/dues.png"),
                 textFieldWidget(label: "وصول", imgPath: "assets/icons/income.png"),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -95,9 +84,19 @@ class DueScreen extends StatelessWidget {
                   ],
                 ),
               ],
-            ))
+            )),
+             Align(alignment: Alignment.centerRight, child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+              child: Text("راناندی کهاته",style: boldTextStyle(),),
+            )),
+            TableWidget(tableRows: tableRows, tableColumns: tableColumns),
           ],
         ),
+      ),
+       floatingActionButton: FloatingActionButton(
+        onPressed: ()=>Get.to(AddDueScreen()),
+        backgroundColor: primaryColor,
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -41,8 +41,8 @@ class CreditScreen extends StatelessWidget {
     ];
     return Scaffold(
       
-      appBar: appBarWidget(title: "وصولی", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "وصولی",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [

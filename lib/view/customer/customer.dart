@@ -34,8 +34,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "کسٹمر", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "کسٹمر",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [

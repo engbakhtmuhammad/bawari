@@ -12,8 +12,6 @@ class SaleModel {
   int? totalCount; // jumla tadad
   int? price; // qeemat
   DateTime? date;
-  DateTime? createdAt;
-  DateTime? updatedAt;
 
   SaleModel({
     this.id,
@@ -27,8 +25,6 @@ class SaleModel {
     this.note,
     this.pieceCount,
     this.date,
-    this.createdAt,
-    this.updatedAt,
   });
 
   factory SaleModel.fromJson(Map<String, dynamic> json) {

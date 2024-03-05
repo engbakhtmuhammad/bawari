@@ -1,7 +1,5 @@
 import 'package:bawari/controller/goods_controller.dart';
-import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/utils/common.dart';
-import 'package:bawari/view/widgets/table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,8 +34,8 @@ class _StockScreenState extends State<StockScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       
-      appBar: appBarWidget(title: "گودام سٹاک", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "گودام سٹاک",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [

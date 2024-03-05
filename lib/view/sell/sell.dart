@@ -1,11 +1,8 @@
 import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:bawari/utils/text_styles.dart';
 import '../widgets/custom_btn.dart';
-import '../widgets/sell_container.dart';
-import '../widgets/table_widget.dart';
 import 'package:get/get.dart';
 import 'package:bawari/utils/colors.dart';
 import '../../utils/constants.dart';
@@ -21,9 +18,6 @@ class SellScreen extends StatefulWidget {
 }
 
 class _SellScreenState extends State<SellScreen> {
-  DateTime selectedDate = DateTime.now();
-  TextEditingController? billController;
-  TextEditingController? dateController;
   SaleController saleController = Get.put(SaleController());
 
 // Example data, you can replace it with your dynamic data
@@ -41,29 +35,9 @@ class _SellScreenState extends State<SellScreen> {
     "في تعدادقيمت",
 
   ];
-  // List<List<String>> tableRows = [
-  //   ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
-  //   ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
-  // ];
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
 
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        dateController!.text = DateFormat('dd/MM/yyyy').format(picked);
-      });
-    }
-  }
   @override
   void initState() {
-    dateController=TextEditingController(text: DateFormat('dd/MM/yyyy').format(selectedDate));
     super.initState();
   }
   @override
@@ -71,12 +45,12 @@ class _SellScreenState extends State<SellScreen> {
     
     return Scaffold(
       
-      appBar: appBarWidget(title: "سامان فروخت",context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "سامان فروخت",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            billAndDateWidget(dateController: dateController,onPressed2: () => _selectDate(context),),
+            billAndDateWidget(dateController: saleController.date,onPressed2: () => selectDate(saleController.date),),
             backContainerWidget(
               child: Column(
                 children: [

@@ -42,8 +42,8 @@ class _GoodsScreenState extends State<GoodsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "سامان", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "سامان",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [

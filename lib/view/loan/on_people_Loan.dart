@@ -30,8 +30,8 @@ class _LoanScreenState extends State<LoanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       
-      appBar: appBarWidget(title: "پہ خلکو باندے", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "پہ خلکو باندے",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [

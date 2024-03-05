@@ -37,26 +37,12 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
     ["5", "جیلانی لشکرگاه", "12453"],
   ];
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (picked != null && picked != purchaseController.date) {
-      setState(() {
-        purchaseController.date.text = DateFormat('MM/dd/yyyy').format(picked);
-      });
-    }
-  }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "خریداری معلومات", context: context),
-      drawer: drawerWidget(context),
+      appBar: appBarWidget(title: "خریداری معلومات",),
+      drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -65,8 +51,8 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                 imgPath: "assets/icons/calendar.png",
                 title2: "اختتامي",
                 imgPath2: "assets/icons/calendar.png",
-                dateController: purchaseController.endDate,onPressed2: () => _selectDate(context),
-                billController: purchaseController.startDate,onPressed: () => _selectDate(context),),
+                dateController: purchaseController.endDate,onPressed2: () => selectDate(purchaseController.endDate),
+                billController: purchaseController.startDate,onPressed: () => selectDate(purchaseController.startDate),),
             // TableWidget(tableRows: tableRows, tableColumns: tableColumns),
             SizedBox(
               height: defaultPadding,
