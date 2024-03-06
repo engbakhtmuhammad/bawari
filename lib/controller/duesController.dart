@@ -1,23 +1,23 @@
+import 'package:bawari/model/duesModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../utils/colors.dart';
-import 'dues_model.dart';
 
 class DuesController extends GetxController {
   FirebaseFirestore db = FirebaseFirestore.instance;
   var duesList = RxList<DuesModel>();
 
-  // Text editing controllers
   TextEditingController date = TextEditingController(
-      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+  );
   TextEditingController customerId = TextEditingController();
   String customerName = "گراک نوم";
+  TextEditingController address = TextEditingController();
   TextEditingController dues = TextEditingController();
-  TextEditingController received = TextEditingController(text: "0");
-  TextEditingController address = TextEditingController(text: '');
+  TextEditingController received = TextEditingController();
 
   @override
   void onInit() async {
@@ -27,17 +27,12 @@ class DuesController extends GetxController {
 
   Future<void> addDuesEntry() async {
     try {
-      // Validate input before parsing
-      int duesAmount = int.tryParse(dues.text) ?? 0;
-      int receivedAmount = int.tryParse(received.text) ?? 0;
 
       var duesEntry = DuesModel(
-        date: DateFormat('yyyy-MM-dd').parse(date.text),
         customerId: customerId.text,
         customerName: customerName,
-        dues: duesAmount,
-        received: receivedAmount,
-        address: address.text,
+        dues: [Dues(price: int.parse(dues.text),date: DateFormat('yyyy-MM-dd').parse(date.text),address: address.text)],
+        received: [],
       );
 
       DocumentReference documentReference =
@@ -52,7 +47,7 @@ class DuesController extends GetxController {
       await db.collection("dues").doc(duesId).update({'id': duesId});
 
       getDuesEntries();
-      Get.snackbar('Success', 'Customer added successfully!',
+      Get.snackbar('Success', 'Dues added successfully!',
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
           backgroundColor: primaryColor);
@@ -72,6 +67,7 @@ class DuesController extends GetxController {
   }
 
   Future<void> getDuesEntries() async {
+    
     var duesEntries =
         await db.collection("dues").orderBy("date", descending: true).get();
     duesList.clear();
@@ -82,5 +78,48 @@ class DuesController extends GetxController {
     print("$duesList >>>>>>>. Dues Entries List");
   }
 
-  // Add other methods as needed, e.g., deleteDuesEntry, updateDuesEntry, etc.
+  DuesModel? getCustomerByName(String name) {
+    for (var customer in duesList) {
+      if (customer.customerName == name) {
+        return customer;
+      }
+    }
+    return null; // Return null if no matching customer found
+  }
+   DuesModel? getDuesByName(String name) {
+    for (var dues in duesList) {
+      if (dues.customerName == name) {
+        return dues;
+      }
+    }
+    return null; // Return null if no matching customer found
+  }
+
+  // void addToSubDueList(String docId,) {
+  //   try {
+  //     var collection = FirebaseFirestore.instance.collection('dues');
+  //     collection
+  //         .doc(docId)
+  //         .update({
+  //           'dues': FieldValue.arrayUnion([subDue.toJson()])
+  //         })
+  //         .then((_) {
+  //           getDuesEntries();
+  //           Get.snackbar('Success', 'Dues added successfully!',
+  //               snackPosition: SnackPosition.BOTTOM,
+  //               duration: const Duration(seconds: 3),
+  //               backgroundColor: Colors.green);
+  //         })
+  //         .catchError((error) {
+  //           Get.snackbar('Failed', error,
+  //               snackPosition: SnackPosition.BOTTOM,
+  //               duration: const Duration(seconds: 3),
+  //               backgroundColor: Colors.red);
+  //         });
+  //   } catch (e) {
+  //     print('Error adding dues entry: $e');
+  //     // Handle the error
+  //   }
+  //   update();
+  // }
 }
