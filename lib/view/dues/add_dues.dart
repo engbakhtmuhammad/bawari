@@ -1,12 +1,11 @@
 import 'package:bawari/controller/customer_controller.dart';
-import 'package:bawari/controller/duesController.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../model/duesModel.dart';
+import '../../controller/dues_controller.dart';
 import '../../utils/colors.dart';
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
@@ -42,9 +41,6 @@ class _AddDueScreenState extends State<AddDueScreen> {
 // Inside a method where you fetch customers, such as in the initState method
   void fetchCustomers() async {
     List<String?> customerNames = await customerController.getCustomerNames();
-    // print('Customer Names: $customerNames');
-
-    // Update the dropDownList based on the fetched customer names
     dropDownList = customerNames.map((customerName) {
       return DropdownMenuItem(
         alignment: Alignment.centerLeft,
@@ -52,9 +48,6 @@ class _AddDueScreenState extends State<AddDueScreen> {
         child: Text(customerName!),
       );
     }).toList();
-    // print(dropDownList.length);
-
-    // Ensure to update the state to reflect changes in the UI
     if (mounted) {
       setState(() {});
     }
@@ -65,62 +58,6 @@ class _AddDueScreenState extends State<AddDueScreen> {
     setState(() {});
   }
 
-  List<DataRow> buildDataRows()  {
-    List<DataRow> rows = [];
-
-    for (var row = 0; row < duesController.duesList.length; row++) {
-       assignTransactionData(duesController.duesList[row].id!);
-      print(">>>>>>>>>>>>>>>>>>>>>>>>> ROW: ${duesController.duesList[row].id!}");
-      for (var subRow = 0; subRow < transactionsList.length; subRow++) {
-        print(
-            ">>>>>>>>>>>>>>>>>>>>>>>>> Price: ${transactionsList[subRow].price}");
-
-        DataRow dataRow = DataRow(
-          color: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.selected)) {
-                return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-              }
-              return Colors.transparent;
-            },
-          ),
-          cells: [
-            DataCell(
-              Text(
-                transactionsList[subRow].address.toString(),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14),
-              ),
-            ),
-            DataCell(
-              Text(
-                DateFormat('yyyy-MM-dd').format(transactionsList[subRow].date),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14),
-              ),
-            ),
-            DataCell(
-              Text(
-                transactionsList[subRow].price.toString(),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14),
-              ),
-            ),
-            DataCell(
-              Text(
-                duesController.duesList[row].customerName.toString(),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14),
-              ),
-            ),
-          ],
-        );
-        rows.add(dataRow);
-      }
-    }
-
-    return rows;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,73 +145,59 @@ class _AddDueScreenState extends State<AddDueScreen> {
                                 ),
                               )
                           ],
-                          rows: buildDataRows()
+                          rows:
 
-                          //  [
-                          //   // TODO: here you need to have the nested loop to show data
-                          //   for (var row = 0;
-                          //       row < duesController.duesList.length;
-                          //       row++)
-                          //       for(var subRow=0; subRow<transactionsList.length; subRow++)
-                          //     DataRow(
-                          //       color: MaterialStateProperty.resolveWith<Color>(
-                          //         (Set<MaterialState> states) {
-                          //           // assignTransactionData(duesController.duesList[row].id!);
-                          //           if (states.contains(MaterialState.selected)) {
-                          //             return Theme.of(context)
-                          //                 .colorScheme
-                          //                 .primary
-                          //                 .withOpacity(0.08);
-                          //           }
-                          //           return Colors.transparent;
-                          //         },
-                          //       ),
-                          //       cells: [
-
-                          //          DataCell(
-                          //           Text(
-                          //             DateFormat('yyyy-MM-dd').format(transactionsList[subRow].date),
-                          //             textAlign: TextAlign.center,
-                          //             style: primaryTextStyle(size: 14),
-                          //           ),
-                          //         ),
-                          //         DataCell(
-                          //           Text(
-                          //             transactionsList[subRow].address
-                          //                 .toString(),
-                          //             textAlign: TextAlign.center,
-                          //             style: primaryTextStyle(size: 14),
-                          //           ),
-                          //         ),
-                          //         DataCell(
-                          //           Text(
-                          //             duesController.duesList[row].received
-                          //                 .toString(),
-                          //             textAlign: TextAlign.center,
-                          //             style: primaryTextStyle(size: 14),
-                          //           ),
-                          //         ),
-                          //         //6
-                          //         DataCell(
-                          //           Text(
-                          //             duesController.duesList[row].dues
-                          //                 .toString(),
-                          //             textAlign: TextAlign.center,
-                          //             style: primaryTextStyle(size: 14),
-                          //           ),
-                          //         ),
-                          //         //5
-                          //         DataCell(
-                          //           Text(
-                          //             duesController.duesList[row].customerName
-                          //                 .toString(),
-                          //             textAlign: TextAlign.center,
-                          //             style: primaryTextStyle(size: 14),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          // ],
+                           [
+                            for (var row = 0;
+                                row < duesController.duesList.length;
+                                row++)
+                              DataRow(
+                                color: MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.selected)) {
+                                      return Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.08);
+                                    }
+                                    return Colors.transparent;
+                                  },
+                                ),
+                                cells: [
+                                  DataCell(
+                                    Text(
+                                     duesController.duesList[row].dues![0].address
+                                          .toString(),
+                                      textAlign: TextAlign.center,
+                                      style: primaryTextStyle(size: 14),
+                                    ),
+                                  ),
+                                   DataCell(
+                                    Text(
+                                      DateFormat('yyyy-MM-dd').format(duesController.duesList[row].dues![0].date!),
+                                      textAlign: TextAlign.center,
+                                      style: primaryTextStyle(size: 14),
+                                    ),
+                                  ),
+                                  
+                                  DataCell(
+                                    Text(
+                                      duesController.calculateDuesTotal(duesController.duesList[row].dues!).toString(),
+                                      textAlign: TextAlign.center,
+                                      style: primaryTextStyle(size: 14),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      duesController.duesList[row].customerName
+                                          .toString(),
+                                      textAlign: TextAlign.center,
+                                      style: primaryTextStyle(size: 14),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
                           ),
                     ],
                   ));

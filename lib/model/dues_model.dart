@@ -2,53 +2,107 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DuesModel {
   String? id;
-  DateTime? date;
   String? customerId;
   String? customerName;
-  int? dues;
-  int? received;
+  List<Dues>? dues;
+  List<Dues>? received;
+
+  DuesModel(
+      {this.id,
+      this.customerId,
+      this.customerName,
+      this.dues,
+      this.received});
+
+DuesModel.fromJson(Map<String, dynamic> json) {
+  id = json['id'];
+  customerId = json['customerId'];
+  customerName = json['customerName'];
+  
+  if (json['dues'] != null) {
+    if (json['dues'] is List) {
+      dues = <Dues>[];
+      json['dues'].forEach((v) {
+        dues!.add(new Dues.fromJson(v));
+      });
+    } else {
+      // Handle the case where 'dues' is not a List
+      // You can add custom logic here based on your requirements
+    }
+  }
+  
+  if (json['received'] != null) {
+    if (json['received'] is List) {
+      received = <Dues>[];
+      json['received'].forEach((v) {
+        received!.add(new Dues.fromJson(v));
+      });
+    } else {
+      // Handle the case where 'received' is not a List
+      // You can add custom logic here based on your requirements
+    }
+  }
+}
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['customerId'] = this.customerId;
+    data['customerName'] = this.customerName;
+    if (this.dues != null) {
+      data['dues'] = this.dues!.map((v) => v.toJson()).toList();
+    }
+    if (this.received != null) {
+      data['received'] = this.received!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Dues {
+  int? price;
+  DateTime? date;
   String? address;
-  List<DuesModel>? subDuesList; // New field
 
-  DuesModel({
-    this.id,
-    this.date,
-    this.customerId,
-    this.customerName,
-    this.dues,
-    this.received,
-    this.address,
-    this.subDuesList,
-  });
+  Dues({this.price, this.date, this.address});
 
-  factory DuesModel.fromJson(Map<String, dynamic> json) {
-    return DuesModel(
-      id: json["id"] ?? "",
-      customerId: json["customerId"] ?? "",
-      customerName: json["customerName"] ?? "",
-      dues: json["dues"] ?? 0,
-      received: json["received"] ?? 0,
-      address: json["address"] ?? "",
-      date: json["date"] != null
+  Dues.fromJson(Map<String, dynamic> json) {
+    price = json['price'];
+    date = json["date"] != null
           ? (json["date"] as Timestamp).toDate()
-          : null,
-      subDuesList: (json["subDuesList"] as List<dynamic>?)
-          ?.map((subDuesJson) =>
-              DuesModel.fromJson(subDuesJson as Map<String, dynamic>))
-          .toList(),
-    );
+          : null;
+    address = json['address'];
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "date": date,
-      "customerId": customerId,
-      "customerName": customerName,
-      "dues": dues,
-      "received": received,
-      "address": address,
-      "subDuesList": subDuesList?.map((subDues) => subDues.toJson()).toList(),
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['price'] = this.price;
+    data['date'] = this.date;
+    data['address'] = this.address;
+    return data;
   }
 }
+class Received {
+  int? price;
+  DateTime? date;
+  String? address;
+
+  Received({this.price, this.date, this.address});
+
+  Received.fromJson(Map<String, dynamic> json) {
+    price = json['price'];
+    date = json["date"] != null
+          ? (json["date"] as Timestamp).toDate()
+          : null;
+    address = json['address'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['price'] = this.price;
+    data['date'] = this.date;
+    data['address'] = this.address;
+    return data;
+  }
+}
+

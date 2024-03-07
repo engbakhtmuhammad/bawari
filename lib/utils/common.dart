@@ -4,7 +4,7 @@ import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/loan/loan_info.dart';
 import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
-import 'package:bawari/view/sell/sell.dart';
+import 'package:bawari/view/sell/sale.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

@@ -3,10 +3,12 @@
 class GoodsModel {
   String? id;
   int? goodsNo;
+  int? pieceCount;
   int? salePrice;
   int? purchasePrice;
   String? name;
   int? cartonCount;
+  int? perCartonCount;
   bool? isActive;
   bool? lineItem;
 
@@ -18,7 +20,9 @@ class GoodsModel {
     this.name,
     this.cartonCount,
     this.lineItem,
-    this.isActive
+    this.isActive,
+    this.pieceCount,
+    this.perCartonCount,
   });
 
   factory GoodsModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +33,8 @@ class GoodsModel {
       purchasePrice: json["purchasePrice"],
       name: json["name"],
       cartonCount: json["cartonCount"],
+      perCartonCount: json["perCartonCount"],
+      pieceCount: json["pieceCount"],
       lineItem: json["lineItem"],
       isActive: json["isActive"]
     );
@@ -42,6 +48,8 @@ class GoodsModel {
     data["purchasePrice"] = purchasePrice;
     data["name"] = name;
     data["cartonCount"] = cartonCount;
+    data["pieceCount"] = pieceCount;
+    data["perCartonCount"] = perCartonCount;
     data["lineItem"] = lineItem;
     data["isActive"]=isActive;
     return data;

@@ -1,3 +1,4 @@
+import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class SellScreen extends StatefulWidget {
 
 class _SellScreenState extends State<SellScreen> {
   SaleController saleController = Get.put(SaleController());
+  GoodsController goodsController = Get.put(GoodsController());
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -27,23 +29,45 @@ class _SellScreenState extends State<SellScreen> {
     "پیس تعداد",
     "کارتن تعداد",
     "في كارتن تعداد",
-    "مکمل تعداد",
     "في تعدادقيمت",
-    "مکمل تعداد",
-    "مکمل تعداد",
-    "مکمل تعداد",
-    "في تعدادقيمت",
-    "في تعدادقيمت",
-
+    "مکمل تعدادقيمت",
   ];
+
+   List<DropdownMenuItem<String>> dropDownList = [];
+  var transactionsList = [];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchGoods();
+    });
   }
+
+// Inside a method where you fetch customers, such as in the initState method
+  void fetchGoods() async {
+    List<String?> goodsName = await goodsController.getGoodsNames();
+    // print('Customer Names: $goodsName');
+
+    // Update the dropDownList based on the fetched customer names
+    dropDownList = goodsName.map((goods) {
+      return DropdownMenuItem(
+        alignment: Alignment.centerLeft,
+        value: goods,
+        child: Text(goods!),
+      );
+    }).toList();
+    // print(dropDownList.length);
+
+    // Ensure to update the state to reflect changes in the UI
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    
+    fetchGoods();
     return Scaffold(
       
       appBar: appBarWidget(title: "سامان فروخت",),
@@ -51,15 +75,26 @@ class _SellScreenState extends State<SellScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            billAndDateWidget(dateController: saleController.date,onPressed2: () => selectDate(saleController.date),),
+            billAndDateWidget(dateController: saleController.date,onPressed2: () => selectDate(saleController.date),billController: saleController.bill),
             backContainerWidget(
               child: Column(
                 children: [
-                  textFieldWidget(
-                      label: "نام",
-                      imgPath: "assets/icons/name.png",
-                      controller: saleController.name,),
-
+                  dropDownTextFieldWidget(
+                  label: "سامان نوم غوره کړئ",
+                  imgPath: "assets/icons/name.png",
+                  dropDownList: dropDownList,
+                  onChanged: (value) async {
+                    // Update the expenseType in the ExpenseController
+                    saleController.name = value;
+                    var goodsModel =
+                        await goodsController.getGoodsByName(value);
+                    saleController.goodsNo.text = goodsModel!.goodsNo!.toString();
+                    saleController.pieceCount.text = goodsModel.pieceCount!.toString();
+                    saleController.cartonCount.text = goodsModel.cartonCount.toString();
+                    saleController.perCartonCount.text = goodsModel.perCartonCount.toString();
+                    saleController.price.text = goodsModel.purchasePrice.toString();
+                  },
+                ),
                   textFieldWidget(
                       label: "نوٹ",
                       imgPath: "assets/icons/note.png",
@@ -155,83 +190,41 @@ class _SellScreenState extends State<SellScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].date
-                                        .toString(),
+                                    saleController.saleList[row].price.toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].date
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-
-                                //7
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .saleList[row].totalCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //6
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].price
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //5
+                                // DataCell(
+                                //   Text(
+                                //     saleController
+                                //         .saleList[row].pieceCount
+                                //         .toString(),
+                                //     textAlign: TextAlign.center,
+                                //     style: primaryTextStyle(size: 14),
+                                //   ),
+                                // ),
+                                // DataCell(
+                                //   Text(
+                                //     saleController.saleList[row].price
+                                //         .toString(),
+                                //     textAlign: TextAlign.center,
+                                //     style: primaryTextStyle(size: 14),
+                                //   ),
+                                // ),
+                                // DataCell(
+                                //   Text(
+                                //     saleController
+                                //         .saleList[row].perCartonCount
+                                //         .toString(),
+                                //     textAlign: TextAlign.center,
+                                //     style: primaryTextStyle(size: 14),
+                                //   ),
+                                // ),
                                 DataCell(
                                   Text(
                                     saleController
-                                        .saleList[row].perCartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //4
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .saleList[row].cartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //3
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].note
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-
-                                //2
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].billNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //1
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].name
+                                        .saleList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -239,7 +232,23 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].name
+                                    saleController.saleList[row].perCartonCount
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    saleController.saleList[row].cartonCount
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    saleController.saleList[row].pieceCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),

@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../controller/customer_controller.dart';
-import '../../controller/duesController.dart';
+import '../../controller/dues_controller.dart';
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
 
@@ -59,10 +59,6 @@ List<String> tableColumns = [
     }
   }
 
-  void assignTransactionData(String id) async {
-    transactionsList = await duesController.getTransactionsList(id);
-    setState(() {});
-  }
 
   List<DataRow> buildDataRows()  {
     List<DataRow> rows = [];

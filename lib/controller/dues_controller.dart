@@ -1,150 +1,222 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
-// import '../utils/colors.dart';
-// import '../model/dues_model.dart';
+import '../model/dues_model.dart';
+import '../utils/colors.dart';
 
-// class DuesController extends GetxController {
-//   FirebaseFirestore db = FirebaseFirestore.instance;
-//   var duesList = RxList<DuesModel>();
+class DuesController extends GetxController {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  var duesList = RxList<DuesModel>();
 
-//   // Text editing controllers
-//   TextEditingController date = TextEditingController(
-//       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-//   TextEditingController customerId = TextEditingController();
-//   String customerName = "گراک نوم";
-//   TextEditingController dues = TextEditingController();
-//   TextEditingController received = TextEditingController();
-//   TextEditingController address = TextEditingController();
+  TextEditingController date = TextEditingController(
+    text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+  );
+  TextEditingController customerId = TextEditingController();
+  String customerName = "گراک نوم";
+  TextEditingController address = TextEditingController();
+  TextEditingController dues = TextEditingController();
+  TextEditingController received = TextEditingController();
 
-//   @override
-//   void onInit() async {
-//     await getDuesEntries();
-//     super.onInit();
-//   }
+  @override
+  void onInit() async {
+    await getDuesEntries();
+    super.onInit();
+  }
 
-//   Future<void> addDuesEntry() async {
-//     try {
-//       // Validate input before parsing
-//       int duesAmount = int.tryParse(dues.text) ?? 0;
-//       int receivedAmount = int.tryParse(received.text) ?? 0;
+  Future<void> addDuesEntry() async {
+    try {
+      // Check if the customer name already exists
+      var existingCustomer = duesList.firstWhere(
+        (entry) => entry.customerName == customerName,
+        orElse: () => DuesModel(), // Provide a default value (empty DuesModel)
+      );
 
-//       var duesEntry = DuesModel(
-//         date: DateFormat('yyyy-MM-dd').parse(date.text),
-//         customerId: customerId.text,
-//         customerName: customerName,
-//         dues: duesAmount,
-//         received: receivedAmount,
-//         address: address.text,
-//         subDuesList: []
-//       );
+      if (existingCustomer.id != null) {
+        // If customer name exists, update the existing entry
+        existingCustomer.dues!.add(
+          Dues(
+            price: int.parse(dues.text),
+            date: DateFormat('yyyy-MM-dd').parse(date.text),
+            address: address.text,
+          ),
+        );
 
-//       DocumentReference documentReference =
-//           await db.collection("dues").add(duesEntry.toJson());
+        // Update the existing document in Firestore
+        await db.collection("dues").doc(existingCustomer.id!).update({
+          'dues': existingCustomer.dues!.map((d) => d.toJson()).toList(),
+        });
 
-//       // Get the auto-generated ID
-//       String duesId = documentReference.id;
+        Get.snackbar('Success', 'Dues updated successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: primaryColor);
+      } else {
+        // If customer name doesn't exist, add a new entry
+        var duesEntry = DuesModel(
+          customerId: customerId.text,
+          customerName: customerName,
+          dues: [
+            Dues(
+              price: int.parse(dues.text),
+              date: DateFormat('yyyy-MM-dd').parse(date.text),
+              address: address.text,
+            ),
+          ],
+          received: [],
+        );
 
-//       // Update the dues model with the ID
-//       duesEntry.id = duesId;
+        DocumentReference documentReference =
+            await db.collection("dues").add(duesEntry.toJson());
 
-//       await db.collection("dues").doc(duesId).update({'id': duesId});
+        // Get the auto-generated ID
+        String duesId = documentReference.id;
 
-//       getDuesEntries();
-//       Get.snackbar('Success', 'Dues added successfully!',
-//           snackPosition: SnackPosition.BOTTOM,
-//           duration: const Duration(seconds: 3),
-//           backgroundColor: primaryColor);
+        // Update the dues model with the ID
+        duesEntry.id = duesId;
 
-//       // Clear the text editing controllers after adding the entry
-//       date.clear();
-//       customerId.clear();
-//       customerName = "";
-//       dues.clear();
-//       received.clear();
-//       address.clear();
-//     } catch (e) {
-//       print('Error adding dues entry: $e');
-//       // Handle the error
-//     }
-//     update();
-//   }
+        await db.collection("dues").doc(duesId).update({'id': duesId});
 
-//   Future<void> getDuesEntries() async {
-//     var duesEntries =
-//         await db.collection("dues").orderBy("date", descending: true).get();
-//     duesList.clear();
-//     for (var duesEntry in duesEntries.docs) {
-//       duesList.add(DuesModel.fromJson(duesEntry.data()));
-//     }
-//     update();
-//     print("$duesList >>>>>>>. Dues Entries List");
-//   }
+        Get.snackbar('Success', 'Dues added successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: primaryColor);
+      }
 
-//   DuesModel? getCustomerByName(String name) {
-//     for (var customer in duesList) {
-//       if (customer.customerName == name) {
-//         return customer;
-//       }
-//     }
-//     return null; // Return null if no matching customer found
-//   }
-//    DuesModel? getDuesByName(String name) {
-//     for (var dues in duesList) {
-//       if (dues.customerName == name) {
-//         return dues;
-//       }
-//     }
-//     return null; // Return null if no matching customer found
-//   }
+      // Clear the text editing controllers after adding/updating the entry
+      customerId.clear();
+      customerName = "";
+      dues.clear();
+      received.clear();
+      address.clear();
+    } catch (e) {
+      print('Error adding/updating dues entry: $e');
+      // Handle the error
+    }
+    update();
+  }
 
-//   void addToSubDueList(docId) {
-//     try {
-//       var duesEntry = DuesModel(
-//         date: DateFormat('yyyy-MM-dd').parse(date.text),
-//         customerName: customerName,
-//         dues: int.parse(dues.text),
-//         received: int.parse(received.text),
-//         address: address.text,
-//       );
-//       var collection = FirebaseFirestore.instance.collection('dues');
-// collection 
-//     .doc(docId) // <-- Document ID
-//     .set({'subDuesList': FieldValue.arrayUnion([duesEntry.toJson()])}) // <-- Add data
-//     .then((_) {getDuesEntries();
-//       Get.snackbar('Success', 'Dues added successfully!',
-//           snackPosition: SnackPosition.BOTTOM,
-//           duration: const Duration(seconds: 3),
-//           backgroundColor: primaryColor);})
-//     // ignore: invalid_return_type_for_catch_error
-//     .catchError((error) => Get.snackbar('Failed', error,
-//           snackPosition: SnackPosition.BOTTOM,
-//           duration: const Duration(seconds: 3),
-//           backgroundColor: primaryColor));
-      
+  Future<void> addRecieveEntry() async {
+    try {
+      // Check if the customer name already exists
+      var existingCustomer = duesList.firstWhere(
+        (entry) => entry.customerName == customerName,
+        orElse: () => DuesModel(), // Provide a default value (empty DuesModel)
+      );
 
-//       // Clear the text editing controllers after adding the entry
-//       date.clear();
-//       customerId.clear();
-//       customerName = "";
-//       dues.clear();
-//       received.clear();
-//       address.clear();
-//     } catch (e) {
-//       print('Error adding dues entry: $e');
-//       // Handle the error
-//     }
-//     update();
-//   }
+      if (existingCustomer.id != null) {
+        // If customer name exists, update the existing entry
+        existingCustomer.received!.add(
+          Dues(
+            price: int.parse("-${received.text}"),
+            date: DateFormat('yyyy-MM-dd').parse(date.text),
+            address: address.text,
+          ),
+        );
 
-//   void getDocumentId() async {
-//   var duesEntries = await db.collection("dues").get();
-//   for (var duesEntry in duesEntries.docs) {
-//     String documentId = duesEntry.id;
-//     print('Document ID: $documentId');
-//   }
-// }
+        // Update the existing document in Firestore
+        await db.collection("dues").doc(existingCustomer.id!).update({
+          'received':
+              existingCustomer.received!.map((d) => d.toJson()).toList(),
+        });
 
-// }
+        Get.snackbar('Success', 'Credit updated successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: primaryColor);
+      } else {
+        Get.snackbar('Error', 'Customer Not Found!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.red);
+      }
+
+      // Clear the text editing controllers after adding/updating the entry
+      customerId.clear();
+      dues.clear();
+      received.clear();
+      address.clear();
+    } catch (e) {
+      print('Error adding/updating dues entry: $e');
+      // Handle the error
+    }
+    update();
+  }
+
+  double calculateDuesTotal(List<Dues> duesList) {
+    double total = 0;
+
+    for (var dues in duesList) {
+      total += dues.price ?? 0;
+    }
+
+    return total;
+  }
+
+  int getTotalDues(List transactionsList) {
+    int totalDues = 0;
+
+    for (var transaction in transactionsList) {
+      if (transaction is Dues && transaction.price != null) {
+        totalDues += transaction.price!;
+      }
+    }
+
+    return totalDues;
+  }
+
+  Future<List> getTransactionsList(String documentId) async {
+    var duesModel = duesList.firstWhere(
+      (element) => element.id == documentId,
+      orElse: () => DuesModel(),
+    );
+
+    var allTransactions = [
+      ...duesModel.dues ?? [],
+      ...duesModel.received ?? []
+    ];
+    allTransactions.sort((a, b) {
+      if (a.date == null || b.date == null) {
+        return 0;
+      }
+      return a.date!.compareTo(b.date!);
+    });
+
+    return allTransactions;
+  }
+
+  Future<void> getDuesEntries() async {
+    var duesEntries = await db.collection("dues").get();
+    duesList.clear();
+    for (var duesEntry in duesEntries.docs) {
+      var duesModel = DuesModel.fromJson(duesEntry.data());
+      duesList.add(duesModel);
+    }
+    update();
+    // print("$duesList >>>>>>>. Dues Entries List");
+  }
+
+  DuesModel? getCustomerByName(String name) {
+    for (var customer in duesList) {
+      if (customer.customerName == name) {
+        return customer;
+      }
+    }
+    return null; // Return null if no matching customer found
+  }
+
+  DuesModel? getDuesByName(String name) {
+    for (var dues in duesList) {
+      if (dues.customerName == name) {
+        return dues;
+      }
+    }
+    return null; // Return null if no matching customer found
+  }
+
+  List<String?> getDuesNames() {
+    return duesList.map((customer) => customer.customerName).toList();
+  }
+}
+

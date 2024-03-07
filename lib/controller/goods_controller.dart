@@ -11,6 +11,8 @@ class GoodsController extends GetxController {
   TextEditingController purchasePrice = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController cartonCount = TextEditingController();
+  TextEditingController perCartonCount = TextEditingController();
+  TextEditingController pieceCount = TextEditingController();
   bool lineItem = true;
   bool isActive = true;
 
@@ -31,6 +33,8 @@ class GoodsController extends GetxController {
         purchasePrice: int.tryParse(purchasePrice.text) ?? 0,
         name: name.text,
         cartonCount: int.tryParse(cartonCount.text) ?? 0,
+        perCartonCount: int.tryParse(perCartonCount.text) ?? 0,
+        pieceCount: int.tryParse(pieceCount.text) ?? 0,
         lineItem: lineItem,
         isActive: isActive,
       );
@@ -49,6 +53,8 @@ class GoodsController extends GetxController {
         purchasePrice.clear();
         name.clear();
         cartonCount.clear();
+        perCartonCount.clear();
+        pieceCount.clear();
         lineItem = false;
         isActive = true;
         goodsNo.clear();
@@ -93,4 +99,15 @@ class GoodsController extends GetxController {
     getGoods();
     update();
   }
+  List<String?> getGoodsNames() {
+    return goodsList.map((goods) => goods.name).toList();
+  }
+  GoodsModel? getGoodsByName(String goodsName) {
+  for (var goods in goodsList) {
+    if (goods.name == goodsName) {
+      return goods;
+    }
+  }
+  return null; // Return null if no matching customer found
+}
 }

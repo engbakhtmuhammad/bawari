@@ -15,7 +15,7 @@ class SaleController extends GetxController {
       text: DateFormat('yyyy-MM-dd').format(DateTime(2024, 3, 3)));
   TextEditingController date = TextEditingController(
       text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
-  TextEditingController name = TextEditingController();
+  String name = "سامان نوم";
   TextEditingController note = TextEditingController();
   TextEditingController goodsNo = TextEditingController();
   TextEditingController pieceCount = TextEditingController();
@@ -36,7 +36,7 @@ class SaleController extends GetxController {
 
   void addSale() async {
     var sale = SaleModel(
-      name: name.text,
+      name: name,
       note: note.text,
       goodsNo: int.tryParse(goodsNo.text) ?? 0,
       pieceCount: int.tryParse(pieceCount.text) ?? 0,
@@ -59,7 +59,6 @@ class SaleController extends GetxController {
           backgroundColor: primaryColor);
 
       // Clear all controllers except date and bill
-      name.clear();
       note.clear();
       goodsNo.clear();
       pieceCount.clear();
@@ -75,40 +74,41 @@ class SaleController extends GetxController {
   }
 
   void getSale() async {
-    var sales= await db.collection("sales").get();
+    var sales = await db.collection("sales").get();
     saleList.clear();
     for (var sale in sales.docs) {
       saleList.add(SaleModel.fromJson(sale.data()));
-
     }
     print("$saleList >>>>>>>. Sales List");
   }
 
-int getTotalBill() {
-  return saleList.fold(0, (sum, purchase) => sum + purchase.billNo!);
-}
+  double getTotalPrice() {
+    double totalPrice = 0;
 
-int getTotalCartonCount() {
-  return saleList.fold(0, (sum, purchase) => sum + purchase.cartonCount!);
-}
+    for (var sale in saleList) {
+      totalPrice += sale.price ?? 0;
+    }
 
-int getTotalPrice() {
-  return saleList.fold(0, (sum, purchase) => sum + purchase.price!);
-}
+    return totalPrice;
+  }
 
-List<SaleModel> getPurchasesBetweenDates() {
-  // print("Start Date >>>>>>>>>>>> ${startDate.text}");
-  // print("Start end >>>>>>>>>>>> ${endDate.text}");
-  // print("Purchase 0 >>>>>>>>>>>> ${saleList[0].date}");
-  // print("Purchase 1 >>>>>>>>>>>> ${saleList[1].date}");
-  return saleList
-      .where((purchase) =>
-  purchase.date!
-      .isAfter(DateFormat('yyyy-MM-dd').parse(startDate.text)) &&
-      purchase.date!
-          .isBefore(DateFormat('yyyy-MM-dd').parse(endDate.text)))
-      .toList();
-}
-}
+  int getTotalCartonCount() {
+    int totalCartonCount = 0;
 
+    for (var sale in saleList) {
+      totalCartonCount += sale.cartonCount ?? 0;
+    }
 
+    return totalCartonCount;
+  }
+
+  int getTotalPieceCount() {
+    int totalPieceCount = 0;
+
+    for (var sale in saleList) {
+      totalPieceCount += sale.pieceCount ?? 0;
+    }
+
+    return totalPieceCount;
+  }
+}
