@@ -5,7 +5,7 @@ class DuesModel {
   String? customerId;
   String? customerName;
   List<Dues>? dues;
-  List<Received>? received;
+  List<Dues>? received;
 
   DuesModel(
       {this.id,
@@ -33,9 +33,9 @@ DuesModel.fromJson(Map<String, dynamic> json) {
   
   if (json['received'] != null) {
     if (json['received'] is List) {
-      received = <Received>[];
+      received = <Dues>[];
       json['received'].forEach((v) {
-        received!.add(new Received.fromJson(v));
+        received!.add(new Dues.fromJson(v));
       });
     } else {
       // Handle the case where 'received' is not a List

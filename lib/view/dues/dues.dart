@@ -8,8 +8,6 @@ import 'package:intl/intl.dart';
 
 import '../../controller/customer_controller.dart';
 import '../../controller/duesController.dart';
-import '../../controller/dues_controller.dart';
-import '../../model/dues_model.dart';
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
 
@@ -23,15 +21,14 @@ class DueScreen extends StatefulWidget {
 class _DueScreenState extends State<DueScreen> {
   DuesController duesController = Get.put(DuesController());
   CustomerController customerController = Get.put(CustomerController());
-  // Example data, you can replace it with your dynamic data
-  List<String> tableColumns = [
+List<String> tableColumns = [
     "را باندی نوم",
-    "کرضہ",
-    "وصول",
-    // "حوالا ادرس",
-    // "تاریخ",
+    "پیسے",
+    "تاریخ",
+    "حوالا ادرس",
   ];
   List<DropdownMenuItem<String>> dropDownList = [];
+  var transactionsList = [];
 
   @override
   void initState() {
@@ -43,8 +40,8 @@ class _DueScreenState extends State<DueScreen> {
 
 // Inside a method where you fetch customers, such as in the initState method
   void fetchCustomers() async {
-    List<String?> customerNames = await customerController.getCustomerNames();
-    print('Customer Names: $customerNames');
+    List<String?> customerNames = await duesController.getDuesNames();
+    // print('Customer Names: $customerNames');
 
     // Update the dropDownList based on the fetched customer names
     dropDownList = customerNames.map((customerName) {
@@ -54,7 +51,7 @@ class _DueScreenState extends State<DueScreen> {
         child: Text(customerName!),
       );
     }).toList();
-    print(dropDownList.length);
+    // print(dropDownList.length);
 
     // Ensure to update the state to reflect changes in the UI
     if (mounted) {
@@ -62,21 +59,58 @@ class _DueScreenState extends State<DueScreen> {
     }
   }
 
-  String calculateTotal() {
-    try {
-      int duesAmount = duesController.dues.text.isEmpty
-          ? 0
-          : int.parse(duesController.dues.text);
-      int receivedAmount = duesController.received.text.isEmpty
-          ? 0
-          : int.parse(duesController.received.text);
+  void assignTransactionData(String id) async {
+    transactionsList = await duesController.getTransactionsList(id);
+    setState(() {});
+  }
 
-      return (duesAmount - receivedAmount).toString();
-    } catch (e) {
-      // Handle the exception (e.g., log it)
-      print("Error calculating total: $e");
-      return 'Error';
-    }
+  List<DataRow> buildDataRows()  {
+    List<DataRow> rows = [];
+      for (var subRow = 0; subRow < transactionsList.length; subRow++) {
+        DataRow dataRow = DataRow(
+          color: MaterialStateProperty.resolveWith<Color>(
+            (Set<MaterialState> states) {
+              if (states.contains(MaterialState.selected)) {
+                return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+              }
+              return Colors.transparent;
+            },
+          ),
+          cells: [
+            DataCell(
+              Text(
+                transactionsList[subRow].address.toString(),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14),
+              ),
+            ),
+            DataCell(
+              Text(
+                DateFormat('yyyy-MM-dd').format(transactionsList[subRow].date),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14),
+              ),
+            ),
+            DataCell(
+              Text(
+                transactionsList[subRow].price.toString(),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14,color: transactionsList[subRow].price < 0 ? Colors.red :blackColor),
+              ),
+            ),
+            DataCell(
+              Text(
+                duesController.customerName.toString(),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14),
+              ),
+            ),
+          ],
+        );
+        rows.add(dataRow);
+      }
+
+    return rows;
   }
 
   @override
@@ -104,11 +138,12 @@ class _DueScreenState extends State<DueScreen> {
                   onChanged: (value) async {
                     // Update the expenseType in the ExpenseController
                     duesController.customerName = value;
-                    // var customer =
-                    //     await duesController.getCustomerByName(value);
-                    // duesController.customerId.text = customer!.id.toString();
-                    // duesController.address.text = customer.address.toString();
-                    // duesController.dues.text = customer.dues.toString();
+                    var duesModel =
+                        await duesController.getDuesByName(value);
+                        transactionsList= await duesController.getTransactionsList(duesModel!.id.toString());
+                    duesController.customerId.text = duesModel.id.toString();
+                    duesController.address.text = duesModel.dues![0].address.toString();
+                    duesController.dues.text = duesController.getTotalDues(transactionsList).toString();
                   },
                 ),
                 textFieldWidget(
@@ -137,14 +172,13 @@ class _DueScreenState extends State<DueScreen> {
                       width: MediaQuery.of(context).size.width * .25,
                       child: CustomButton(
                         onPressed: () {
-                          
-                          // duesController.addToSubDueList(customerController.ger);
+                          duesController.addRecieveEntry();
                         },
                         icon: "assets/icons/file_sync.png",
                       ),
                     ),
                     Text(
-                      "Total: ${calculateTotal()}",
+                      "Total: ${duesController.getTotalDues(transactionsList)}",
                       style: boldTextStyle(),
                     )
                   ],
@@ -161,10 +195,10 @@ class _DueScreenState extends State<DueScreen> {
                     style: boldTextStyle(),
                   ),
                 )),
-            Obx(() {
-              duesController.getDuesEntries();
-              return SizedBox(
-                  height: duesController.duesList.length * 50 + 60,
+            // Obx(() {
+              // duesController.getDuesEntries();
+               SizedBox(
+                  height: transactionsList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -187,73 +221,11 @@ class _DueScreenState extends State<DueScreen> {
                               ),
                             )
                         ],
-                        rows: [
-                          for (var row = 0;
-                              row < duesController.duesList.length;
-                              row++)
-                            DataRow(
-                              color: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                                  if (states.contains(MaterialState.selected)) {
-                                    return Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.08);
-                                  }
-                                  return Colors.transparent;
-                                },
-                              ),
-                              cells: [
-                                // DataCell(
-                                //   Text(
-                                //     DateFormat('yyyy-MM-dd').format(
-                                //         duesController.duesList[row].date!),
-                                //     textAlign: TextAlign.center,
-                                //     style: primaryTextStyle(size: 14),
-                                //   ),
-                                // ),
-                                // DataCell(
-                                //   Text(
-                                //     duesController.duesList[row].address
-                                //         .toString(),
-                                //     textAlign: TextAlign.center,
-                                //     style: primaryTextStyle(size: 14),
-                                //   ),
-                                // ),
-                                //7
-                                DataCell(
-                                  Text(
-                                    duesController.duesList[row].received
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //6
-                                DataCell(
-                                  Text(
-                                    duesController.duesList[row].dues
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //5
-                                DataCell(
-                                  Text(
-                                    duesController.duesList[row].customerName
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
+                        rows: buildDataRows()
                       ),
                     ],
-                  ));
-            }),
+                  )),
+            // }),
             Container(
               padding:
                   EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
@@ -273,7 +245,7 @@ class _DueScreenState extends State<DueScreen> {
                           label: "search", imgPath: "", isSearch: true)),
                   Spacer(),
                   Text(
-                    "1-3 of 6 Columns",
+                    "توثل بقايا  ${duesController.getTotalDues(transactionsList)}",
                     style: primaryTextStyle(color: whiteColor, size: 12),
                   )
                 ],

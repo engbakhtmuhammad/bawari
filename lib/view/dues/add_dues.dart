@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/duesModel.dart';
 import '../../utils/colors.dart';
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
@@ -23,26 +24,25 @@ class _AddDueScreenState extends State<AddDueScreen> {
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "را باندی نوم",
-    "کرضہ",
-    "وصول",
-    // "حوالا ادرس",
-    // "تاریخ",
+    "پیسے",
+    "تاریخ",
+    "حوالا ادرس",
   ];
   List<DropdownMenuItem<String>> dropDownList = [];
+  var transactionsList = [];
 
-@override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    fetchCustomers();
-  });
-}
-
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchCustomers();
+    });
+  }
 
 // Inside a method where you fetch customers, such as in the initState method
   void fetchCustomers() async {
     List<String?> customerNames = await customerController.getCustomerNames();
-    print('Customer Names: $customerNames');
+    // print('Customer Names: $customerNames');
 
     // Update the dropDownList based on the fetched customer names
     dropDownList = customerNames.map((customerName) {
@@ -52,12 +52,74 @@ void initState() {
         child: Text(customerName!),
       );
     }).toList();
-    print(dropDownList.length);
+    // print(dropDownList.length);
 
     // Ensure to update the state to reflect changes in the UI
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void assignTransactionData(String id) async {
+    transactionsList = await duesController.getTransactionsList(id);
+    setState(() {});
+  }
+
+  List<DataRow> buildDataRows()  {
+    List<DataRow> rows = [];
+
+    for (var row = 0; row < duesController.duesList.length; row++) {
+       assignTransactionData(duesController.duesList[row].id!);
+      print(">>>>>>>>>>>>>>>>>>>>>>>>> ROW: ${duesController.duesList[row].id!}");
+      for (var subRow = 0; subRow < transactionsList.length; subRow++) {
+        print(
+            ">>>>>>>>>>>>>>>>>>>>>>>>> Price: ${transactionsList[subRow].price}");
+
+        DataRow dataRow = DataRow(
+          color: MaterialStateProperty.resolveWith<Color>(
+            (Set<MaterialState> states) {
+              if (states.contains(MaterialState.selected)) {
+                return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+              }
+              return Colors.transparent;
+            },
+          ),
+          cells: [
+            DataCell(
+              Text(
+                transactionsList[subRow].address.toString(),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14),
+              ),
+            ),
+            DataCell(
+              Text(
+                DateFormat('yyyy-MM-dd').format(transactionsList[subRow].date),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14),
+              ),
+            ),
+            DataCell(
+              Text(
+                transactionsList[subRow].price.toString(),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14),
+              ),
+            ),
+            DataCell(
+              Text(
+                duesController.duesList[row].customerName.toString(),
+                textAlign: TextAlign.center,
+                style: primaryTextStyle(size: 14),
+              ),
+            ),
+          ],
+        );
+        rows.add(dataRow);
+      }
+    }
+
+    return rows;
   }
 
   @override
@@ -87,7 +149,8 @@ void initState() {
                   onChanged: (value) {
                     // Update the expenseType in the ExpenseController
                     duesController.customerName = value;
-                    duesController.customerId.text=customerController.getCustomerIdByName(value)!;
+                    duesController.customerId.text =
+                        customerController.getCustomerIdByName(value)!;
                   },
                 ),
                 textFieldWidget(
@@ -131,85 +194,88 @@ void initState() {
                     padding: const EdgeInsets.all(5.0),
                     children: <Widget>[
                       DataTable(
-                        headingRowColor: MaterialStateColor.resolveWith(
-                            (states) => greyColor),
-                        columnSpacing: 10.0,
-                        columns: [
-                          for (var i = tableColumns.length; i > 0; i--)
-                            DataColumn(
-                              numeric: true,
-                              label: Text(
-                                "${tableColumns[i - 1]}   ",
-                                textAlign: TextAlign.center,
-                                style: boldTextStyle(color: whiteColor),
-                              ),
-                            )
-                        ],
-                        rows: [
-                          // TODO: here you need to have the nested loop to show data
-                          for (var row = 0;
-                              row < duesController.duesList.length;
-                              row++)
-                            DataRow(
-                              color: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                                  if (states.contains(MaterialState.selected)) {
-                                    return Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.08);
-                                  }
-                                  return Colors.transparent;
-                                },
-                              ),
-                              cells: [
-                                DataCell(
-                                  Text(
-                                    DateFormat('yyyy-MM-dd').format(duesController.duesList[row].dues![row].date!),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
+                          headingRowColor: MaterialStateColor.resolveWith(
+                              (states) => greyColor),
+                          columnSpacing: 10.0,
+                          columns: [
+                            for (var i = tableColumns.length; i > 0; i--)
+                              DataColumn(
+                                numeric: true,
+                                label: Text(
+                                  "${tableColumns[i - 1]}   ",
+                                  textAlign: TextAlign.center,
+                                  style: boldTextStyle(color: whiteColor),
                                 ),
-                                // DataCell(
-                                //   Text(
-                                //     duesController.duesList[row].address
-                                //         .toString(),
-                                //     textAlign: TextAlign.center,
-                                //     style: primaryTextStyle(size: 14),
-                                //   ),
-                                // ),
-                                //7
-                                DataCell(
-                                  Text(
-                                    duesController.duesList[row].received
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //6
-                                DataCell(
-                                  Text(
-                                    duesController.duesList[row].dues
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //5
-                                DataCell(
-                                  Text(
-                                    duesController.duesList[row].customerName
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                
-                              ],
-                            ),
-                        ],
-                      ),
+                              )
+                          ],
+                          rows: buildDataRows()
+
+                          //  [
+                          //   // TODO: here you need to have the nested loop to show data
+                          //   for (var row = 0;
+                          //       row < duesController.duesList.length;
+                          //       row++)
+                          //       for(var subRow=0; subRow<transactionsList.length; subRow++)
+                          //     DataRow(
+                          //       color: MaterialStateProperty.resolveWith<Color>(
+                          //         (Set<MaterialState> states) {
+                          //           // assignTransactionData(duesController.duesList[row].id!);
+                          //           if (states.contains(MaterialState.selected)) {
+                          //             return Theme.of(context)
+                          //                 .colorScheme
+                          //                 .primary
+                          //                 .withOpacity(0.08);
+                          //           }
+                          //           return Colors.transparent;
+                          //         },
+                          //       ),
+                          //       cells: [
+
+                          //          DataCell(
+                          //           Text(
+                          //             DateFormat('yyyy-MM-dd').format(transactionsList[subRow].date),
+                          //             textAlign: TextAlign.center,
+                          //             style: primaryTextStyle(size: 14),
+                          //           ),
+                          //         ),
+                          //         DataCell(
+                          //           Text(
+                          //             transactionsList[subRow].address
+                          //                 .toString(),
+                          //             textAlign: TextAlign.center,
+                          //             style: primaryTextStyle(size: 14),
+                          //           ),
+                          //         ),
+                          //         DataCell(
+                          //           Text(
+                          //             duesController.duesList[row].received
+                          //                 .toString(),
+                          //             textAlign: TextAlign.center,
+                          //             style: primaryTextStyle(size: 14),
+                          //           ),
+                          //         ),
+                          //         //6
+                          //         DataCell(
+                          //           Text(
+                          //             duesController.duesList[row].dues
+                          //                 .toString(),
+                          //             textAlign: TextAlign.center,
+                          //             style: primaryTextStyle(size: 14),
+                          //           ),
+                          //         ),
+                          //         //5
+                          //         DataCell(
+                          //           Text(
+                          //             duesController.duesList[row].customerName
+                          //                 .toString(),
+                          //             textAlign: TextAlign.center,
+                          //             style: primaryTextStyle(size: 14),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          // ],
+                          ),
                     ],
                   ));
             }),
