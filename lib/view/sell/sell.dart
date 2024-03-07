@@ -6,6 +6,7 @@ import '../widgets/custom_btn.dart';
 import 'package:get/get.dart';
 import 'package:bawari/utils/colors.dart';
 import '../../utils/constants.dart';
+import '../widgets/sell_container.dart';
 
 
 
@@ -289,70 +290,22 @@ class _SellScreenState extends State<SellScreen> {
             const SizedBox(
               height: 20,
             ),
-            // const SellContainerWidget(
-            //   btnTitle: "نقد وصولي",
-            //   bill: 400,
-            //   cortonCount: 2,
-            //   remaining: 3,
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // const SellContainerWidget(
-            //   btnTitle: "نقد وصولي",
-            //   bill: 400,
-            //   cortonCount: 2,
-            //   remaining: 3,
-            // )
-            Container(
-              height: 70,
-              padding:
-              EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-              width: double.infinity,
-              color: secondaryColor,
-              child: Obx(
-                    ()=> Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${saleController.getTotalPrice()}",
-                          style: primaryTextStyle(color: whiteColor),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Text(
-                            "ٹوٹل بل",
-                            textAlign: TextAlign.end,
-                            style: boldTextStyle(color: whiteColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${saleController.getTotalCartonCount()}",
-                          style: primaryTextStyle(color: whiteColor),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Text(
-                            "کارٹن تعداد",
-                            textAlign: TextAlign.end,
-                            style: boldTextStyle(color: whiteColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
+            const SellContainerWidget(
+              btnTitle: "نقد وصولي",
+              bill: 400,
+              cortonCount: 2,
+              remaining: 3,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const SellContainerWidget(
+              btnTitle: "سابقہ قیم وصولی",
+              bill: 400,
+              cortonCount: 2,
+              remaining: 3,
+            ),
+
           ],
         ),
       ),
