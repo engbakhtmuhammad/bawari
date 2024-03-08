@@ -1,3 +1,6 @@
+import 'package:bawari/controller/credit_controller.dart';
+import 'package:bawari/controller/customer_controller.dart';
+import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +9,7 @@ import '../widgets/custom_btn.dart';
 import 'package:get/get.dart';
 import 'package:bawari/utils/colors.dart';
 import '../../utils/constants.dart';
-
-
-
+import '../widgets/sell_container.dart';
 
 class SellScreen extends StatefulWidget {
   const SellScreen({super.key});
@@ -19,6 +20,9 @@ class SellScreen extends StatefulWidget {
 
 class _SellScreenState extends State<SellScreen> {
   SaleController saleController = Get.put(SaleController());
+  GoodsController goodsController = Get.put(GoodsController());
+  CustomerController customerController = Get.put(CustomerController());
+  CreditController creditController = Get.put(CreditController());
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -26,54 +30,120 @@ class _SellScreenState extends State<SellScreen> {
     "پیس تعداد",
     "کارتن تعداد",
     "في كارتن تعداد",
-    "مکمل تعداد",
     "في تعدادقيمت",
-    "مکمل تعداد",
-    "مکمل تعداد",
-    "مکمل تعداد",
-    "في تعدادقيمت",
-    "في تعدادقيمت",
-
+    "مکمل تعدادقيمت",
   ];
+
+  List<DropdownMenuItem<String>> goodsDropDownList = [];
+  List<DropdownMenuItem<String>> customerDropDownList = [];
+  var transactionsList = [];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchGoods();
+    });
   }
+
+// Inside a method where you fetch customers, such as in the initState method
+  void fetchGoods() async {
+    List<String?> goodsName = await goodsController.getGoodsNames();
+    List<String?> customerName = await customerController.getCustomerNames();
+
+    goodsDropDownList = goodsName.map((goods) {
+      return DropdownMenuItem(
+        alignment: Alignment.centerLeft,
+        value: goods,
+        child: Text(goods!),
+      );
+    }).toList();
+
+    customerDropDownList = customerName.map((customer) {
+      return DropdownMenuItem(
+        alignment: Alignment.centerLeft,
+        value: customer,
+        child: Text(customer!),
+      );
+    }).toList();
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    
+    fetchGoods();
     return Scaffold(
-      
-      appBar: appBarWidget(title: "سامان فروخت",),
+      appBar: appBarWidget(
+        title: "سامان فروخت",
+      ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            billAndDateWidget(dateController: saleController.date,onPressed2: () => selectDate(saleController.date),),
+            billAndDateWidget(
+                dateController: saleController.date,
+                onPressed2: () => selectDate(saleController.date),
+                billController: saleController.bill),
             backContainerWidget(
               child: Column(
                 children: [
-                  textFieldWidget(
-                      label: "نام",
+                  dropDownTextFieldWidget(
+                      label: "گراک نوم غوره کړئ",
                       imgPath: "assets/icons/name.png",
-                      controller: saleController.name,),
-
-                  textFieldWidget(
-                      label: "نوٹ",
-                      imgPath: "assets/icons/note.png",
-                      maxLine: 4,
-                      controller: saleController.note),
+                      dropDownList: customerDropDownList,
+                      onChanged: (value) async {
+                        creditController.customerName = value;
+                        var creditModel =
+                            await customerController.getCustomerByName(value);
+                        creditController.customerId.text =
+                            creditModel!.id.toString();
+                      }),
+                  dropDownTextFieldWidget(
+                    label: "سامان نوم غوره کړئ",
+                    imgPath: "assets/icons/name.png",
+                    dropDownList: goodsDropDownList,
+                    onChanged: (value) async {
+                      // Update the expenseType in the ExpenseController
+                      saleController.name = value;
+                      var goodsModel =
+                          await goodsController.getGoodsByName(value);
+                      saleController.goodsNo.text =
+                          goodsModel!.goodsNo!.toString();
+                      saleController.pieceCount.text =
+                          goodsModel.pieceCount!.toString();
+                      saleController.cartonCount.text =
+                          goodsModel.cartonCount.toString();
+                      saleController.perCartonCount.text =
+                          goodsModel.perCartonCount.toString();
+                      saleController.price.text =
+                          goodsModel.purchasePrice.toString();
+                      saleController.totalPrice.text =
+                          (int.parse(saleController.pieceCount.text) *
+                                  int.parse(saleController.price.text))
+                              .toString();
+                    },
+                  ),
                   textFieldWidget(
                       label: "سامان نمبر",
                       imgPath: "assets/icons/number.png",
                       inputType: TextInputType.number,
                       controller: saleController.goodsNo),
                   textFieldWidget(
-                      label: "پیس تعداد",
-                      imgPath: "assets/icons/count.png",
-                      inputType: TextInputType.number,
-                      controller: saleController.pieceCount),
+                    label: "پیس تعداد",
+                    imgPath: "assets/icons/count.png",
+                    inputType: TextInputType.number,
+                    controller: saleController.pieceCount,
+                    onChange: (value) {
+                      // Update totalCount when pieceCount changes
+                      int pieceCount = int.tryParse(value) ?? 0;
+                      int price = int.tryParse(saleController.price.text) ?? 0;
+                      saleController.totalPrice.text =
+                          (pieceCount * price).toString();
+                    },
+                  ),
                   textFieldWidget(
                       label: "کارٹن تعداد",
                       imgPath: "assets/icons/cortons.png",
@@ -97,7 +167,21 @@ class _SellScreenState extends State<SellScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        creditController.credits.text =
+                            (int.parse(saleController.pieceCount.text) *
+                                    int.parse(saleController.price.text))
+                                .toString();
+                        creditController.date.text = saleController.date.text;
+                        goodsController.getGoods();
+                        var goods = await goodsController
+                            .getGoodsByName(saleController.name);
+                        goodsController.updateGoodsCount(
+                            goods!.id.toString(),
+                            goods.pieceCount!-int.parse(saleController.pieceCount.text.toString()),
+                            goods.cartonCount!-int.parse(saleController.cartonCount.text.toString()));
+                        creditController.addCreditEntry();
+
                         saleController.addSale();
                       },
                     ),
@@ -119,7 +203,7 @@ class _SellScreenState extends State<SellScreen> {
                     children: <Widget>[
                       DataTable(
                         headingRowColor: MaterialStateColor.resolveWith(
-                                (states) => greyColor),
+                            (states) => greyColor),
                         columnSpacing: 10.0,
                         columns: [
                           for (var i = tableColumns.length; i > 0; i--)
@@ -130,17 +214,15 @@ class _SellScreenState extends State<SellScreen> {
                                 textAlign: TextAlign.center,
                                 style: boldTextStyle(color: whiteColor),
                               ),
-
                             ),
-
                         ],
                         rows: [
                           for (var row = 0;
-                          row < saleController.saleList.length;
-                          row++)
+                              row < saleController.saleList.length;
+                              row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) {
+                                (Set<MaterialState> states) {
                                   if (states.contains(MaterialState.selected)) {
                                     return Theme.of(context)
                                         .colorScheme
@@ -154,32 +236,12 @@ class _SellScreenState extends State<SellScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].date
+                                    saleController.saleList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].date
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-
-                                //7
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .saleList[row].totalCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //6
                                 DataCell(
                                   Text(
                                     saleController.saleList[row].price
@@ -188,49 +250,9 @@ class _SellScreenState extends State<SellScreen> {
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //5
                                 DataCell(
                                   Text(
-                                    saleController
-                                        .saleList[row].perCartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //4
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .saleList[row].cartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //3
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].note
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-
-                                //2
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].billNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //1
-                                DataCell(
-                                  Text(
-                                    saleController.saleList[row].name
+                                    saleController.saleList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -238,7 +260,15 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].name
+                                    saleController.saleList[row].cartonCount
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    saleController.saleList[row].pieceCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -262,7 +292,7 @@ class _SellScreenState extends State<SellScreen> {
 
             Container(
               padding:
-              EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
               width: double.infinity,
               height: 50,
               color: secondaryColor,
@@ -289,74 +319,24 @@ class _SellScreenState extends State<SellScreen> {
             const SizedBox(
               height: 20,
             ),
-            // const SellContainerWidget(
-            //   btnTitle: "نقد وصولي",
-            //   bill: 400,
-            //   cortonCount: 2,
-            //   remaining: 3,
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // const SellContainerWidget(
-            //   btnTitle: "نقد وصولي",
-            //   bill: 400,
-            //   cortonCount: 2,
-            //   remaining: 3,
-            // )
-            Container(
-              height: 70,
-              padding:
-              EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-              width: double.infinity,
-              color: secondaryColor,
-              child: Obx(
-                    ()=> Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${saleController.getTotalPrice()}",
-                          style: primaryTextStyle(color: whiteColor),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Text(
-                            "ٹوٹل بل",
-                            textAlign: TextAlign.end,
-                            style: boldTextStyle(color: whiteColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${saleController.getTotalCartonCount()}",
-                          style: primaryTextStyle(color: whiteColor),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Text(
-                            "کارٹن تعداد",
-                            textAlign: TextAlign.end,
-                            style: boldTextStyle(color: whiteColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
+            const SellContainerWidget(
+              btnTitle: "نقد وصولي",
+              bill: 400,
+              cortonCount: 2,
+              remaining: 3,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const SellContainerWidget(
+              btnTitle: "سابقہ قیم وصولی",
+              bill: 400,
+              cortonCount: 2,
+              remaining: 3,
+            ),
           ],
         ),
       ),
     );
   }
 }
-

@@ -12,7 +12,7 @@ import 'package:bawari/view/loan/loan_info.dart';
 import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
-import 'package:bawari/view/sell/sell.dart';
+import 'package:bawari/view/sell/sale.dart';
 import 'package:bawari/view/sell/sell_info.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:get/get.dart';

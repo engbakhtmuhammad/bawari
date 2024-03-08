@@ -19,12 +19,13 @@ class _GoodsScreenState extends State<GoodsScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   String? selectedValue;
   // Example data, you can replace it with your dynamic data
-  List<String> tableColumns = [
-    "سامان کا نام",
-    "سامان کا نمبر",
-    "کارٹن تعداد",
-    "قیمت خرید",
-    "قیمت فروخت",
+   List<String> tableColumns = [
+    "سامان",
+    "پیس تعداد",
+    "کارتن تعداد",
+    "في كارتن تعداد",
+    "في تعدادقيمت",
+    "مکمل تعدادقيمت",
     "isActive",
     "lineItem",
     // "پیس تعداد",
@@ -52,16 +53,24 @@ class _GoodsScreenState extends State<GoodsScreen> {
               children: [
                 textFieldWidget(
                     label: "سامان کا نمبر",
-                    imgPath: "assets/icons/number.png",
+                    imgPath: "assets/icons/bill.png",
                     controller: goodsController.goodsNo),
                 textFieldWidget(
                     label: "سامان کا نام",
                     imgPath: "assets/icons/name.png",
                     controller: goodsController.name),
+                    textFieldWidget(
+                    label: "پیس تعداد",
+                    imgPath: "assets/icons/number.png",
+                    controller: goodsController.pieceCount),
                 textFieldWidget(
                     label: "کارٹن تعداد",
                     imgPath: "assets/icons/cortons.png",
                     controller: goodsController.cartonCount),
+                    textFieldWidget(
+                    label: "في كارتن تعداد",
+                    imgPath: "assets/icons/per_corton.png",
+                    controller: goodsController.perCartonCount),
                 textFieldWidget(
                     label: "قیمت خرید",
                     imgPath: "assets/icons/price.png",
@@ -181,6 +190,14 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 DataCell(
                                   Text(
                                     goodsController.goodsList[row].isActive
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    goodsController.goodsList[row].salePrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),

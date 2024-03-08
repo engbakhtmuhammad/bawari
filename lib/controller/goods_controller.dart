@@ -11,6 +11,8 @@ class GoodsController extends GetxController {
   TextEditingController purchasePrice = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController cartonCount = TextEditingController();
+  TextEditingController perCartonCount = TextEditingController();
+  TextEditingController pieceCount = TextEditingController();
   bool lineItem = true;
   bool isActive = true;
 
@@ -31,28 +33,34 @@ class GoodsController extends GetxController {
         purchasePrice: int.tryParse(purchasePrice.text) ?? 0,
         name: name.text,
         cartonCount: int.tryParse(cartonCount.text) ?? 0,
+        perCartonCount: int.tryParse(perCartonCount.text) ?? 0,
+        pieceCount: int.tryParse(pieceCount.text) ?? 0,
         lineItem: lineItem,
         isActive: isActive,
       );
 
-      await db.collection("goods").add(goods.toJson()).whenComplete(() {
-        print("Goods Added");
-        getGoods();
+      var documentReference = await db.collection("goods").add(goods.toJson());
+      var saleId = documentReference.id;
 
-        Get.snackbar('Success', 'Goods added successfully!',
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 3),
-            backgroundColor: primaryColor);
-        
-        goodsNo.clear();
-        salePrice.clear();
-        purchasePrice.clear();
-        name.clear();
-        cartonCount.clear();
-        lineItem = false;
-        isActive = true;
-        goodsNo.clear();
-      });
+      await db.collection("goods").doc(saleId).update({'id': saleId});
+
+      getGoods();
+
+      Get.snackbar('Success', 'Goods added successfully!',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          backgroundColor: primaryColor);
+
+      goodsNo.clear();
+      salePrice.clear();
+      purchasePrice.clear();
+      name.clear();
+      cartonCount.clear();
+      perCartonCount.clear();
+      pieceCount.clear();
+      lineItem = false;
+      isActive = true;
+      goodsNo.clear();
     } catch (e) {
       print('Error adding goods: $e');
 
@@ -92,5 +100,49 @@ class GoodsController extends GetxController {
     }
     getGoods();
     update();
+  }
+
+  List<String?> getGoodsNames() {
+    return goodsList.map((goods) => goods.name).toList();
+  }
+
+  GoodsModel? getGoodsByName(String goodsName) {
+    for (var goods in goodsList) {
+      if (goods.name == goodsName) {
+        return goods;
+      }
+    }
+    return null; // Return null if no matching customer found
+  }
+
+  Future<void> updateGoodsCount(
+      String goodsId, int newPieceCount, int newCartonCount) async {
+    try {
+      var goodsData = {
+        'pieceCount': newPieceCount,
+        'cartonCount': newCartonCount,
+      };
+
+      await db
+          .collection("goods")
+          .doc(goodsId)
+          .update(goodsData)
+          .whenComplete(() {
+        print("Goods Count Updated");
+        getGoods();
+
+        Get.snackbar('Success', 'Goods count updated successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: primaryColor);
+      });
+    } catch (e) {
+      print('Error updating goods count: $e');
+
+      Get.snackbar('Error', 'Failed to update goods count. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red);
+    }
   }
 }

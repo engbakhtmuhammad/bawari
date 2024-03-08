@@ -116,5 +116,13 @@ String? getCustomerIdByName(String customerName) {
   }
   return ''; // Return an empty string if no matching customer found
 }
+CustomerModel? getCustomerByName(String customerName) {
+  for (var customer in customerList) {
+    if (customer.name == customerName) {
+      return customer;
+    }
+  }
+  return null; // Return null if no matching customer found
+}
 
 }

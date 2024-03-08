@@ -6,7 +6,7 @@ import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/goods/goods.dart';
 import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase.dart';
-import 'package:bawari/view/sell/sell.dart';
+import 'package:bawari/view/sell/sale.dart';
 import 'package:bawari/view/widgets/dashboard_widget.dart';
 import 'package:flutter/material.dart';
 

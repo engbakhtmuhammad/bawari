@@ -4,7 +4,7 @@ import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/loan/loan_info.dart';
 import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
-import 'package:bawari/view/sell/sell.dart';
+import 'package:bawari/view/sell/sale.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -379,30 +379,22 @@ Container billAndDateWidget(
   );
 }
 
-// Future<DateTime> selectDate({required ,required DateTime initialDate}) async {
-//     final DateTime? picked = await showDatePicker(
-//       context: context,
-//       initialDate: initialDate,
-//       firstDate: DateTime(2000),
-//       lastDate: DateTime(2101),
-//     );
-
-//     return picked ?? initialDate;
-//   }
-
 Widget textFieldWidget(
     {TextEditingController? controller,
     required String label,
     required String imgPath,
     bool? isSearch = false,
     TextInputType? inputType,
+    Function(String)? onChange,
     VoidCallback? onPressed,
+    
     int? maxLine}) {
   return Padding(
     padding:
         EdgeInsets.symmetric(vertical: isSearch! ? 0 : defaultPadding / 2.5),
     child: TextField(
       controller: controller,
+      onChanged: onChange ?? (value) {},
       textAlign: TextAlign.right,
       maxLines: maxLine ?? 1,
       keyboardType: inputType ?? TextInputType.text,
@@ -427,6 +419,7 @@ Widget textFieldWidget(
     ),
   );
 }
+
 
 Widget dropDownTextFieldWidget({
   required String label,
