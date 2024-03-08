@@ -379,30 +379,22 @@ Container billAndDateWidget(
   );
 }
 
-// Future<DateTime> selectDate({required ,required DateTime initialDate}) async {
-//     final DateTime? picked = await showDatePicker(
-//       context: context,
-//       initialDate: initialDate,
-//       firstDate: DateTime(2000),
-//       lastDate: DateTime(2101),
-//     );
-
-//     return picked ?? initialDate;
-//   }
-
 Widget textFieldWidget(
     {TextEditingController? controller,
     required String label,
     required String imgPath,
     bool? isSearch = false,
     TextInputType? inputType,
+    Function(String)? onChange,
     VoidCallback? onPressed,
+    
     int? maxLine}) {
   return Padding(
     padding:
         EdgeInsets.symmetric(vertical: isSearch! ? 0 : defaultPadding / 2.5),
     child: TextField(
       controller: controller,
+      onChanged: onChange ?? (value) {},
       textAlign: TextAlign.right,
       maxLines: maxLine ?? 1,
       keyboardType: inputType ?? TextInputType.text,
@@ -427,6 +419,7 @@ Widget textFieldWidget(
     ),
   );
 }
+
 
 Widget dropDownTextFieldWidget({
   required String label,

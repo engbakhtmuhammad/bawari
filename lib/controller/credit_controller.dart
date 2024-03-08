@@ -1,0 +1,239 @@
+import 'package:bawari/model/credit_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
+import '../utils/colors.dart';
+
+class CreditController extends GetxController {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  var creditList = RxList<CreditModel>();
+
+  TextEditingController date = TextEditingController(
+    text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+  );
+  TextEditingController customerId = TextEditingController();
+  String customerName = "گراک نوم";
+  TextEditingController address = TextEditingController();
+  TextEditingController credits = TextEditingController();
+  TextEditingController received = TextEditingController();
+
+  @override
+  void onInit() async {
+    await getCreditEntries();
+    super.onInit();
+  }
+
+  Future<void> addCreditEntry() async {
+    try {
+      // Check if the customer name already exists
+      var existingCustomer = creditList.firstWhere(
+        (entry) => entry.customerName == customerName,
+        orElse: () =>
+            CreditModel(), // Provide a default value (empty CreditModel)
+      );
+
+      if (existingCustomer.id != null) {
+        // If customer name exists, update the existing entry
+        existingCustomer.credits!.add(
+          Credit(
+            price: int.parse(credits.text),
+            date: _parseDate(date.text),
+            address: address.text,
+          ),
+        );
+
+        // Update the existing document in Firestore
+        await db.collection("credits").doc(existingCustomer.id!).update({
+          'credits': existingCustomer.credits!.map((d) => d.toJson()).toList(),
+        });
+
+        // Get.snackbar('Success', 'Credit updated successfully!',
+        //     snackPosition: SnackPosition.BOTTOM,
+        //     duration: const Duration(seconds: 3),
+        //     backgroundColor: primaryColor);
+      } else {
+        // If customer name doesn't exist, add a new entry
+        var creditEntry = CreditModel(
+          customerId: customerId.text,
+          customerName: customerName,
+          credits: [
+            Credit(
+              price: int.parse(credits.text),
+              date: _parseDate(date.text),
+              address: address.text,
+            ),
+          ],
+          received: [],
+        );
+
+        DocumentReference documentReference =
+            await db.collection("credits").add(creditEntry.toJson());
+
+        // Get the auto-generated ID
+        String creditId = documentReference.id;
+
+        // Update the credits model with the ID
+        creditEntry.id = creditId;
+
+        await db.collection("credits").doc(creditId).update({'id': creditId});
+
+        // Get.snackbar('Success', 'Credit added successfully!',
+        //     snackPosition: SnackPosition.BOTTOM,
+        //     duration: const Duration(seconds: 3),
+        //     backgroundColor: primaryColor);
+      }
+
+      // Clear the text editing controllers after adding/updating the entry
+      customerId.clear();
+      customerName = "";
+      credits.clear();
+      received.clear();
+      address.clear();
+    } catch (e) {
+      print('Error adding/updating credits entry: $e');
+      // Handle the error
+    }
+    update();
+  }
+
+  DateTime _parseDate(String dateString) {
+    // Try different date format patterns here until the correct one is found
+    List<String> dateFormats = ['MM/dd/yyyy', 'yyyy-MM-dd', 'dd MMM yyyy'];
+
+    for (String format in dateFormats) {
+      try {
+        return DateFormat(format).parse(dateString);
+      } catch (e) {
+        continue;
+      }
+    }
+
+    // If no valid format is found, return the current date as a fallback
+    return DateTime.now();
+  }
+
+  Future<void> addRecieveEntry() async {
+    try {
+      // Check if the customer name already exists
+      var existingCustomer = creditList.firstWhere(
+        (entry) => entry.customerName == customerName,
+        orElse: () =>
+            CreditModel(), // Provide a default value (empty CreditModel)
+      );
+
+      if (existingCustomer.id != null) {
+        // If customer name exists, update the existing entry
+        existingCustomer.received!.add(
+          Credit(
+            price: int.parse("-${received.text}"),
+            date: _parseDate(date.text),
+            address: address.text,
+          ),
+        );
+
+        // Update the existing document in Firestore
+        await db.collection("credits").doc(existingCustomer.id!).update({
+          'received':
+              existingCustomer.received!.map((d) => d.toJson()).toList(),
+        });
+
+        Get.snackbar('Success', 'Credit updated successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: primaryColor);
+      } else {
+        Get.snackbar('Error', 'Customer Not Found!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.red);
+      }
+
+      // Clear the text editing controllers after adding/updating the entry
+      customerId.clear();
+      credits.clear();
+      received.clear();
+      address.clear();
+    } catch (e) {
+      print('Error adding/updating credits entry: $e');
+      // Handle the error
+    }
+    update();
+  }
+
+  double calculateCreditTotal(List<Credit> creditList) {
+    double total = 0;
+
+    for (var credits in creditList) {
+      total += credits.price ?? 0;
+    }
+
+    return total;
+  }
+
+  int getTotalCredits(List transactionsList) {
+    int totalDues = 0;
+
+    for (var transaction in transactionsList) {
+      if (transaction is Credit && transaction.price != null) {
+        totalDues += transaction.price!;
+      }
+    }
+
+    return totalDues;
+  }
+
+  Future<List> getTransactionsList(String documentId) async {
+    var creditModel = creditList.firstWhere(
+      (element) => element.id == documentId,
+      orElse: () => CreditModel(),
+    );
+
+    var allTransactions = [
+      ...creditModel.credits ?? [],
+      ...creditModel.received ?? []
+    ];
+    allTransactions.sort((a, b) {
+      if (a.date == null || b.date == null) {
+        return 0;
+      }
+      return a.date!.compareTo(b.date!);
+    });
+
+    return allTransactions;
+  }
+
+  Future<void> getCreditEntries() async {
+    var duesEntries = await db.collection("credits").get();
+    creditList.clear();
+    for (var creditEntry in duesEntries.docs) {
+      var creditModel = CreditModel.fromJson(creditEntry.data());
+      creditList.add(creditModel);
+    }
+    update();
+    // print("$creditList >>>>>>>. Credit Entries List");
+  }
+
+  CreditModel? getCustomerByName(String name) {
+    for (var customer in creditList) {
+      if (customer.customerName == name) {
+        return customer;
+      }
+    }
+    return null; // Return null if no matching customer found
+  }
+
+  CreditModel? getCreditByName(String name) {
+    for (var credits in creditList) {
+      if (credits.customerName == name) {
+        return credits;
+      }
+    }
+    return null; // Return null if no matching customer found
+  }
+
+  List<String?> getCreditNames() {
+    return creditList.map((customer) => customer.customerName).toList();
+  }
+}

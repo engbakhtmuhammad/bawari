@@ -2,8 +2,7 @@ import 'package:bawari/model/sale_model.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class SaleController extends GetxController {
@@ -22,6 +21,7 @@ class SaleController extends GetxController {
   TextEditingController cartonCount = TextEditingController();
   TextEditingController perCartonCount = TextEditingController();
   TextEditingController totalCount = TextEditingController();
+  TextEditingController totalPrice = TextEditingController();
   TextEditingController price = TextEditingController();
 
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -35,42 +35,58 @@ class SaleController extends GetxController {
   }
 
   void addSale() async {
-    var sale = SaleModel(
-      name: name,
-      note: note.text,
-      goodsNo: int.tryParse(goodsNo.text) ?? 0,
-      pieceCount: int.tryParse(pieceCount.text) ?? 0,
-      cartonCount: int.tryParse(cartonCount.text) ?? 0,
-      perCartonCount: int.tryParse(perCartonCount.text) ?? 0,
-      totalCount: int.tryParse(totalCount.text) ?? 0,
-      price: int.tryParse(price.text) ?? 0,
-      billNo: int.tryParse(bill.text) ?? 0,
-      date: DateFormat('MM/dd/yyyy').parse(date.text),
-    );
+    try {
+      var sale = SaleModel(
+        name: name,
+        note: note.text,
+        goodsNo: int.tryParse(goodsNo.text) ?? 0,
+        pieceCount: int.tryParse(pieceCount.text) ?? 0,
+        cartonCount: int.tryParse(cartonCount.text) ?? 0,
+        perCartonCount: int.tryParse(perCartonCount.text) ?? 0,
+        totalCount: int.tryParse(totalCount.text) ?? 0,
+        totalPrice: int.tryParse(totalPrice.text) ?? 0,
+        price: int.tryParse(price.text) ?? 0,
+        billNo: int.tryParse(bill.text) ?? 0,
+        date: DateFormat('MM/dd/yyyy').parse(date.text),
+      );
+      var documentReference = await db.collection("sales").add(sale.toJson());
+      var saleId = documentReference.id;
+      print(">>>>>>>>>>>>>>>>>>>>>>> Reference: $documentReference");
 
-    await db.collection("sales").add(sale.toJson()).whenComplete(() {
-      print("Sale Added");
-      getSale();
+      await db
+          .collection("sales")
+          .doc(saleId)
+          .update({'id': saleId}).then((value) async {
+        getSale();
 
-      // Show GetX Snackbar
-      Get.snackbar('Success', 'Sale added successfully!',
+        // Show GetX Snackbar
+        Get.snackbar('Success', 'Sale added successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: primaryColor);
+
+        // Clear all controllers except date and bill
+        note.clear();
+        goodsNo.clear();
+        pieceCount.clear();
+        cartonCount.clear();
+        perCartonCount.clear();
+        totalCount.clear();
+        totalPrice.clear();
+        price.clear();
+
+        // Update bill controller value by adding 1
+        autoBillNo++;
+        bill.text = autoBillNo.toString();
+      });
+    } catch (e) {
+      print('Error adding sale: $e');
+      // Handle the error
+      Get.snackbar('Error', 'Failed to add sale. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
-          backgroundColor: primaryColor);
-
-      // Clear all controllers except date and bill
-      note.clear();
-      goodsNo.clear();
-      pieceCount.clear();
-      cartonCount.clear();
-      perCartonCount.clear();
-      totalCount.clear();
-      price.clear();
-
-      // Update bill controller value by adding 1
-      autoBillNo++;
-      bill.text = autoBillNo.toString();
-    });
+          backgroundColor: Colors.red);
+    }
   }
 
   void getSale() async {
@@ -79,7 +95,6 @@ class SaleController extends GetxController {
     for (var sale in sales.docs) {
       saleList.add(SaleModel.fromJson(sale.data()));
     }
-    print("$saleList >>>>>>>. Sales List");
   }
 
   double getTotalPrice() {

@@ -12,6 +12,7 @@ class SaleModel {
   int? totalCount; // jumla tadad
   int? price; // qeemat
   DateTime? date;
+  int? totalPrice;
 
   SaleModel({
     this.id,
@@ -25,6 +26,7 @@ class SaleModel {
     this.note,
     this.pieceCount,
     this.date,
+    this.totalPrice
   });
 
   factory SaleModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class SaleModel {
       cartonCount: json["cartonCount"],
       perCartonCount: json["perCartonCount"],
       totalCount: json["totalCount"],
+      totalPrice: json["totalPrice"],
       price: json["price"],
       billNo: json["billNo"],
       name: json["name"],
@@ -54,6 +57,7 @@ class SaleModel {
     data["billNo"] = billNo;
     data["name"] = name;
     data['pieceCount'] = pieceCount;
+    data['totalPrice'] = totalPrice;
     data["note"] = note;
     data["date"] = date;
     return data;
