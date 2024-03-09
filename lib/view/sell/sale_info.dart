@@ -15,6 +15,7 @@ class SaleInfoScreen extends StatefulWidget {
 
 class _SaleInfoScreenState extends State<SaleInfoScreen> {
   SaleController saleController = Get.put(SaleController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String customerId = '';
 
 // Example data, you can replace it with your dynamic data
@@ -30,8 +31,10 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: appBarWidget(
         title: "سامان فروخت",
+        openDrawer: () => scaffoldKey.currentState?.openDrawer(),
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(

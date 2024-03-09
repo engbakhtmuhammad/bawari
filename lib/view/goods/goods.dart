@@ -17,6 +17,7 @@ class GoodsScreen extends StatefulWidget {
 
 class _GoodsScreenState extends State<GoodsScreen> {
   GoodsController goodsController = Get.put(GoodsController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String? selectedValue;
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -34,8 +35,10 @@ class _GoodsScreenState extends State<GoodsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: appBarWidget(
         title: "سامان",
+        openDrawer: () => scaffoldKey.currentState?.openDrawer(),
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
@@ -241,12 +244,12 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                       child:
                                           Image.asset("assets/icons/trash.png"),
                                     ),
-                                    onTap: () {
+                                    onTap: () =>alertDialog(title: "ایا تاسو ډاډه یاست چې توکي حذف کړئ",onPressed: (){
                                       // Add your delete logic here using goodsController
                                       goodsController.deleteGoods(
                                           goodsController.goodsList[row].id
                                               .toString());
-                                    },
+                                    },),
                                   )),
                                 ),
                               ],

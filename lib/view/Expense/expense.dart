@@ -18,6 +18,7 @@ class ExpenseInfoScreen extends StatefulWidget {
 
 class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
   ExpenseController expenseController = Get.put(ExpenseController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "تمبر",
@@ -55,7 +56,8 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "ده خرچے معلومات",),
+      key: scaffoldKey,
+      appBar: appBarWidget(title: "ده خرچے معلومات",openDrawer: () => scaffoldKey.currentState?.openDrawer(),),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(

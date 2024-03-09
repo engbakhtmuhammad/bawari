@@ -16,6 +16,7 @@ class PurchaseInfoScreen extends StatefulWidget {
 
 class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   //  String? selectedValue;
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -40,7 +41,8 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "خریداری معلومات",),
+      key: scaffoldKey,
+      appBar: appBarWidget(title: "خریداری معلومات",openDrawer: () => scaffoldKey.currentState?.openDrawer(),),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(

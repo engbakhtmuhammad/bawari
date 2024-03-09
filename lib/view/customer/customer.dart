@@ -17,6 +17,7 @@ class CustomerScreen extends StatefulWidget {
 
 class _CustomerScreenState extends State<CustomerScreen> {
   CustomerController customerController = Get.put(CustomerController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool isActive=true;
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -34,7 +35,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "کسٹمر",),
+      key: scaffoldKey,
+      appBar: appBarWidget(title: "کسٹمر",openDrawer: ()=>scaffoldKey.currentState?.openDrawer()),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
@@ -206,13 +208,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                         padding:  EdgeInsets.only(left: defaultPadding),
                                         child: Image.asset("assets/icons/trash.png"),
                                       ),
-                                      onTap: () {
+                                      onTap: ()=>alertDialog(title: "ایا تاسو ډاډه یاست چې پیرودونکي حذف کړئ",onPressed: () {
                                         // Add your delete logic here using customerController
                                         customerController.deleteCustomer(
                                             customerController
                                                 .customerList[row].id
                                                 .toString());
-                                      },
+                                      }),
                                     )
                                   ),
                                 ),

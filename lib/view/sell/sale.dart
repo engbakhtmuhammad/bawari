@@ -25,6 +25,7 @@ class _SellScreenState extends State<SellScreen> {
   CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
   PurchaseController purchaseController = Get.put(PurchaseController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int totalCarton = 0;
   int? totalBill = 0;
   int remainingBill=0;
@@ -82,8 +83,10 @@ class _SellScreenState extends State<SellScreen> {
   Widget build(BuildContext context) {
     fetchGoods();
     return Scaffold(
+      key: scaffoldKey,
       appBar: appBarWidget(
         title: "سامان فروخت",
+        openDrawer: () => scaffoldKey.currentState?.openDrawer(),
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(

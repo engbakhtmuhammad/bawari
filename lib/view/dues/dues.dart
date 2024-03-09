@@ -19,6 +19,7 @@ class DueScreen extends StatefulWidget {
 }
 
 class _DueScreenState extends State<DueScreen> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   DuesController duesController = Get.put(DuesController());
   CustomerController customerController = Get.put(CustomerController());
 List<String> tableColumns = [
@@ -113,8 +114,10 @@ List<String> tableColumns = [
   Widget build(BuildContext context) {
     fetchCustomers();
     return Scaffold(
+      key: scaffoldKey,
       appBar: appBarWidget(
         title: "را باندی",
+        openDrawer: () => scaffoldKey.currentState?.openDrawer(),
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(

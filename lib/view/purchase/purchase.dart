@@ -5,7 +5,6 @@ import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
@@ -20,6 +19,7 @@ class PurchaseScreen extends StatefulWidget {
 class _PurchaseScreenState extends State<PurchaseScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
   GoodsController goodsController = Get.put(GoodsController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -79,8 +79,10 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   Widget build(BuildContext context) {
     fetchGoods();
     return Scaffold(
+      key: scaffoldKey,
       appBar: appBarWidget(
         title: "سامان خرید",
+        openDrawer: () => scaffoldKey.currentState?.openDrawer(),
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(

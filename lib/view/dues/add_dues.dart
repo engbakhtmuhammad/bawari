@@ -18,6 +18,7 @@ class AddDueScreen extends StatefulWidget {
 }
 
 class _AddDueScreenState extends State<AddDueScreen> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   DuesController duesController = Get.put(DuesController());
   CustomerController customerController = Get.put(CustomerController());
   // Example data, you can replace it with your dynamic data
@@ -61,10 +62,12 @@ class _AddDueScreenState extends State<AddDueScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     fetchCustomers();
     return Scaffold(
+      key: scaffoldKey,
       appBar: appBarWidget(
-        title: "را باندی",
+        title: "را باندی",openDrawer: () => scaffoldKey.currentState?.openDrawer(),
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(

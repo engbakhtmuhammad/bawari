@@ -17,10 +17,11 @@ class CreditScreen extends StatefulWidget {
 }
 
 class _CreditScreenState extends State<CreditScreen> {
-
-
-CreditController creditController = Get.put(CreditController());
-List<String> tableColumns = [
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  CreditController creditController = Get.put(CreditController());
+  TextEditingController billController = TextEditingController();
+  List<String> tableColumns = [
+    "بل نمبر",
     "ور باندی نوم",
     "پیسے",
     "تاریخ",
@@ -53,52 +54,62 @@ List<String> tableColumns = [
     }
   }
 
-
-  List<DataRow> buildDataRows()  {
+  List<DataRow> buildDataRows() {
     List<DataRow> rows = [];
-      for (var subRow = 0; subRow < transactionsList.length; subRow++) {
-        DataRow dataRow = DataRow(
-          color: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.selected)) {
-                return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-              }
-              return Colors.transparent;
-            },
+    for (var subRow = 0; subRow < transactionsList.length; subRow++) {
+      DataRow dataRow = DataRow(
+        color: MaterialStateProperty.resolveWith<Color>(
+          (Set<MaterialState> states) {
+            if (states.contains(MaterialState.selected)) {
+              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+            }
+            return Colors.transparent;
+          },
+        ),
+        cells: [
+          DataCell(
+            Text(
+              transactionsList[subRow].address.toString(),
+              textAlign: TextAlign.center,
+              style: primaryTextStyle(size: 14),
+            ),
           ),
-          cells: [
-            DataCell(
-              Text(
-                transactionsList[subRow].address.toString(),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14),
-              ),
+          DataCell(
+            Text(
+              DateFormat('yyyy-MM-dd').format(transactionsList[subRow].date),
+              textAlign: TextAlign.center,
+              style: primaryTextStyle(size: 14),
             ),
-            DataCell(
-              Text(
-                DateFormat('yyyy-MM-dd').format(transactionsList[subRow].date),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14),
-              ),
+          ),
+          DataCell(
+            Text(
+              transactionsList[subRow].price.toString(),
+              textAlign: TextAlign.center,
+              style: primaryTextStyle(
+                  size: 14,
+                  color: transactionsList[subRow].price < 0
+                      ? Colors.red
+                      : blackColor),
             ),
-            DataCell(
-              Text(
-                transactionsList[subRow].price.toString(),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14,color: transactionsList[subRow].price < 0 ? Colors.red :blackColor),
-              ),
+          ),
+          DataCell(
+            Text(
+              creditController.customerName.toString(),
+              textAlign: TextAlign.center,
+              style: primaryTextStyle(size: 14),
             ),
-            DataCell(
-              Text(
-                creditController.customerName.toString(),
-                textAlign: TextAlign.center,
-                style: primaryTextStyle(size: 14),
-              ),
+          ),
+          DataCell(
+            Text(
+              transactionsList[subRow].billNo.toString(),
+              textAlign: TextAlign.center,
+              style: primaryTextStyle(size: 14),
             ),
-          ],
-        );
-        rows.add(dataRow);
-      }
+          ),
+        ],
+      );
+      rows.add(dataRow);
+    }
 
     return rows;
   }
@@ -107,8 +118,11 @@ List<String> tableColumns = [
   Widget build(BuildContext context) {
     fetchCredits();
     return Scaffold(
+      key: scaffoldKey,
       appBar: appBarWidget(
+        
         title: "وصولی",
+        openDrawer: ()=>scaffoldKey.currentState?.openDrawer()
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
@@ -130,121 +144,30 @@ List<String> tableColumns = [
                     creditController.customerName = value;
                     var duesModel =
                         await creditController.getCreditByName(value);
-                        transactionsList= await creditController.getTransactionsList(duesModel!.id.toString());
+                    transactionsList = await creditController
+                        .getTransactionsList(duesModel!.id.toString());
                     creditController.customerId.text = duesModel.id.toString();
-                    creditController.address.text = duesModel.credits![0].address.toString();
-                    creditController.credits.text = creditController.getTotalCredits(transactionsList).toString();
+                    creditController.address.text =
+                        duesModel.credits![0].address.toString();
+                    creditController.credits.text = creditController
+                        .getTotalCredits(transactionsList)
+                        .toString();
                   },
                 ),
                 textFieldWidget(
                     label: "حوالا ادرس",
                     imgPath: "assets/icons/price.png",
                     controller: creditController.address),
-                    // SizedBox(height: defaultPadding,),
-                    textFieldWidget(
+                // SizedBox(height: defaultPadding,),
+                textFieldWidget(
                     label: "ور باندی",
                     imgPath: "assets/icons/dues.png",
                     controller: creditController.credits),
-                textFieldWidget(
-                    label: "وصول",
-                    imgPath: "assets/icons/income.png",
-                    controller: creditController.received,inputType: TextInputType.number),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .25,
-                      child: CustomButton(
-                        onPressed: () {},
-                        icon: "assets/icons/print.png",
-                      ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .25,
-                      child: CustomButton(
-                        onPressed: () {
-                          creditController.addRecieveEntry();
-                        },
-                        icon: "assets/icons/file_sync.png",
-                      ),
-                    ),
-                    Text(
-                      "Total: ${creditController.getTotalCredits(transactionsList)}",
-                      style: boldTextStyle(),
-                    )
-                  ],
-                ),
-              
-                // Container(
-                //     height: 50,
-                //     width: double.infinity,
-                //     color: secondaryColor,
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //       children: [
-                //         SizedBox(
-                //           width: MediaQuery.of(context).size.width * .7,
-                //           child: Row(
-                //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //             children: [
-                //               Text(
-                //                 "data",
-                //                 style: boldTextStyle(color: whiteColor),
-                //               ),
-                //               Text(
-                //                 "data",
-                //                 style: boldTextStyle(color: whiteColor),
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //         SizedBox(
-                //           width: defaultIconsSize,
-                //         )
-                //       ],
-                //     )),
-                // Padding(
-                //   padding: EdgeInsets.only(top: defaultPadding),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //     children: [
-                //       SizedBox(
-                //         width: MediaQuery.of(context).size.width * .7,
-                //         child: Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //           children: [
-                //             Container(
-                //               height: 30,
-                //               width: MediaQuery.of(context).size.width * .3,
-                //               decoration: BoxDecoration(
-                //                   borderRadius:
-                //                       BorderRadius.circular(defaultRadius),
-                //                   border: Border.all(color: greyColor)),
-                //               child: Center(child: Text("Bill")),
-                //             ),
-                //             Container(
-                //               height: 30,
-                //               width: MediaQuery.of(context).size.width * .3,
-                //               decoration: BoxDecoration(
-                //                   borderRadius:
-                //                       BorderRadius.circular(defaultRadius),
-                //                   border: Border.all(color: greyColor)),
-                //               child: Center(child: Text("Bill")),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //       GestureDetector(
-                //         child: Image.asset(
-                //           "assets/icons/trash.png",
-                //           width: defaultIconsSize,
-                //           height: defaultIconsSize,
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
-                // Divider(),
+                    SizedBox(height: defaultPadding,),
+                // textFieldWidget(
+                //     label: "وصول",
+                //     imgPath: "assets/icons/income.png",
+                //     controller: creditController.received,inputType: TextInputType.number),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 //   children: [
@@ -258,18 +181,139 @@ List<String> tableColumns = [
                 //     SizedBox(
                 //       width: MediaQuery.of(context).size.width * .25,
                 //       child: CustomButton(
-                //         onPressed: () {},
+                //         onPressed: () {
+                //           creditController.addRecieveEntry();
+                //         },
                 //         icon: "assets/icons/file_sync.png",
                 //       ),
                 //     ),
                 //     Text(
-                //       "Total: 500",
+                //       "Total: ${creditController.getTotalCredits(transactionsList)}",
                 //       style: boldTextStyle(),
                 //     )
                 //   ],
                 // ),
-                // const SizedBox(height: 10,),
-                // CustomButton(onPressed: (){},label: "سابقہ بل وصولی",)
+
+                Container(
+                    height: 50,
+                    width: double.infinity,
+                    color: secondaryColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .7,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "پیسے",
+                                style: boldTextStyle(color: whiteColor),
+                              ),
+                              Text(
+                                "بل نمبر",
+                                style: boldTextStyle(color: whiteColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: defaultIconsSize,
+                        )
+                      ],
+                    )),
+                Padding(
+                  padding: EdgeInsets.only(top: defaultPadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .7,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              height: 30,
+                              width: MediaQuery.of(context).size.width * .3,
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius),
+                                  border: Border.all(color: greyColor)),
+                              child: Center(
+                                  child: TextField(
+                                textAlign: TextAlign.center,
+                                controller: creditController.received,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                              )),
+                            ),
+                            Container(
+                              height: 30,
+                              width: MediaQuery.of(context).size.width * .3,
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius),
+                                  border: Border.all(color: greyColor)),
+                              child: Center(
+                                  child: TextField(
+                                textAlign: TextAlign.center,
+                                controller: billController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                              )),
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () =>alertDialog(title: "ایا تاسو ډاډه یاست چې ساحې پاکې کړئ",onPressed: () {
+                          billController.clear();
+                          creditController.received.clear();
+                        }),
+                        child: Image.asset(
+                          "assets/icons/trash.png",
+                          width: defaultIconsSize,
+                          height: defaultIconsSize,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .25,
+                      child: CustomButton(
+                        onPressed: () {},
+                        icon: "assets/icons/print.png",
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .25,
+                      child: CustomButton(
+                        onPressed: () {creditController.addRecieveEntry();},
+                        icon: "assets/icons/file_sync.png",
+                      ),
+                    ),
+                    Text(
+                      "Total: ${creditController.getTotalCredits(transactionsList)}",
+                      style: boldTextStyle(),
+                    )
+                  ],
+                ),
+                // const SizedBox(
+                //   height: 10,
+                // ),
+                // CustomButton(
+                //   onPressed: () {},
+                //   label: "سابقہ بل وصولی",
+                // )
               ],
             )),
             Align(
@@ -283,11 +327,11 @@ List<String> tableColumns = [
                   ),
                 )),
             // Obx(() {
-              // creditController.getDuesEntries();
-               StreamBuilder(
-                 stream: creditController.getCreditEntries().asStream(),
-                 builder: (context, snapshot) {
-                   return SizedBox(
+            // creditController.getDuesEntries();
+            StreamBuilder(
+                stream: creditController.getCreditEntries().asStream(),
+                builder: (context, snapshot) {
+                  return SizedBox(
                       height: transactionsList.length * 50 + 60,
                       width: double.infinity,
                       child: ListView(
@@ -297,26 +341,24 @@ List<String> tableColumns = [
                         padding: const EdgeInsets.all(5.0),
                         children: <Widget>[
                           DataTable(
-                            headingRowColor: MaterialStateColor.resolveWith(
-                                (states) => greyColor),
-                            columnSpacing: 10.0,
-                            columns: [
-                              for (var i = tableColumns.length; i > 0; i--)
-                                DataColumn(
-                                  numeric: true,
-                                  label: Text(
-                                    "${tableColumns[i - 1]}   ",
-                                    textAlign: TextAlign.center,
-                                    style: boldTextStyle(color: whiteColor),
-                                  ),
-                                )
-                            ],
-                            rows: buildDataRows()
-                          ),
+                              headingRowColor: MaterialStateColor.resolveWith(
+                                  (states) => greyColor),
+                              columnSpacing: 10.0,
+                              columns: [
+                                for (var i = tableColumns.length; i > 0; i--)
+                                  DataColumn(
+                                    numeric: true,
+                                    label: Text(
+                                      "${tableColumns[i - 1]}   ",
+                                      textAlign: TextAlign.center,
+                                      style: boldTextStyle(color: whiteColor),
+                                    ),
+                                  )
+                              ],
+                              rows: buildDataRows()),
                         ],
                       ));
-                 }
-               ),
+                }),
             // }),
             Container(
               padding:

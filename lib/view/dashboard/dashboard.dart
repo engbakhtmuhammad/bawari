@@ -23,7 +23,7 @@ class DashboardScrreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: appBarWidget(title: "باوری زراعتی شرکت",isDashboard: true),
+      appBar: appBarWidget(title: "باوری زراعتی شرکت",isDashboard: true,openDrawer: () => scaffoldKey.currentState?.openDrawer(),),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Padding(

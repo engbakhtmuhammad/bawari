@@ -16,6 +16,7 @@ class StockScreen extends StatefulWidget {
 
 class _StockScreenState extends State<StockScreen> {
   GoodsController goodsController = Get.put(GoodsController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
    List<String> tableColumns = [
     "سامان کا نام",
     "سامان کا نمبر",
@@ -28,8 +29,8 @@ class _StockScreenState extends State<StockScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      appBar: appBarWidget(title: "گودام سٹاک",),
+      key: scaffoldKey,
+      appBar: appBarWidget(title: "گودام سٹاک",openDrawer: () => scaffoldKey.currentState?.openDrawer(),),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(

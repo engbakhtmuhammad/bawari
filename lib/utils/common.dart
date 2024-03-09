@@ -1,6 +1,5 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/view/Expense/expense.dart';
-import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/loan/loan_info.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
@@ -15,8 +14,7 @@ import 'package:intl/intl.dart' as intl;
 import 'constants.dart';
 import 'text_styles.dart';
 
-
-  int autoBillNo = 1;
+int autoBillNo = 1;
 
 Widget emptyWidget({String? text}) {
   return Center(
@@ -61,19 +59,21 @@ Widget drawerWidget() {
           ),
         ),
         ListTile(
-          trailing: Image.asset(
-            "assets/icons/cortons.png",
-            width: 35,
-            height: 35,
-          ),
-          title: Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                "گودام سٹاک",
-                style: boldTextStyle(),
-              )),
-          onTap: () =>Get.to(StockScreen())
-        ),
+            trailing: Image.asset(
+              "assets/icons/cortons.png",
+              width: 35,
+              height: 35,
+            ),
+            title: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "گودام سٹاک",
+                  style: boldTextStyle(),
+                )),
+            onTap: () {
+              Get.back();
+              Get.to(StockScreen());
+            }),
         const Divider(),
         ListTile(
           trailing: Image.asset(
@@ -87,7 +87,10 @@ Widget drawerWidget() {
                 "پہ خلکو باندے",
                 style: boldTextStyle(),
               )),
-          onTap: () =>Get.to(DueScreen())
+          onTap: () {
+            Get.back();
+            Get.to(DueScreen());
+          },
         ),
         const Divider(),
         ListTile(
@@ -102,7 +105,10 @@ Widget drawerWidget() {
                 "ده خرچے معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: ()=>Get.to(ExpenseInfoScreen())
+          onTap: () {
+            Get.back();
+            Get.to(ExpenseInfoScreen());
+          },
         ),
         const Divider(),
         ListTile(
@@ -117,7 +123,10 @@ Widget drawerWidget() {
                 "منافع / بچت",
                 style: boldTextStyle(),
               )),
-          onTap: ()=>Get.to(SellScreen())
+          onTap: () {
+            Get.back();
+            Get.to(SellScreen());
+          },
         ),
         const Divider(),
         ListTile(
@@ -132,7 +141,10 @@ Widget drawerWidget() {
                 "خریداری معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: () =>Get.to(PurchaseInfoScreen())
+          onTap: () {
+            Get.back();
+            Get.to(PurchaseInfoScreen());
+          },
         ),
         const Divider(),
         ListTile(
@@ -147,7 +159,10 @@ Widget drawerWidget() {
                 "فروخت معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: ()=>Get.to(SaleInfoScreen())
+          onTap: () {
+            Get.back();
+            Get.to(SaleInfoScreen());
+          },
         ),
         const Divider(),
         ListTile(
@@ -162,7 +177,10 @@ Widget drawerWidget() {
                 "نقد ريو معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: () =>Get.to(SellScreen())
+          onTap: () {
+            Get.back();
+            Get.to(SellScreen());
+          },
         ),
         const Divider(),
         ListTile(
@@ -177,7 +195,10 @@ Widget drawerWidget() {
                 "پور معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: ()=>Get.to(LoanInfoScreen())
+          onTap: () {
+            Get.back();
+            Get.to(LoanInfoScreen());
+          },
         ),
         const Divider(),
       ],
@@ -186,9 +207,9 @@ Widget drawerWidget() {
 }
 
 PreferredSizeWidget appBarWidget(
-    {required ,
-    String? title,
+    {String? title,
     VoidCallback? onPressed,
+    VoidCallback? openDrawer,
     bool? isDashboard = false}) {
   return AppBar(
       title: Text(
@@ -198,9 +219,7 @@ PreferredSizeWidget appBarWidget(
       centerTitle: true,
       backgroundColor: primaryColor,
       leading: IconButton(
-          onPressed: () {
-            DashboardScrreen.scaffoldKey.currentState?.openDrawer();
-          },
+          onPressed: openDrawer,
           icon: Image.asset(
             "assets/icons/menu.png",
             width: 24,
@@ -208,7 +227,7 @@ PreferredSizeWidget appBarWidget(
       actions: [
         IconButton(
             onPressed: () => isDashboard!
-                ? showDialog<bool>(
+                ? showDialog(
                     context: Get.context!,
                     builder: (BuildContext context) {
                       return AlertDialog(
@@ -244,6 +263,31 @@ PreferredSizeWidget appBarWidget(
               width: 24,
             )),
       ]);
+}
+
+alertDialog({required String title,VoidCallback? onPressed}) {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          title,
+          textAlign: TextAlign.right,
+          style: boldTextStyle(size: 24),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed:()=> Get.back(),
+            child: Text('نه', style: boldTextStyle(color: primaryColor)),
+          ),
+          TextButton(
+            onPressed: onPressed,
+            child: Text('هو', style: boldTextStyle(color: primaryColor)),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 Widget backContainerWidget({required Widget child}) {
@@ -383,11 +427,6 @@ Container billAndDateWidget(
   );
 }
 
-
-
-
-
-
 Widget textFieldWidget(
     {TextEditingController? controller,
     required String label,
@@ -411,14 +450,14 @@ Widget textFieldWidget(
         suffixIcon: isSearch
             ? const Icon(Icons.search)
             : GestureDetector(
-              onTap: onPressed??(){},
-              child: Image.asset(
+                onTap: onPressed ?? () {},
+                child: Image.asset(
                   imgPath,
                   width: defaultIconsSize,
                   height: defaultIconsSize,
                 ),
-            ),
-            prefix: Text(prefixText??''),
+              ),
+        prefix: Text(prefixText ?? ''),
         hintText: label,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -430,12 +469,11 @@ Widget textFieldWidget(
   );
 }
 
-
 Widget dropDownTextFieldWidget({
   required String label,
   required String imgPath,
   required List<DropdownMenuItem<String>> dropDownList,
-   Function(String)? onChanged, // Pass a callback function
+  Function(String)? onChanged, // Pass a callback function
 }) {
   return Padding(
     padding: EdgeInsets.symmetric(vertical: defaultPadding / 2.5),
@@ -465,26 +503,26 @@ Widget dropDownTextFieldWidget({
   );
 }
 
-
-
 void log(Object? value) {
   if (!kReleaseMode || forceEnableDebug) print(value);
 }
 
 Widget loaderWidget(bool isLoad) {
-  return isLoad? const Center(child: CircularProgressIndicator()):const SizedBox();
+  return isLoad
+      ? const Center(child: CircularProgressIndicator())
+      : const SizedBox();
 }
- Future<bool?> selectDate(TextEditingController controller) async {
-    final DateTime? picked = await showDatePicker(
-      context: Get.context!,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
 
-    if (picked != null && picked != controller) {
-      controller.text = intl.DateFormat('dd MMM yyyy').format(picked);
-    }
-    return true;
+Future<bool?> selectDate(TextEditingController controller) async {
+  final DateTime? picked = await showDatePicker(
+    context: Get.context!,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2000),
+    lastDate: DateTime(2101),
+  );
+
+  if (picked != null && picked != controller) {
+    controller.text = intl.DateFormat('dd MMM yyyy').format(picked);
   }
-
+  return true;
+}
