@@ -140,7 +140,7 @@ List<String> tableColumns = [
                     label: "حوالا ادرس",
                     imgPath: "assets/icons/price.png",
                     controller: creditController.address),
-                    SizedBox(height: defaultPadding,),
+                    // SizedBox(height: defaultPadding,),
                     textFieldWidget(
                     label: "ور باندی",
                     imgPath: "assets/icons/dues.png",

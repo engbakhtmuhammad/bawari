@@ -6,8 +6,9 @@ import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:intl/intl.dart';
 
+import '../utils/common.dart';
+
 class PurchaseController extends GetxController {
-  int autoBillNo = 1;
   TextEditingController bill = TextEditingController();
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
@@ -15,7 +16,7 @@ class PurchaseController extends GetxController {
       text: DateFormat('yyyy-MM-dd').format(DateTime(2024, 3, 3)));
   TextEditingController date = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-  TextEditingController name = TextEditingController();
+  String name = "";
   TextEditingController note = TextEditingController();
   TextEditingController goodsNo = TextEditingController();
   TextEditingController cartonCount = TextEditingController();
@@ -41,7 +42,7 @@ class PurchaseController extends GetxController {
     try {
       var purchase = PurchaseModel(
         id: null, // Initially set to null, will be updated after adding to Firestore
-        name: name.text,
+        name: name,
         note: note.text,
         goodsNo: int.tryParse(goodsNo.text) ?? 0,
         cartonCount: int.tryParse(cartonCount.text) ?? 0,
@@ -75,7 +76,7 @@ class PurchaseController extends GetxController {
           backgroundColor: primaryColor);
 
       // Clear all controllers except date and bill
-      name.clear();
+      name='';
       note.clear();
       goodsNo.clear();
       cartonCount.clear();
@@ -105,6 +106,14 @@ class PurchaseController extends GetxController {
     }
     update();
     print("$purchaseList >>>>>>>. Purchases List");
+  }
+   PurchaseModel? getPurchaseByBill(String bill) {
+    for (var purchase in purchaseList) {
+      if (purchase.billNo == bill) {
+        return purchase;
+      }
+    }
+    return null; // Return null if no matching customer found
   }
 
   int getTotalBill() {

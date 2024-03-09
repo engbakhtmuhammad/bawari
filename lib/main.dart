@@ -22,9 +22,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'Bawary Zari Sharkat',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(33, 158, 188, 1)),
         useMaterial3: true,
         textTheme: GoogleFonts.almaraiTextTheme(), 

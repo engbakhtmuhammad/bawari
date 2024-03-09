@@ -1,3 +1,4 @@
+import 'package:bawari/utils/common.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,6 +41,8 @@ class DuesController extends GetxController {
             price: int.parse(dues.text),
             date: DateFormat('yyyy-MM-dd').parse(date.text),
             address: address.text,
+            billNo: autoBillNo
+            
           ),
         );
 
@@ -52,6 +55,7 @@ class DuesController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
+            autoBillNo++;
       } else {
         // If customer name doesn't exist, add a new entry
         var duesEntry = DuesModel(
@@ -62,6 +66,7 @@ class DuesController extends GetxController {
               price: int.parse(dues.text),
               date: DateFormat('yyyy-MM-dd').parse(date.text),
               address: address.text,
+              billNo: autoBillNo
             ),
           ],
           received: [],
@@ -82,6 +87,7 @@ class DuesController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
+            autoBillNo++;
       }
 
       // Clear the text editing controllers after adding/updating the entry
@@ -112,6 +118,7 @@ class DuesController extends GetxController {
             price: int.parse("-${received.text}"),
             date: DateFormat('yyyy-MM-dd').parse(date.text),
             address: address.text,
+            billNo: autoBillNo
           ),
         );
 
@@ -125,6 +132,7 @@ class DuesController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
+            autoBillNo++;
       } else {
         Get.snackbar('Error', 'Customer Not Found!',
             snackPosition: SnackPosition.BOTTOM,

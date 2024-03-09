@@ -46,6 +46,7 @@ dependencies:
 
   # State Management
   get: ^4.6.6
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

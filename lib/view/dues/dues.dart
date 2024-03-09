@@ -153,6 +153,7 @@ List<String> tableColumns = [
                 textFieldWidget(
                     label: "وصول",
                     imgPath: "assets/icons/income.png",
+                    inputType: TextInputType.number,
                     controller: duesController.received),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

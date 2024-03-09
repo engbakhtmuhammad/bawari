@@ -61,13 +61,15 @@ DuesModel.fromJson(Map<String, dynamic> json) {
 
 class Dues {
   int? price;
+  int? billNo;
   DateTime? date;
   String? address;
 
-  Dues({this.price, this.date, this.address});
+  Dues({this.price, this.date, this.address,this.billNo});
 
   Dues.fromJson(Map<String, dynamic> json) {
     price = json['price'];
+    billNo = json['billNo'];
     date = json["date"] != null
           ? (json["date"] as Timestamp).toDate()
           : null;
@@ -77,32 +79,9 @@ class Dues {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['price'] = this.price;
+    data['billNo'] = this.billNo;
     data['date'] = this.date;
     data['address'] = this.address;
     return data;
   }
 }
-class Received {
-  int? price;
-  DateTime? date;
-  String? address;
-
-  Received({this.price, this.date, this.address});
-
-  Received.fromJson(Map<String, dynamic> json) {
-    price = json['price'];
-    date = json["date"] != null
-          ? (json["date"] as Timestamp).toDate()
-          : null;
-    address = json['address'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['price'] = this.price;
-    data['date'] = this.date;
-    data['address'] = this.address;
-    return data;
-  }
-}
-

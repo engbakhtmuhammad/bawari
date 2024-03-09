@@ -71,6 +71,9 @@ class GoodsController extends GetxController {
     }
   }
 
+int getTotalCartonCount() {
+    return goodsList.fold(0, (sum, goods) => sum + goods.cartonCount!);
+  }
   Future<void> getGoods() async {
     var goods = await db.collection("goods").get();
     goodsList.clear();

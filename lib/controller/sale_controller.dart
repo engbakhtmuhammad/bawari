@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../utils/common.dart';
+
 class SaleController extends GetxController {
-  int autoBillNo = 1;
   TextEditingController bill = TextEditingController();
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));

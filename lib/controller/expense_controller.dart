@@ -1,3 +1,4 @@
+import 'package:bawari/utils/common.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +20,6 @@ class ExpenseController extends GetxController {
   FirebaseFirestore db = FirebaseFirestore.instance;
   var expenseList = RxList<ExpenseModel>();
   int autoExpenseId = 1;
-  int autoBillNo = 1;
 
   @override
   void onInit() async {

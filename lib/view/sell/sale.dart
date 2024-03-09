@@ -1,6 +1,7 @@
 import 'package:bawari/controller/credit_controller.dart';
 import 'package:bawari/controller/customer_controller.dart';
 import 'package:bawari/controller/goods_controller.dart';
+import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,10 @@ class _SellScreenState extends State<SellScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
-  int cartonCount = 0;
+  PurchaseController purchaseController = Get.put(PurchaseController());
+  int totalCarton = 0;
   int? totalBill = 0;
-  int baqaya = 0;
+  int remainingBill=0;
   String customerId = '';
 
 // Example data, you can replace it with your dynamic data
@@ -105,6 +107,7 @@ class _SellScreenState extends State<SellScreen> {
                         creditController.customerId.text =
                             creditModel!.id.toString();
                         customerId = creditModel.id.toString();
+                        print('>>>>>>>>>>>>>>>ID CUstomer: $customerId');
                         saleController.customerId = creditModel.id.toString();
                         saleController.customerName = value;
                       }),
@@ -119,16 +122,14 @@ class _SellScreenState extends State<SellScreen> {
                           await goodsController.getGoodsByName(value);
                       saleController.goodsNo.text =
                           goodsModel!.goodsNo!.toString();
-                      saleController.pieceCount.text =
-                          goodsModel.cartonCount!.toString();
                       saleController.perCartonCount.text =
                           goodsModel.perCartonCount.toString();
                       saleController.price.text =
                           goodsModel.salePrice.toString();
-                      saleController.totalPrice.text =
-                          (int.parse(saleController.cartonCount.text) *
-                                  int.parse(saleController.price.text))
-                              .toString();
+                      // saleController.totalPrice.text =
+                      //     (int.parse(saleController.cartonCount.text) *
+                      //             int.parse(saleController.price.text))
+                      //         .toString();
                     },
                   ),
                   // textFieldWidget(
@@ -143,41 +144,51 @@ class _SellScreenState extends State<SellScreen> {
                     controller: saleController.pieceCount,
                   ),
                   textFieldWidget(
-                    label: "کارٹن تعداد",
-                    imgPath: "assets/icons/cortons.png",
-                    inputType: TextInputType.number,
-                    controller: saleController.cartonCount,
-                    onChange: (value)async {
-                      print("Received value: $value");
-                      var goodsModel =
-                          await goodsController.getGoodsByName(saleController.name);
-                      try {
-                        int cartCount = int.tryParse(value) ?? 1;
-                        int perCartCount =goodsModel!.perCartonCount!;
-                        int totalPrice =
-                            goodsModel.salePrice!;
+                      label: "کارٹن تعداد",
+                      imgPath: "assets/icons/cortons.png",
+                      inputType: TextInputType.number,
+                      controller: saleController.cartonCount,
+                      onChange: (value) async {
+                        print("Received value: $value");
+                        var goodsModel = await goodsController
+                            .getGoodsByName(saleController.name);
+                        try {
+                          int cartCount = int.tryParse(value) ?? 1;
+                          int perCartCount = goodsModel!.perCartonCount!;
+                          int totalPrice = goodsModel.salePrice!;
 
-                        print(
-                            "Per Carton Count: ${goodsController.perCartonCount.text}");
-                        print("Sale Price: ${goodsController.salePrice.text}");
+                          print(
+                              "Per Carton Count: ${goodsController.perCartonCount.text}");
+                          print(
+                              "Sale Price: ${goodsController.salePrice.text}");
 
-                        saleController.totalPrice.text =
-                            (cartCount * perCartCount * totalPrice).toString();
-                        saleController.totalCount.text =
-                            (cartCount * perCartCount).toString();
-                        saleController.update();
+                          saleController.totalPrice.text =
+                              ((cartCount * perCartCount +
+                                          int.parse(
+                                              saleController.pieceCount.text)) *
+                                      totalPrice)
+                                  .toString();
+                          saleController.totalCount.text =
+                              (cartCount * perCartCount +
+                                      int.parse(saleController.pieceCount.text))
+                                  .toString();
+                                  totalBill=int.parse(saleController.totalPrice.text);
+                                  totalCarton=int.parse(saleController.cartonCount.text);
+                          saleController.update();
 
-                        print(
-                            "Total Price: ${saleController.totalPrice.text}, Total Count: ${saleController.totalCount.text}");
-                      } catch (e) {
-                        print("Error parsing values: $e");
-                      }
-                    },
-                  ),
+                          print(
+                              "Total Price: ${saleController.totalPrice.text}, Total Count: ${saleController.totalCount.text}");
+                        } catch (e) {
+                          print("Error parsing values: $e");
+                        }
+                      },
+                      prefixText:
+                          "Cartons: ${goodsController.getTotalCartonCount()}"),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/corton_count.png",
                       inputType: TextInputType.number,
+
                       controller: saleController.perCartonCount),
                   textFieldWidget(
                       label: "جمله تعداد",
@@ -188,7 +199,8 @@ class _SellScreenState extends State<SellScreen> {
                       label: "قیمت",
                       imgPath: "assets/icons/price.png",
                       inputType: TextInputType.number,
-                      controller: saleController.totalPrice,prefixText: "Sale Price: ${saleController.price.text}"),
+                      controller: saleController.totalPrice,
+                      prefixText: "Sale Price: ${saleController.price.text}"),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
@@ -212,6 +224,35 @@ class _SellScreenState extends State<SellScreen> {
                   )
                 ],
               ),
+            ),
+            
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+              child: SellContainerWidget(
+                isBaqaya: false,
+                btnTitle: "نقد وصولي",
+                bill: totalBill,
+                cortonCount: totalCarton,
+                remaining: totalBill,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+              child: SellContainerWidget(
+                btnTitle: "سابقہ قیم وصولی",
+                isBaqaya: true,
+                bill: totalBill,
+                cortonCount: creditController.calculateNetAmountById(customerId),
+                remaining: totalBill!-creditController.calculateNetAmountById(customerId),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
 
             Obx(() {
@@ -340,38 +381,6 @@ class _SellScreenState extends State<SellScreen> {
               ),
             ),
             // TableWidget(tableRows: tableRows, tableColumns: tableColumns),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-              child: SellContainerWidget(
-                btnTitle: "نقد وصولي",
-                bill: totalBill,
-                cortonCount: cartonCount,
-                remaining: baqaya,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-              child: SellContainerWidget(
-                btnTitle: "سابقہ قیم وصولی",
-                bill: int.tryParse(creditController
-                        .getTotalCreditsById(customerId)
-                        .toString()) ??
-                    0,
-                cortonCount: 2,
-                remaining: int.tryParse(creditController
-                        .getTotalReceivedById(customerId)
-                        .toString()) ??
-                    0,
-              ),
-            ),
           ],
         ),
       ),

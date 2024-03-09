@@ -9,9 +9,10 @@ class SellContainerWidget extends StatelessWidget {
   final int? cortonCount;
   final int? bill;
   final int? remaining;
+  final bool? isBaqaya;
   final String? btnTitle;
   const SellContainerWidget(
-      {super.key, this.bill, this.cortonCount, this.remaining, this.btnTitle});
+      {super.key, this.bill, this.cortonCount, this.remaining, this.btnTitle,this.isBaqaya});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class SellContainerWidget extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                      "کارٹن تعداد",
+                      isBaqaya!?"سابقا بقايا": "کارٹن تعداد",
                       style: boldTextStyle(color: whiteColor),
                     ),
                   )),
@@ -57,7 +58,7 @@ class SellContainerWidget extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                      "ٹوٹل بل",
+                      isBaqaya!?"بل بقايا":"ٹوٹل بل",
                       style: boldTextStyle(color: whiteColor),
                     ),
                   )),
@@ -75,7 +76,7 @@ class SellContainerWidget extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                      "بقايا",
+                      isBaqaya!?"توتل":"بقايا",
                       style: boldTextStyle(color: whiteColor),
                     ),
                   )),

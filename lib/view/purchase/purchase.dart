@@ -1,3 +1,4 @@
+import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
@@ -18,6 +19,7 @@ class PurchaseScreen extends StatefulWidget {
 
 class _PurchaseScreenState extends State<PurchaseScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
+  GoodsController goodsController = Get.put(GoodsController());
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -30,11 +32,56 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     "مکمل تعداد",
     "في تعدادقيمت",
   ];
+  List<DropdownMenuItem<String>> goodsDropDownList = [];
+  var suppplierDropDownList = const [
+    DropdownMenuItem(
+      alignment: Alignment.centerLeft,
+      value: "China",
+      child: Text("China"),
+    ),
+    DropdownMenuItem(
+      alignment: Alignment.centerLeft,
+      value: "Korian",
+      child: Text("Korian"),
+    ),
+    DropdownMenuItem(
+      alignment: Alignment.centerLeft,
+      value: "Japan",
+      child: Text("Japan"),
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchGoods();
+    });
+  }
+
+// Inside a method where you fetch customers, such as in the initState method
+  void fetchGoods() async {
+    List<String?> goodsName = await goodsController.getGoodsNames();
+
+    goodsDropDownList = goodsName.map((goods) {
+      return DropdownMenuItem(
+        alignment: Alignment.centerLeft,
+        value: goods,
+        child: Text(goods!),
+      );
+    }).toList();
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    fetchGoods();
     return Scaffold(
-      appBar: appBarWidget(title: "سامان خرید",),
+      appBar: appBarWidget(
+        title: "سامان خرید",
+      ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
@@ -46,25 +93,58 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             backContainerWidget(
               child: Column(
                 children: [
-                  textFieldWidget(
-                      label: "نام",
-                      imgPath: "assets/icons/name.png",
-                      controller: purchaseController.name),
+                  dropDownTextFieldWidget(
+                    label: "سپلایر نوم غوره کړئ",
+                    imgPath: "assets/icons/name.png",
+                    dropDownList: suppplierDropDownList,
+                    onChanged: (value) async {},
+                  ),
+                  dropDownTextFieldWidget(
+                    label: "سامان نوم غوره کړئ",
+                    imgPath: "assets/icons/name.png",
+                    dropDownList: goodsDropDownList,
+                    onChanged: (value) async {
+                      // Update the expenseType in the ExpenseController
+                      purchaseController.name = value;
+                      var goodsModel =
+                          await goodsController.getGoodsByName(value);
+                      purchaseController.goodsNo.text =
+                          goodsModel!.goodsNo!.toString();
+                      purchaseController.perCartonCount.text =
+                          goodsModel.perCartonCount.toString();
+                      purchaseController.price.text =
+                          goodsModel.salePrice.toString();
+                      purchaseController.cartonCount.text =
+                          goodsModel.cartonCount.toString();
+                      purchaseController.price.text =
+                          goodsModel.salePrice.toString();
+                      purchaseController.totalCount.text = (int.parse(
+                                  purchaseController.cartonCount.text) *
+                              int.parse(purchaseController.perCartonCount.text))
+                          .toString();
+                    },
+                  ),
                   textFieldWidget(
                       label: "نوٹ",
                       imgPath: "assets/icons/note.png",
                       maxLine: 4,
                       controller: purchaseController.note),
-                  textFieldWidget(
-                      label: "سامان نمبر",
-                      imgPath: "assets/icons/number.png",
-                      inputType: TextInputType.number,
-                      controller: purchaseController.goodsNo),
+                  // textFieldWidget(
+                  //     label: "سامان نمبر",
+                  //     imgPath: "assets/icons/number.png",
+                  //     inputType: TextInputType.number,
+                  //     controller: purchaseController.goodsNo),
                   textFieldWidget(
                       label: "کارٹن تعداد",
                       imgPath: "assets/icons/cortons.png",
                       inputType: TextInputType.number,
-                      controller: purchaseController.cartonCount),
+                      controller: purchaseController.cartonCount,
+                      onChange: (value) {
+                        purchaseController.totalCount.text = (int.parse(value) *
+                                int.parse(
+                                    purchaseController.perCartonCount.text))
+                            .toString();
+                      }),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/count.png",
@@ -79,6 +159,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       label: "قیمت",
                       imgPath: "assets/icons/price.png",
                       inputType: TextInputType.number,
+                      prefixText: calculateTotal(),
                       controller: purchaseController.price),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
@@ -245,60 +326,73 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             ),
             // TableWidget(tableRows: purchaseController.purchaseList, tableColumns: tableColumns),
             const SizedBox(
-              height: 20,
-            ),
-            Container(
               height: 70,
-              padding:
-                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-              width: double.infinity,
-              color: secondaryColor,
-              child: Obx(
-                ()=> Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${purchaseController.getTotalPrice()}",
-                          style: primaryTextStyle(color: whiteColor),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Text(
-                            "ٹوٹل بل",
-                            textAlign: TextAlign.end,
-                            style: boldTextStyle(color: whiteColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "${purchaseController.getTotalCartonCount()}",
-                          style: primaryTextStyle(color: whiteColor),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Text(
-                            "کارٹن تعداد",
-                            textAlign: TextAlign.end,
-                            style: boldTextStyle(color: whiteColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
+            ),
           ],
         ),
       ),
+      bottomNavigationBar: Container(
+        height: 70,
+        padding: EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+        width: double.infinity,
+        color: secondaryColor,
+        child: Obx(
+          () => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "${purchaseController.getTotalPrice()}",
+                    style: primaryTextStyle(color: whiteColor),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .3,
+                    child: Text(
+                      "ٹوٹل بل",
+                      textAlign: TextAlign.end,
+                      style: boldTextStyle(color: whiteColor),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "${goodsController.getTotalCartonCount()}",
+                    style: primaryTextStyle(color: whiteColor),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .3,
+                    child: Text(
+                      "کارٹن تعداد",
+                      textAlign: TextAlign.end,
+                      style: boldTextStyle(color: whiteColor),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  String calculateTotal() {
+    try {
+      int price = int.parse(purchaseController.price.text ?? '0');
+      int totalCount = int.parse(purchaseController.totalCount.text ?? '0');
+      int total = price * totalCount;
+
+      return "Total: $total";
+    } catch (e) {
+      // Handle the case where parsing fails
+      print("Error: Invalid input. Please enter valid numbers.");
+      return "Total: N/A";
+    }
   }
 }

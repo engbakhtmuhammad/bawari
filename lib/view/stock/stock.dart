@@ -24,11 +24,6 @@ class _StockScreenState extends State<StockScreen> {
     "قیمت فروخت",
     "isActive",
     "lineItem",
-    // "پیس تعداد",
-    // "کارتن تعداد",
-    // "في كارتن تعداد",
-    // "مکمل تعداد",
-    // "في تعدادقيمت",
   ];
   @override
   Widget build(BuildContext context) {

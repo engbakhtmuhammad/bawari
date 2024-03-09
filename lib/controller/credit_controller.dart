@@ -1,4 +1,5 @@
 import 'package:bawari/model/credit_model.dart';
+import 'package:bawari/utils/common.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,6 +42,7 @@ class CreditController extends GetxController {
             price: int.parse(credits.text),
             date: _parseDate(date.text),
             address: address.text,
+            billNo: autoBillNo
           ),
         );
 
@@ -48,11 +50,7 @@ class CreditController extends GetxController {
         await db.collection("credits").doc(existingCustomer.id!).update({
           'credits': existingCustomer.credits!.map((d) => d.toJson()).toList(),
         });
-
-        // Get.snackbar('Success', 'Credit updated successfully!',
-        //     snackPosition: SnackPosition.BOTTOM,
-        //     duration: const Duration(seconds: 3),
-        //     backgroundColor: primaryColor);
+        autoBillNo++;
       } else {
         // If customer name doesn't exist, add a new entry
         var creditEntry = CreditModel(
@@ -63,6 +61,7 @@ class CreditController extends GetxController {
               price: int.parse(credits.text),
               date: _parseDate(date.text),
               address: address.text,
+              billNo: autoBillNo++
             ),
           ],
           received: [],
@@ -78,11 +77,7 @@ class CreditController extends GetxController {
         creditEntry.id = creditId;
 
         await db.collection("credits").doc(creditId).update({'id': creditId});
-
-        // Get.snackbar('Success', 'Credit added successfully!',
-        //     snackPosition: SnackPosition.BOTTOM,
-        //     duration: const Duration(seconds: 3),
-        //     backgroundColor: primaryColor);
+        autoBillNo++;
       }
 
       // Clear the text editing controllers after adding/updating the entry
@@ -130,6 +125,7 @@ class CreditController extends GetxController {
             price: int.parse("-${received.text}"),
             date: _parseDate(date.text),
             address: address.text,
+            billNo: autoBillNo
           ),
         );
 
@@ -143,6 +139,7 @@ class CreditController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
+            autoBillNo++;
       } else {
         Get.snackbar('Error', 'Customer Not Found!',
             snackPosition: SnackPosition.BOTTOM,
@@ -256,5 +253,32 @@ class CreditController extends GetxController {
     }
 
     return total;
+  }
+
+ int calculateNetAmountById(String customerId) {
+    var creditModel = creditList.firstWhere(
+      (element) => element.customerId == customerId,
+      orElse: () => CreditModel(),
+    );
+
+    print(">>>>>>>>>>>.. ${creditModel.customerName}");
+
+    double totalCredit = 0;
+    double totalReceived = 0;
+
+    if (creditModel.credits != null) {
+      totalCredit = calculateCreditTotal(creditModel.credits!);
+    }
+
+    if (creditModel.received != null) {
+      totalReceived = calculateCreditTotal(creditModel.received!);
+    }
+    // print(">>>>>>>>>>>.. ${creditModel.received![0].price}");
+
+
+    // Convert to int if you want to discard the decimal part
+    int netAmount = (totalCredit - totalReceived).toInt();
+
+    return netAmount;
   }
 }
