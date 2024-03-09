@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SaleModel {
   String? id; // id
+  String? customerName; // id
+  String? customerId; // id
   int? billNo; // nill no
   String? name; // name
   String? note; // note
@@ -13,6 +15,7 @@ class SaleModel {
   int? price; // qeemat
   DateTime? date;
   int? totalPrice;
+
 
   SaleModel({
     this.id,
@@ -27,6 +30,8 @@ class SaleModel {
     this.pieceCount,
     this.date,
     this.totalPrice
+    ,this.customerId,
+    this.customerName
   });
 
   factory SaleModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +46,8 @@ class SaleModel {
       billNo: json["billNo"],
       name: json["name"],
       pieceCount: json['pieceCount'],
+      customerId: json['customerId'],
+      customerName: json['customerName'],
       note: json["note"],
       date: json["date"] != null ? (json["date"] as Timestamp).toDate() : null,
     );
@@ -57,6 +64,8 @@ class SaleModel {
     data["billNo"] = billNo;
     data["name"] = name;
     data['pieceCount'] = pieceCount;
+    data['customerId'] = customerId;
+    data['customerName'] = customerName;
     data['totalPrice'] = totalPrice;
     data["note"] = note;
     data["date"] = date;

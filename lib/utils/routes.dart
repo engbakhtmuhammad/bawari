@@ -13,7 +13,7 @@ import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
 import 'package:bawari/view/sell/sale.dart';
-import 'package:bawari/view/sell/sell_info.dart';
+import 'package:bawari/view/sell/sale_info.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:get/get.dart';
 
@@ -76,7 +76,7 @@ var pages = [
   ),
   GetPage(
     name: "/sell_info",
-    page: () => SellInfoScreen(),
+    page: () => SaleInfoScreen(),
   ),
   GetPage(
     name: "/stock",

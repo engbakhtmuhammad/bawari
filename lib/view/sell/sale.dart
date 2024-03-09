@@ -23,6 +23,10 @@ class _SellScreenState extends State<SellScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
+  int cartonCount=0;
+  int? totalBill=0;
+  int baqaya=0;
+  String customerId='';
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -100,6 +104,10 @@ class _SellScreenState extends State<SellScreen> {
                             await customerController.getCustomerByName(value);
                         creditController.customerId.text =
                             creditModel!.id.toString();
+                           customerId =
+                            creditModel.id.toString();
+                            saleController.customerId=creditModel.id.toString();
+                            saleController.customerName=value;
                       }),
                   dropDownTextFieldWidget(
                     label: "سامان نوم غوره کړئ",
@@ -319,21 +327,28 @@ class _SellScreenState extends State<SellScreen> {
             const SizedBox(
               height: 20,
             ),
-            const SellContainerWidget(
-              btnTitle: "نقد وصولي",
-              bill: 400,
-              cortonCount: 2,
-              remaining: 3,
-            ),
+             Padding(
+               padding:  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+               child: SellContainerWidget(
+                btnTitle: "نقد وصولي",
+                bill: totalBill,
+                cortonCount: cartonCount,
+                remaining: baqaya,
+                           ),
+             ),
             const SizedBox(
               height: 20,
             ),
-            const SellContainerWidget(
-              btnTitle: "سابقہ قیم وصولی",
-              bill: 400,
-              cortonCount: 2,
-              remaining: 3,
-            ),
+             Padding(
+               padding:  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+               child: SellContainerWidget(
+                 btnTitle: "سابقہ قیم وصولی",
+                 bill: int.tryParse(creditController.getTotalCreditsById(customerId).toString()) ?? 0,
+                 cortonCount: 2,
+                 remaining: int.tryParse(creditController.getTotalReceivedById(customerId).toString()) ?? 0,
+               ),
+             ),
+
           ],
         ),
       ),

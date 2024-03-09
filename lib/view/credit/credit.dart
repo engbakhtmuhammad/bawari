@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../controller/customer_controller.dart';
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
 
@@ -22,7 +21,7 @@ class _CreditScreenState extends State<CreditScreen> {
 
 CreditController creditController = Get.put(CreditController());
 List<String> tableColumns = [
-    "را باندی نوم",
+    "ور باندی نوم",
     "پیسے",
     "تاریخ",
     "حوالا ادرس",
@@ -34,15 +33,13 @@ List<String> tableColumns = [
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchCustomers();
+      fetchCredits();
     });
   }
 
 // Inside a method where you fetch customers, such as in the initState method
-  void fetchCustomers() async {
+  void fetchCredits() async {
     List<String?> customerNames = await creditController.getCreditNames();
-    // print('Customer Names: $customerNames');
-
     // Update the dropDownList based on the fetched customer names
     dropDownList = customerNames.map((customerName) {
       return DropdownMenuItem(
@@ -51,9 +48,6 @@ List<String> tableColumns = [
         child: Text(customerName!),
       );
     }).toList();
-    // print(dropDownList.length);
-
-    // Ensure to update the state to reflect changes in the UI
     if (mounted) {
       setState(() {});
     }
@@ -111,10 +105,10 @@ List<String> tableColumns = [
 
   @override
   Widget build(BuildContext context) {
-    fetchCustomers();
+    fetchCredits();
     return Scaffold(
       appBar: appBarWidget(
-        title: "را باندی",
+        title: "وصولی",
       ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
@@ -148,13 +142,13 @@ List<String> tableColumns = [
                     controller: creditController.address),
                     SizedBox(height: defaultPadding,),
                     textFieldWidget(
-                    label: "را باندی",
+                    label: "ور باندی",
                     imgPath: "assets/icons/dues.png",
                     controller: creditController.credits),
                 textFieldWidget(
                     label: "وصول",
                     imgPath: "assets/icons/income.png",
-                    controller: creditController.received),
+                    controller: creditController.received,inputType: TextInputType.number),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -284,40 +278,45 @@ List<String> tableColumns = [
                   padding: EdgeInsets.symmetric(
                       horizontal: defaultHorizontalPadding),
                   child: Text(
-                    "راناندی کهاته",
+                    "ورباندی کهاته",
                     style: boldTextStyle(),
                   ),
                 )),
             // Obx(() {
               // creditController.getDuesEntries();
-               SizedBox(
-                  height: transactionsList.length * 50 + 60,
-                  width: double.infinity,
-                  child: ListView(
-                    shrinkWrap: true,
-                    reverse: true,
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.all(5.0),
-                    children: <Widget>[
-                      DataTable(
-                        headingRowColor: MaterialStateColor.resolveWith(
-                            (states) => greyColor),
-                        columnSpacing: 10.0,
-                        columns: [
-                          for (var i = tableColumns.length; i > 0; i--)
-                            DataColumn(
-                              numeric: true,
-                              label: Text(
-                                "${tableColumns[i - 1]}   ",
-                                textAlign: TextAlign.center,
-                                style: boldTextStyle(color: whiteColor),
-                              ),
-                            )
+               StreamBuilder(
+                 stream: creditController.getCreditEntries().asStream(),
+                 builder: (context, snapshot) {
+                   return SizedBox(
+                      height: transactionsList.length * 50 + 60,
+                      width: double.infinity,
+                      child: ListView(
+                        shrinkWrap: true,
+                        reverse: true,
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.all(5.0),
+                        children: <Widget>[
+                          DataTable(
+                            headingRowColor: MaterialStateColor.resolveWith(
+                                (states) => greyColor),
+                            columnSpacing: 10.0,
+                            columns: [
+                              for (var i = tableColumns.length; i > 0; i--)
+                                DataColumn(
+                                  numeric: true,
+                                  label: Text(
+                                    "${tableColumns[i - 1]}   ",
+                                    textAlign: TextAlign.center,
+                                    style: boldTextStyle(color: whiteColor),
+                                  ),
+                                )
+                            ],
+                            rows: buildDataRows()
+                          ),
                         ],
-                        rows: buildDataRows()
-                      ),
-                    ],
-                  )),
+                      ));
+                 }
+               ),
             // }),
             Container(
               padding:

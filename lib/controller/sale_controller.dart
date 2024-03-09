@@ -15,6 +15,8 @@ class SaleController extends GetxController {
   TextEditingController date = TextEditingController(
       text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
   String name = "سامان نوم";
+  String customerId="";
+  String customerName = "";
   TextEditingController note = TextEditingController();
   TextEditingController goodsNo = TextEditingController();
   TextEditingController pieceCount = TextEditingController();
@@ -38,6 +40,8 @@ class SaleController extends GetxController {
     try {
       var sale = SaleModel(
         name: name,
+        customerId: customerId,
+        customerName: customerName,
         note: note.text,
         goodsNo: int.tryParse(goodsNo.text) ?? 0,
         pieceCount: int.tryParse(pieceCount.text) ?? 0,

@@ -1,65 +1,59 @@
-import 'package:bawari/controller/purchase_controller.dart';
+import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
+import 'package:bawari/utils/text_styles.dart';
 import 'package:get/get.dart';
-
-import '../../utils/colors.dart';
+import 'package:bawari/utils/colors.dart';
 import '../../utils/constants.dart';
-import '../../utils/text_styles.dart';
 
-class PurchaseInfoScreen extends StatefulWidget {
-  const PurchaseInfoScreen({super.key});
+class SaleInfoScreen extends StatefulWidget {
+  const SaleInfoScreen({super.key});
 
   @override
-  State<PurchaseInfoScreen> createState() => _PurchaseInfoScreenState();
+  State<SaleInfoScreen> createState() => _SaleInfoScreenState();
 }
 
-class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
-  PurchaseController purchaseController = Get.put(PurchaseController());
-  //  String? selectedValue;
-  // Example data, you can replace it with your dynamic data
+class _SaleInfoScreenState extends State<SaleInfoScreen> {
+  SaleController saleController = Get.put(SaleController());
+  String customerId = '';
+
+// Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "سامان",
     "پیس تعداد",
     "کارتن تعداد",
     "في كارتن تعداد",
-    "مکمل تعداد",
     "في تعدادقيمت",
-    "مکمل تعداد",
-    "في تعدادقيمت",
-  ];
-  List<List<String>> tableRows = [
-    ["1", "محمد صادق لشکرگاه", "12453"],
-    ["2", "با خان لشکرقا", "12453"],
-    ["3", "عبد الغفار كرئش", "12453"],
-    ["4", "حاجی محمد جان", "12453"],
-    ["5", "جیلانی لشکرگاه", "12453"],
+    "مکمل تعدادقيمت",
   ];
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "خریداری معلومات",),
+      appBar: appBarWidget(
+        title: "سامان فروخت",
+      ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
             billAndDateWidget(
-                title: "ابتدائی",
-                imgPath: "assets/icons/calendar.png",
-                title2: "اختتامي",
-                imgPath2: "assets/icons/calendar.png",
-                dateController: purchaseController.endDate,onPressed2: () => selectDate(purchaseController.endDate),
-                billController: purchaseController.startDate,onPressed: () => selectDate(purchaseController.startDate),),
+              title: "ابتدائی",
+              imgPath: "assets/icons/calendar.png",
+              title2: "اختتامي",
+              imgPath2: "assets/icons/calendar.png",
+              dateController: saleController.endDate,
+              onPressed2: () => selectDate(saleController.endDate),
+              billController: saleController.startDate,
+              onPressed: () => selectDate(saleController.startDate),
+            ),
             SizedBox(
               height: defaultPadding,
             ),
-            
             Obx(() {
-              purchaseController.getPurchasesBetweenDates();
+              saleController.getSale();
               return SizedBox(
-                  height: purchaseController.purchaseList.length * 50 + 60,
+                  height: saleController.saleList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -84,7 +78,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < purchaseController.purchaseList.length;
+                              row < saleController.saleList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -102,74 +96,47 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].date
+                                    saleController.saleList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //7
                                 DataCell(
                                   Text(
-                                    purchaseController
-                                        .purchaseList[row].totalCount
+                                    saleController.saleList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //6
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].price
+                                    saleController.saleList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //5
                                 DataCell(
                                   Text(
-                                    purchaseController
-                                        .purchaseList[row].perCartonCount
+                                    saleController.saleList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //4
                                 DataCell(
                                   Text(
-                                    purchaseController
-                                        .purchaseList[row].cartonCount
+                                    saleController.saleList[row].pieceCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //3
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].note
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-
-                                //2
-                                DataCell(
-                                  Text(
-                                    purchaseController.purchaseList[row].billNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //1
-                                DataCell(
-                                  Text(
-                                    purchaseController.purchaseList[row].name
+                                    saleController.saleList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -182,26 +149,6 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                     ],
                   ));
             }),
-            Container(
-              height: 50,
-              width: double.infinity,
-              color: primaryColor,
-              child: Center(
-                child: ListTile(
-                  trailing: Text(
-                    "توثل ",
-                    style: boldTextStyle(color: whiteColor),
-                  ),
-                  leading: Obx(
-                    ()=> Text(
-                      purchaseController.getTotalPrice().toString(),
-                      style: primaryTextStyle(color: whiteColor),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
             Container(
               padding:
                   EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),

@@ -215,15 +215,6 @@ class CreditController extends GetxController {
     // print("$creditList >>>>>>>. Credit Entries List");
   }
 
-  CreditModel? getCustomerByName(String name) {
-    for (var customer in creditList) {
-      if (customer.customerName == name) {
-        return customer;
-      }
-    }
-    return null; // Return null if no matching customer found
-  }
-
   CreditModel? getCreditByName(String name) {
     for (var credits in creditList) {
       if (credits.customerName == name) {
@@ -235,5 +226,35 @@ class CreditController extends GetxController {
 
   List<String?> getCreditNames() {
     return creditList.map((customer) => customer.customerName).toList();
+  }
+
+  double getTotalCreditsById(String customerId) {
+    double total = 0;
+
+    var creditModel = creditList.firstWhere(
+      (element) => element.customerId == customerId,
+      orElse: () => CreditModel(),
+    );
+
+    if (creditModel.credits != null) {
+      total = calculateCreditTotal(creditModel.credits!);
+    }
+
+    return total;
+  }
+
+  double getTotalReceivedById(String customerId) {
+    double total = 0;
+
+    var creditModel = creditList.firstWhere(
+      (element) => element.customerId == customerId,
+      orElse: () => CreditModel(),
+    );
+
+    if (creditModel.received != null) {
+      total = calculateCreditTotal(creditModel.received!);
+    }
+
+    return total;
   }
 }

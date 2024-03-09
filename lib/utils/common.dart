@@ -1,10 +1,12 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/view/Expense/expense.dart';
 import 'package:bawari/view/dashboard/dashboard.dart';
+import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/loan/loan_info.dart';
 import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
 import 'package:bawari/view/sell/sale.dart';
+import 'package:bawari/view/sell/sale_info.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +85,7 @@ Widget drawerWidget() {
                 "پہ خلکو باندے",
                 style: boldTextStyle(),
               )),
-          onTap: () =>Get.to(LoanScreen())
+          onTap: () =>Get.to(DueScreen())
         ),
         const Divider(),
         ListTile(
@@ -143,7 +145,7 @@ Widget drawerWidget() {
                 "فروخت معلومات",
                 style: boldTextStyle(),
               )),
-          onTap: ()=>Get.to(SellScreen())
+          onTap: ()=>Get.to(SaleInfoScreen())
         ),
         const Divider(),
         ListTile(
