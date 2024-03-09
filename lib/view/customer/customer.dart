@@ -47,6 +47,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                 textFieldWidget(
                     label: "کسٹمر کا نمبر",
                     imgPath: "assets/icons/note.png",
+                    inputType: TextInputType.number,
                     controller: customerController.customerNo),
                 textFieldWidget(
                     label: "کسٹمر کا نام",
@@ -59,10 +60,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
                 textFieldWidget(
                     label: "کسٹمر کا فون",
                     imgPath: "assets/icons/phone.png",
+                    inputType: TextInputType.phone,
                     controller: customerController.phone),
                 textFieldWidget(
                     label: "قیمت فروخت",
                     imgPath: "assets/icons/income.png",
+                    inputType: TextInputType.number,
                     controller: customerController.price),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -214,6 +217,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                             customerController
                                                 .customerList[row].id
                                                 .toString());
+                                                Get.back();
                                       }),
                                     )
                                   ),

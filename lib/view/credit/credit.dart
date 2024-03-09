@@ -6,6 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/customer.dart';
+import '../../model/invoice.dart';
+import '../../model/supplier.dart';
+import '../../utils/api/pdf_api.dart';
+import '../../utils/api/pdf_invoice_api.dart';
 import '../../utils/constants.dart';
 import '../widgets/custom_btn.dart';
 
@@ -159,11 +164,11 @@ class _CreditScreenState extends State<CreditScreen> {
                     imgPath: "assets/icons/price.png",
                     controller: creditController.address),
                 // SizedBox(height: defaultPadding,),
-                textFieldWidget(
-                    label: "ور باندی",
-                    imgPath: "assets/icons/dues.png",
-                    controller: creditController.credits),
-                    SizedBox(height: defaultPadding,),
+                // textFieldWidget(
+                //     label: "ور باندی",
+                //     imgPath: "assets/icons/dues.png",
+                //     controller: creditController.credits),
+                //     SizedBox(height: defaultPadding,),
                 // textFieldWidget(
                 //     label: "وصول",
                 //     imgPath: "assets/icons/income.png",
@@ -273,6 +278,7 @@ class _CreditScreenState extends State<CreditScreen> {
                         onTap: () =>alertDialog(title: "ایا تاسو ډاډه یاست چې ساحې پاکې کړئ",onPressed: () {
                           billController.clear();
                           creditController.received.clear();
+                          Get.back();
                         }),
                         child: Image.asset(
                           "assets/icons/trash.png",
@@ -290,7 +296,80 @@ class _CreditScreenState extends State<CreditScreen> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * .25,
                       child: CustomButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final invoice = Invoice(
+                      supplier: Supplier(
+                        name: 'Sarah Field',
+                        address: 'Sarah Street 9, Beijing, China',
+                        paymentInfo: 'https://paypal.me/sarahfieldzz',
+                      ),
+                      customer: Customer(
+                        name: 'Apple Inc.',
+                        address: 'Apple Street, Cupertino, CA 95014',
+                      ),
+                      info: InvoiceInfo(
+                        date: DateTime.now(),
+                        // dueDate: dueDate,
+                        description: 'My description...',
+                        number: '${DateTime.now().year}-9999', dueDate: DateTime.now(),
+                      ),
+                      items: [
+                        InvoiceItem(
+                          description: 'Coffee',
+                          date: DateTime.now(),
+                          quantity: 3,
+                          vat: 0.19,
+                          unitPrice: 5.99,
+                        ),
+                        InvoiceItem(
+                          description: 'Water',
+                          date: DateTime.now(),
+                          quantity: 8,
+                          vat: 0.19,
+                          unitPrice: 0.99,
+                        ),
+                        InvoiceItem(
+                          description: 'Orange',
+                          date: DateTime.now(),
+                          quantity: 3,
+                          vat: 0.19,
+                          unitPrice: 2.99,
+                        ),
+                        InvoiceItem(
+                          description: 'Apple',
+                          date: DateTime.now(),
+                          quantity: 8,
+                          vat: 0.19,
+                          unitPrice: 3.99,
+                        ),
+                        InvoiceItem(
+                          description: 'Mango',
+                          date: DateTime.now(),
+                          quantity: 1,
+                          vat: 0.19,
+                          unitPrice: 1.59,
+                        ),
+                        InvoiceItem(
+                          description: 'Blue Berries',
+                          date: DateTime.now(),
+                          quantity: 5,
+                          vat: 0.19,
+                          unitPrice: 0.99,
+                        ),
+                        InvoiceItem(
+                          description: 'Lemon',
+                          date: DateTime.now(),
+                          quantity: 4,
+                          vat: 0.19,
+                          unitPrice: 1.29,
+                        ),
+                      ],
+                    );
+
+                    final pdfFile = await PdfInvoiceApi.generate(invoice);
+
+                    PdfApi.openFile(pdfFile);
+                        },
                         icon: "assets/icons/print.png",
                       ),
                     ),

@@ -1,8 +1,6 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/text_styles.dart';
-import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/widgets/custom_btn.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                       height: MediaQuery.of(context).size.height * .3,
                       child: Image.asset(
-                        "assets/icons/id.png",
+                        "assets/images/logo.png",
                         fit: BoxFit.cover,
                       )),
                   Text("ښه راغلاست",

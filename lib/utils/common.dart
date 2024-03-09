@@ -1,5 +1,6 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/view/Expense/expense.dart';
+import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/loan/loan_info.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
@@ -201,6 +202,24 @@ Widget drawerWidget() {
           },
         ),
         const Divider(),
+        ListTile(
+          trailing: Image.asset(
+            "assets/icons/purchase.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "اصلي ډشبورډ",
+                style: boldTextStyle(),
+              )),
+          onTap: () {
+            Get.back();
+            Get.to(DashboardScrreen());
+          },
+        ),
+        const Divider(),
       ],
     ),
   );
@@ -257,7 +276,7 @@ PreferredSizeWidget appBarWidget(
                       );
                     },
                   )
-                : Get.back(),
+                : Get.to(DashboardScrreen()),
             icon: Image.asset(
               "assets/icons/back.png",
               width: 24,
@@ -436,11 +455,13 @@ Widget textFieldWidget(
     Function(String)? onChange,
     VoidCallback? onPressed,
     String? prefixText,
+    bool? isReadOnly,
     int? maxLine}) {
   return Padding(
     padding:
         EdgeInsets.symmetric(vertical: isSearch! ? 0 : defaultPadding / 2.5),
     child: TextField(
+      readOnly: isReadOnly??false,
       controller: controller,
       onChanged: onChange ?? (value) {},
       textAlign: TextAlign.right,

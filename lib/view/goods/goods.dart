@@ -50,7 +50,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                 textFieldWidget(
                     label: "سامان کا نمبر",
                     imgPath: "assets/icons/bill.png",
-                    controller: goodsController.goodsNo),
+                    controller: goodsController.goodsNo,inputType: TextInputType.number),
                 textFieldWidget(
                     label: "سامان کا نام",
                     imgPath: "assets/icons/name.png",
@@ -62,19 +62,19 @@ class _GoodsScreenState extends State<GoodsScreen> {
                 textFieldWidget(
                     label: "کارٹن تعداد",
                     imgPath: "assets/icons/cortons.png",
-                    controller: goodsController.cartonCount),
+                    controller: goodsController.cartonCount,inputType: TextInputType.number),
                 textFieldWidget(
                     label: "في كارتن تعداد",
                     imgPath: "assets/icons/per_corton.png",
-                    controller: goodsController.perCartonCount),
+                    controller: goodsController.perCartonCount,inputType: TextInputType.number),
                 textFieldWidget(
                     label: "قیمت خرید",
                     imgPath: "assets/icons/price.png",
-                    controller: goodsController.purchasePrice),
+                    controller: goodsController.purchasePrice,inputType: TextInputType.number),
                 textFieldWidget(
                     label: "قیمت فروخت",
                     imgPath: "assets/icons/income.png",
-                    controller: goodsController.salePrice),
+                    controller: goodsController.salePrice,inputType: TextInputType.number),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -249,6 +249,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                       goodsController.deleteGoods(
                                           goodsController.goodsList[row].id
                                               .toString());
+                                              Get.back();
                                     },),
                                   )),
                                 ),

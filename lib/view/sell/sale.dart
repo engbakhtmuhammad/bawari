@@ -191,12 +191,13 @@ class _SellScreenState extends State<SellScreen> {
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/corton_count.png",
                       inputType: TextInputType.number,
-
+                      isReadOnly: true,
                       controller: saleController.perCartonCount),
                   textFieldWidget(
                       label: "جمله تعداد",
                       imgPath: "assets/icons/total.png",
                       inputType: TextInputType.number,
+                      isReadOnly: true,
                       controller: saleController.totalCount),
                   textFieldWidget(
                       label: "قیمت",

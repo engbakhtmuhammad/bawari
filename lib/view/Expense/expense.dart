@@ -236,13 +236,14 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
               textFieldWidget(
                   label: "تمبر",
                   imgPath: "assets/icons/invoice.png",
-                  controller: expenseController.billNo),
+                  controller: expenseController.billNo,inputType: TextInputType.number),
               textFieldWidget(
                   label: "تاریخ",
                   imgPath: "assets/icons/calendar.png",
                   controller: expenseController.startDate,onPressed:()=> selectDate(expenseController.startDate)),
               textFieldWidget(
                   label: "پیسے",
+                  inputType: TextInputType.number,
                   imgPath: "assets/icons/profits.png",
                   controller: expenseController.price),
               dropDownTextFieldWidget(

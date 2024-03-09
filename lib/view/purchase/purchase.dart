@@ -116,14 +116,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           goodsModel.perCartonCount.toString();
                       purchaseController.price.text =
                           goodsModel.salePrice.toString();
-                      purchaseController.cartonCount.text =
-                          goodsModel.cartonCount.toString();
+                      // purchaseController.cartonCount.text =
+                      //     goodsModel.cartonCount.toString();
                       purchaseController.price.text =
                           goodsModel.salePrice.toString();
-                      purchaseController.totalCount.text = (int.parse(
-                                  purchaseController.cartonCount.text) *
-                              int.parse(purchaseController.perCartonCount.text))
-                          .toString();
+                      
                     },
                   ),
                   textFieldWidget(
@@ -140,12 +137,14 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       label: "کارٹن تعداد",
                       imgPath: "assets/icons/cortons.png",
                       inputType: TextInputType.number,
+                      
                       controller: purchaseController.cartonCount,
                       onChange: (value) {
                         purchaseController.totalCount.text = (int.parse(value) *
                                 int.parse(
                                     purchaseController.perCartonCount.text))
                             .toString();
+                            
                       }),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
@@ -156,6 +155,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       label: "جمله تعداد",
                       imgPath: "assets/icons/total.png",
                       inputType: TextInputType.number,
+                      isReadOnly: true,
                       controller: purchaseController.totalCount),
                   textFieldWidget(
                       label: "قیمت",
