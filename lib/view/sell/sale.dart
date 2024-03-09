@@ -23,10 +23,10 @@ class _SellScreenState extends State<SellScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
-  int cartonCount=0;
-  int? totalBill=0;
-  int baqaya=0;
-  String customerId='';
+  int cartonCount = 0;
+  int? totalBill = 0;
+  int baqaya = 0;
+  String customerId = '';
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -104,10 +104,9 @@ class _SellScreenState extends State<SellScreen> {
                             await customerController.getCustomerByName(value);
                         creditController.customerId.text =
                             creditModel!.id.toString();
-                           customerId =
-                            creditModel.id.toString();
-                            saleController.customerId=creditModel.id.toString();
-                            saleController.customerName=value;
+                        customerId = creditModel.id.toString();
+                        saleController.customerId = creditModel.id.toString();
+                        saleController.customerName = value;
                       }),
                   dropDownTextFieldWidget(
                     label: "سامان نوم غوره کړئ",
@@ -121,42 +120,60 @@ class _SellScreenState extends State<SellScreen> {
                       saleController.goodsNo.text =
                           goodsModel!.goodsNo!.toString();
                       saleController.pieceCount.text =
-                          goodsModel.pieceCount!.toString();
-                      saleController.cartonCount.text =
-                          goodsModel.cartonCount.toString();
+                          goodsModel.cartonCount!.toString();
                       saleController.perCartonCount.text =
                           goodsModel.perCartonCount.toString();
                       saleController.price.text =
-                          goodsModel.purchasePrice.toString();
+                          goodsModel.salePrice.toString();
                       saleController.totalPrice.text =
-                          (int.parse(saleController.pieceCount.text) *
+                          (int.parse(saleController.cartonCount.text) *
                                   int.parse(saleController.price.text))
                               .toString();
                     },
                   ),
-                  textFieldWidget(
-                      label: "سامان نمبر",
-                      imgPath: "assets/icons/number.png",
-                      inputType: TextInputType.number,
-                      controller: saleController.goodsNo),
+                  // textFieldWidget(
+                  //     label: "سامان نمبر",
+                  //     imgPath: "assets/icons/number.png",
+                  //     inputType: TextInputType.number,
+                  //     controller: saleController.goodsNo),
                   textFieldWidget(
                     label: "پیس تعداد",
                     imgPath: "assets/icons/count.png",
                     inputType: TextInputType.number,
                     controller: saleController.pieceCount,
-                    onChange: (value) {
-                      // Update totalCount when pieceCount changes
-                      int pieceCount = int.tryParse(value) ?? 0;
-                      int price = int.tryParse(saleController.price.text) ?? 0;
-                      saleController.totalPrice.text =
-                          (pieceCount * price).toString();
-                    },
                   ),
                   textFieldWidget(
-                      label: "کارٹن تعداد",
-                      imgPath: "assets/icons/cortons.png",
-                      inputType: TextInputType.number,
-                      controller: saleController.cartonCount),
+                    label: "کارٹن تعداد",
+                    imgPath: "assets/icons/cortons.png",
+                    inputType: TextInputType.number,
+                    controller: saleController.cartonCount,
+                    onChange: (value)async {
+                      print("Received value: $value");
+                      var goodsModel =
+                          await goodsController.getGoodsByName(saleController.name);
+                      try {
+                        int cartCount = int.tryParse(value) ?? 1;
+                        int perCartCount =goodsModel!.perCartonCount!;
+                        int totalPrice =
+                            goodsModel.salePrice!;
+
+                        print(
+                            "Per Carton Count: ${goodsController.perCartonCount.text}");
+                        print("Sale Price: ${goodsController.salePrice.text}");
+
+                        saleController.totalPrice.text =
+                            (cartCount * perCartCount * totalPrice).toString();
+                        saleController.totalCount.text =
+                            (cartCount * perCartCount).toString();
+                        saleController.update();
+
+                        print(
+                            "Total Price: ${saleController.totalPrice.text}, Total Count: ${saleController.totalCount.text}");
+                      } catch (e) {
+                        print("Error parsing values: $e");
+                      }
+                    },
+                  ),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/corton_count.png",
@@ -171,23 +188,22 @@ class _SellScreenState extends State<SellScreen> {
                       label: "قیمت",
                       imgPath: "assets/icons/price.png",
                       inputType: TextInputType.number,
-                      controller: saleController.price),
+                      controller: saleController.totalPrice,prefixText: "Sale Price: ${saleController.price.text}"),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
                       onPressed: () async {
                         creditController.credits.text =
-                            (int.parse(saleController.pieceCount.text) *
-                                    int.parse(saleController.price.text))
-                                .toString();
+                            saleController.totalPrice.text;
                         creditController.date.text = saleController.date.text;
                         goodsController.getGoods();
                         var goods = await goodsController
                             .getGoodsByName(saleController.name);
                         goodsController.updateGoodsCount(
                             goods!.id.toString(),
-                            goods.pieceCount!-int.parse(saleController.pieceCount.text.toString()),
-                            goods.cartonCount!-int.parse(saleController.cartonCount.text.toString()));
+                            goods.cartonCount! -
+                                int.parse(saleController.cartonCount.text
+                                    .toString()));
                         creditController.addCreditEntry();
 
                         saleController.addSale();
@@ -327,28 +343,35 @@ class _SellScreenState extends State<SellScreen> {
             const SizedBox(
               height: 20,
             ),
-             Padding(
-               padding:  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-               child: SellContainerWidget(
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+              child: SellContainerWidget(
                 btnTitle: "نقد وصولي",
                 bill: totalBill,
                 cortonCount: cartonCount,
                 remaining: baqaya,
-                           ),
-             ),
+              ),
+            ),
             const SizedBox(
               height: 20,
             ),
-             Padding(
-               padding:  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
-               child: SellContainerWidget(
-                 btnTitle: "سابقہ قیم وصولی",
-                 bill: int.tryParse(creditController.getTotalCreditsById(customerId).toString()) ?? 0,
-                 cortonCount: 2,
-                 remaining: int.tryParse(creditController.getTotalReceivedById(customerId).toString()) ?? 0,
-               ),
-             ),
-
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+              child: SellContainerWidget(
+                btnTitle: "سابقہ قیم وصولی",
+                bill: int.tryParse(creditController
+                        .getTotalCreditsById(customerId)
+                        .toString()) ??
+                    0,
+                cortonCount: 2,
+                remaining: int.tryParse(creditController
+                        .getTotalReceivedById(customerId)
+                        .toString()) ??
+                    0,
+              ),
+            ),
           ],
         ),
       ),

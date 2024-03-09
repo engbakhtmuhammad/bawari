@@ -116,10 +116,9 @@ class GoodsController extends GetxController {
   }
 
   Future<void> updateGoodsCount(
-      String goodsId, int newPieceCount, int newCartonCount) async {
+      String goodsId,int newCartonCount) async {
     try {
       var goodsData = {
-        'pieceCount': newPieceCount,
         'cartonCount': newCartonCount,
       };
 

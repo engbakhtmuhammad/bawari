@@ -389,7 +389,7 @@ Widget textFieldWidget(
     TextInputType? inputType,
     Function(String)? onChange,
     VoidCallback? onPressed,
-    
+    String? prefixText,
     int? maxLine}) {
   return Padding(
     padding:
@@ -411,6 +411,7 @@ Widget textFieldWidget(
                   height: defaultIconsSize,
                 ),
             ),
+            prefix: Text(prefixText??''),
         hintText: label,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

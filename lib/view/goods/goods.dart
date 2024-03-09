@@ -19,31 +19,24 @@ class _GoodsScreenState extends State<GoodsScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   String? selectedValue;
   // Example data, you can replace it with your dynamic data
-   List<String> tableColumns = [
+  List<String> tableColumns = [
     "سامان",
-    "پیس تعداد",
+    // "پیس تعداد",
     "کارتن تعداد",
     "في كارتن تعداد",
     "في تعدادقيمت",
     "مکمل تعدادقيمت",
     "isActive",
     "lineItem",
-    // "پیس تعداد",
-    // "کارتن تعداد",
-    // "في كارتن تعداد",
-    // "مکمل تعداد",
-    // "في تعدادقيمت",
   ];
-  List<List<String>> tableRows = [
-    ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
-    ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
-  ];
-  bool isActive=false;
-  bool lineItem=false;
+  bool isActive = false;
+  bool lineItem = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarWidget(title: "سامان",),
+      appBar: appBarWidget(
+        title: "سامان",
+      ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
@@ -59,15 +52,15 @@ class _GoodsScreenState extends State<GoodsScreen> {
                     label: "سامان کا نام",
                     imgPath: "assets/icons/name.png",
                     controller: goodsController.name),
-                    textFieldWidget(
-                    label: "پیس تعداد",
-                    imgPath: "assets/icons/number.png",
-                    controller: goodsController.pieceCount),
+                // textFieldWidget(
+                // label: "پیس تعداد",
+                // imgPath: "assets/icons/number.png",
+                // controller: goodsController.pieceCount),
                 textFieldWidget(
                     label: "کارٹن تعداد",
                     imgPath: "assets/icons/cortons.png",
                     controller: goodsController.cartonCount),
-                    textFieldWidget(
+                textFieldWidget(
                     label: "في كارتن تعداد",
                     imgPath: "assets/icons/per_corton.png",
                     controller: goodsController.perCartonCount),
@@ -94,8 +87,8 @@ class _GoodsScreenState extends State<GoodsScreen> {
                       tristate: true,
                       onChanged: (value) {
                         setState(() {
-                          isActive = value??false;
-                          goodsController.isActive = value??false;
+                          isActive = value ?? false;
+                          goodsController.isActive = value ?? false;
                         });
                       },
                     ),
@@ -116,8 +109,8 @@ class _GoodsScreenState extends State<GoodsScreen> {
                       tristate: true,
                       onChanged: (value) {
                         setState(() {
-                          lineItem = value??false;
-                          goodsController.lineItem = value??false;
+                          lineItem = value ?? false;
+                          goodsController.lineItem = value ?? false;
                         });
                       },
                     ),
@@ -197,8 +190,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].salePrice
-                                        .toString(),
+                                    "${(goodsController.goodsList[row].salePrice ?? 0) * (goodsController.goodsList[row].cartonCount ?? 0) * (goodsController.goodsList[row].perCartonCount ?? 0)}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -215,7 +207,8 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 //6
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].purchasePrice
+                                    goodsController
+                                        .goodsList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -230,16 +223,6 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //4
-                                DataCell(
-                                  Text(
-                                    goodsController.goodsList[row].goodsNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //3
                                 DataCell(
                                   Text(
                                     goodsController.goodsList[row].name
