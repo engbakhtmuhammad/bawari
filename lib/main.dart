@@ -1,7 +1,9 @@
 import 'package:bawari/firebase_options.dart';
+import 'package:bawari/model/invoice.dart';
 import 'package:bawari/utils/routes.dart';
 import 'package:bawari/view/auth/login.dart';
 import 'package:bawari/view/dashboard/dashboard.dart';
+import 'package:bawari/view/invoice2/invoice.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.almaraiTextTheme(), 
       ),
       getPages: pages,
-      home:  const LoginScreen(),
+      home:   InvoiceScreen(),
     );
   }
 }
