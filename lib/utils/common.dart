@@ -1,8 +1,9 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/view/Expense/expense.dart';
+import 'package:bawari/view/credit/cash_flow_info.dart';
 import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/dues/dues.dart';
-import 'package:bawari/view/loan/loan_info.dart';
+import 'package:bawari/view/dues/loan_info.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
 import 'package:bawari/view/sell/sale.dart';
 import 'package:bawari/view/sell/sale_info.dart';
@@ -180,7 +181,7 @@ Widget drawerWidget() {
               )),
           onTap: () {
             Get.back();
-            Get.to(SellScreen());
+            Get.to(CashFlowInfoScreen());
           },
         ),
         const Divider(),
