@@ -13,6 +13,14 @@ class DuesController extends GetxController {
 
   TextEditingController date = TextEditingController(
     text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    
+  );
+  TextEditingController startDate = TextEditingController(
+    text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    
+  );TextEditingController endDate = TextEditingController(
+    text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    
   );
   TextEditingController customerId = TextEditingController();
   String customerName = "گراک نوم";
@@ -213,6 +221,52 @@ class DuesController extends GetxController {
     }
     return null; // Return null if no matching customer found
   }
+
+  int getTotalDuesForCustomer(String customerName) {
+    var duesModel = getDuesByName(customerName);
+
+    if (duesModel != null) {
+      var allTransactions = [...duesModel.dues ?? [], ...duesModel.received ?? []];
+      return getTotalDues(allTransactions);
+    }
+
+    return 0;
+  }
+
+  int getTotalReceivedForCustomer(String customerName) {
+    var duesModel = getDuesByName(customerName);
+
+    if (duesModel != null) {
+      var allTransactions = duesModel.received ?? [];
+      return getTotalDues(allTransactions);
+    }
+
+    return 0;
+  }
+
+  int getTotalDuesForAllCustomers() {
+    int totalDues = 0;
+
+    for (var duesModel in duesList) {
+      var allTransactions = [...duesModel.dues ?? [], ...duesModel.received ?? []];
+      totalDues += getTotalDues(allTransactions);
+    }
+
+    return totalDues;
+  }
+
+  int getTotalReceivedForAllCustomers() {
+    int totalReceived = 0;
+
+    for (var duesModel in duesList) {
+      var allTransactions = duesModel.received ?? [];
+      totalReceived += getTotalDues(allTransactions);
+    }
+
+    return totalReceived;
+  }
+
+  
 
   DuesModel? getDuesByName(String name) {
     for (var dues in duesList) {
