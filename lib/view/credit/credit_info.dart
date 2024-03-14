@@ -1,46 +1,56 @@
-import 'package:bawari/controller/goods_controller.dart';
+import 'package:bawari/controller/dues_controller.dart';
 import 'package:bawari/utils/common.dart';
-import 'package:bawari/view/purchase/purchase.dart';
+import 'package:bawari/utils/text_styles.dart';
+import 'package:bawari/view/credit/show_credit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
+import '../../controller/credit_controller.dart';
 import '../../utils/colors.dart';
 import '../../utils/constants.dart';
-import '../../utils/text_styles.dart';
 
-class StockScreen extends StatefulWidget {
-  const StockScreen({super.key});
+class CreditInfoScreen extends StatefulWidget {
+  const CreditInfoScreen({super.key});
 
   @override
-  State<StockScreen> createState() => _StockScreenState();
+  State<CreditInfoScreen> createState() => _CreditInfoScreenState();
 }
 
-class _StockScreenState extends State<StockScreen> {
-  GoodsController goodsController = Get.put(GoodsController());
+class _CreditInfoScreenState extends State<CreditInfoScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-   List<String> tableColumns = [
-    "سامان کا نام",
-    "سامان کا نمبر",
-    "کارٹن تعداد",
-    "قیمت خرید",
-    "قیمت فروخت",
-    "isActive",
-    "lineItem",
+  CreditController creditController = Get.put(CreditController());
+  DuesController customerController = Get.put(DuesController());
+  // Example data, you can replace it with your dynamic data
+  List<String> tableColumns = [
+    "نمبر",
+    "گاهک",
+    "پیسے",
+    "تاریخ",
+    "حوالا ادرس",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: appBarWidget(title: "گودام سٹاک",openDrawer: () => scaffoldKey.currentState?.openDrawer(),),
+      appBar: appBarWidget(
+        title: "وصولی کهاته",
+        openDrawer: () => scaffoldKey.currentState?.openDrawer(),
+      ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: defaultPadding,),
             Obx(() {
-              goodsController.getGoods();
+              creditController.getCreditEntries();
               return SizedBox(
-                  height: goodsController.goodsList.length * 50 + 60,
+                  height: creditController.creditList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -65,7 +75,7 @@ class _StockScreenState extends State<StockScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < goodsController.goodsList.length;
+                              row < creditController.creditList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -82,7 +92,8 @@ class _StockScreenState extends State<StockScreen> {
                               cells: [
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].lineItem
+                                    creditController
+                                        .creditList[row].credits![0].address
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -90,53 +101,44 @@ class _StockScreenState extends State<StockScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].isActive
+                                    DateFormat('yyyy-MM-dd').format(
+                                        creditController
+                                            .creditList[row].credits![0].date!),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    creditController
+                                        .calculateCreditTotal(creditController
+                                            .creditList[row].credits!)
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //7
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].salePrice
+                                    creditController
+                                        .creditList[row].customerName
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
+                                  onTap: () async {
+                                    var creditModel = await creditController
+                                        .getCreditByName(creditController
+                                            .creditList[row].customerName
+                                            .toString());
+                                            var transaction = await creditController.getTransactionsList(creditModel!.id.toString());
+                                    Get.to(ShowCreditScreen(
+                                        transactionsList: transaction));
+                                  },
                                 ),
-                                //6
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].purchasePrice
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //5
-                                DataCell(
-                                  Text(
-                                    goodsController.goodsList[row].cartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //4
-                                DataCell(
-                                  Text(
-                                    goodsController.goodsList[row].goodsNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //3
-                                DataCell(
-                                  Text(
-                                    goodsController.goodsList[row].name
-                                        .toString(),
+                                    "${row + 1}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -167,7 +169,7 @@ class _StockScreenState extends State<StockScreen> {
                           label: "search", imgPath: "", isSearch: true)),
                   Spacer(),
                   Text(
-                    "1-3 of 6 Columns",
+                    "Total: ${creditController.getTotalCreditsForAllCustomers()}",
                     style: primaryTextStyle(color: whiteColor, size: 12),
                   )
                 ],
@@ -175,13 +177,6 @@ class _StockScreenState extends State<StockScreen> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(PurchaseScreen());
-        },
-        backgroundColor: primaryColor,
-        child: const Icon(Icons.add),
       ),
     );
   }

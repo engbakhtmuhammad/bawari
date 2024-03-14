@@ -1,6 +1,8 @@
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/view/Expense/expense.dart';
 import 'package:bawari/view/credit/cash_flow_info.dart';
+import 'package:bawari/view/credit/credit.dart';
+import 'package:bawari/view/credit/credit_info.dart';
 import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/dues/loan_info.dart';
@@ -91,7 +93,7 @@ Widget drawerWidget() {
               )),
           onTap: () {
             Get.back();
-            Get.to(DueScreen());
+            Get.to(CreditInfoScreen());
           },
         ),
         const Divider(),

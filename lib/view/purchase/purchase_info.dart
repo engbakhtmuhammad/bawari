@@ -2,6 +2,7 @@ import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/constants.dart';
@@ -21,20 +22,12 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "سامان",
-    "پیس تعداد",
     "کارتن تعداد",
     "في كارتن تعداد",
     "مکمل تعداد",
     "في تعدادقيمت",
-    "مکمل تعداد",
-    "في تعدادقيمت",
-  ];
-  List<List<String>> tableRows = [
-    ["1", "محمد صادق لشکرگاه", "12453"],
-    ["2", "با خان لشکرقا", "12453"],
-    ["3", "عبد الغفار كرئش", "12453"],
-    ["4", "حاجی محمد جان", "12453"],
-    ["5", "جیلانی لشکرگاه", "12453"],
+    "مکمل تعدادقيمت",
+    "تاریخ",
   ];
 
   
@@ -83,6 +76,10 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 style: boldTextStyle(color: whiteColor),
                               ),
                             ),
+                            const DataColumn(
+                            label: SizedBox
+                                .shrink(), // Empty space for the trash icon
+                          ),
                         ],
                         rows: [
                           for (var row = 0;
@@ -104,8 +101,8 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].date
-                                        .toString(),
+                                   "${ DateFormat('yyyy-MM-dd').format(purchaseController.purchaseList[row].date!
+                                        )}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -113,9 +110,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    purchaseController
-                                        .purchaseList[row].totalCount
-                                        .toString(),
+                                    "${int.parse(purchaseController.purchaseList[row].price.toString())*int.parse(purchaseController.purchaseList[row].totalCount.toString())}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -133,7 +128,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 DataCell(
                                   Text(
                                     purchaseController
-                                        .purchaseList[row].perCartonCount
+                                        .purchaseList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -143,7 +138,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 DataCell(
                                   Text(
                                     purchaseController
-                                        .purchaseList[row].cartonCount
+                                        .purchaseList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -152,7 +147,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //3
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].note
+                                    purchaseController.purchaseList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -160,14 +155,14 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 ),
 
                                 //2
-                                DataCell(
-                                  Text(
-                                    purchaseController.purchaseList[row].billNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
+                                // DataCell(
+                                //   Text(
+                                //     purchaseController.purchaseList[row].piec
+                                //         .toString(),
+                                //     textAlign: TextAlign.center,
+                                //     style: primaryTextStyle(size: 14),
+                                //   ),
+                                // ),
                                 //1
                                 DataCell(
                                   Text(
@@ -175,6 +170,19 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Center(
+                                    child: GestureDetector(
+                                      child: Padding(
+                                        padding:  EdgeInsets.only(left: defaultPadding),
+                                        child: Image.asset("assets/icons/print.png"),
+                                      ),
+                                      onTap: (){
+                                        // Add print option
+                                      }
+                                    )
                                   ),
                                 ),
                               ],

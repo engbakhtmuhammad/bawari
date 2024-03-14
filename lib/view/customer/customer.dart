@@ -18,7 +18,7 @@ class CustomerScreen extends StatefulWidget {
 class _CustomerScreenState extends State<CustomerScreen> {
   CustomerController customerController = Get.put(CustomerController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isActive=true;
+  bool isActive = true;
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "کسٹمر کا نمبر",
@@ -36,7 +36,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: appBarWidget(title: "کسٹمر",openDrawer: ()=>scaffoldKey.currentState?.openDrawer()),
+      appBar: appBarWidget(
+          title: "کسٹمر",
+          openDrawer: () => scaffoldKey.currentState?.openDrawer()),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
@@ -44,11 +46,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
             backContainerWidget(
                 child: Column(
               children: [
-                textFieldWidget(
-                    label: "کسٹمر کا نمبر",
-                    imgPath: "assets/icons/note.png",
-                    inputType: TextInputType.number,
-                    controller: customerController.customerNo),
+                // textFieldWidget(
+                //     label: "کسٹمر کا نمبر",
+                //     imgPath: "assets/icons/note.png",
+                //     inputType: TextInputType.number,
+                //     controller: customerController.customerNo),
                 textFieldWidget(
                     label: "کسٹمر کا نام",
                     imgPath: "assets/icons/id.png",
@@ -62,11 +64,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     imgPath: "assets/icons/phone.png",
                     inputType: TextInputType.phone,
                     controller: customerController.phone),
-                textFieldWidget(
-                    label: "قیمت فروخت",
-                    imgPath: "assets/icons/income.png",
-                    inputType: TextInputType.number,
-                    controller: customerController.price),
+                // textFieldWidget(
+                //     label: "قیمت فروخت",
+                //     imgPath: "assets/icons/income.png",
+                //     inputType: TextInputType.number,
+                //     controller: customerController.price),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -112,7 +114,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                             (states) => greyColor),
                         columnSpacing: 10.0,
                         columns: [
-                          
                           for (var i = tableColumns.length; i > 0; i--)
                             DataColumn(
                               numeric: true,
@@ -122,13 +123,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 style: boldTextStyle(color: whiteColor),
                               ),
                             ),
-                            const DataColumn(
+                          const DataColumn(
                             label: SizedBox
                                 .shrink(), // Empty space for the trash icon
                           ),
                         ],
-
-// Inside your DataRow
                         rows: [
                           for (var row = 0;
                               row < customerController.customerList.length;
@@ -146,7 +145,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 },
                               ),
                               cells: [
-                               
                                 //8
                                 DataCell(
                                   Text(
@@ -203,24 +201,28 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                 // Trash icon cell
+                                // Trash icon cell
                                 DataCell(
                                   Center(
-                                    child: GestureDetector(
-                                      child: Padding(
-                                        padding:  EdgeInsets.only(left: defaultPadding),
-                                        child: Image.asset("assets/icons/trash.png"),
-                                      ),
-                                      onTap: ()=>alertDialog(title: "ایا تاسو ډاډه یاست چې پیرودونکي حذف کړئ",onPressed: () {
-                                        // Add your delete logic here using customerController
-                                        customerController.deleteCustomer(
-                                            customerController
-                                                .customerList[row].id
-                                                .toString());
-                                                Get.back();
-                                      }),
-                                    )
-                                  ),
+                                      child: GestureDetector(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(left: defaultPadding),
+                                      child:
+                                          Image.asset("assets/icons/trash.png"),
+                                    ),
+                                    onTap: () => alertDialog(
+                                        title:
+                                            "ایا تاسو ډاډه یاست چې پیرودونکي حذف کړئ",
+                                        onPressed: () {
+                                          // Add your delete logic here using customerController
+                                          customerController.deleteCustomer(
+                                              customerController
+                                                  .customerList[row].id
+                                                  .toString());
+                                          Get.back();
+                                        }),
+                                  )),
                                 ),
                               ],
                             ),

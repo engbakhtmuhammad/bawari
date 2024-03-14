@@ -64,7 +64,14 @@ class CreditController extends GetxController {
               billNo: autoBillNo++
             ),
           ],
-          received: [],
+          received: [
+            Credit(
+              price: int.parse(received.text),
+              date: _parseDate(date.text),
+              address: address.text,
+              billNo: autoBillNo++
+            ),
+          ],
         );
 
         DocumentReference documentReference =
@@ -167,6 +174,17 @@ class CreditController extends GetxController {
     }
 
     return total;
+  }
+
+   int getTotalCreditsForAllCustomers() {
+    int totalCredits = 0;
+
+    for (var duesModel in creditList) {
+      var allTransactions = [...duesModel.credits ?? [], ...duesModel.received ?? []];
+      totalCredits += getTotalCredits(allTransactions);
+    }
+
+    return totalCredits;
   }
 
   int getTotalCredits(List transactionsList) {

@@ -246,7 +246,7 @@ List<String> tableColumns = [
                   Spacer(),
                   Text(
                     "توثل بقايا  ${duesController.getTotalDues(transactionsList)}",
-                    style: primaryTextStyle(color: whiteColor, size: 12),
+                    style: boldTextStyle(color: whiteColor),
                   )
                 ],
               ),

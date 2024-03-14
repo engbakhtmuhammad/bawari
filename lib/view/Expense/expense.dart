@@ -175,7 +175,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                       padding:
                                           EdgeInsets.only(left: defaultPadding),
                                       child: Image.asset(
-                                          "assets/icons/file_sync.png"),
+                                          "assets/icons/print.png"),
                                     ),
                                     onTap: () {},
                                   )),
