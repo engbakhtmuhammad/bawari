@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.almaraiTextTheme(), 
       ),
       getPages: pages,
-      home:  const DashboardScrreen(),
+      home:  const LoginScreen(),
     );
   }
 }
