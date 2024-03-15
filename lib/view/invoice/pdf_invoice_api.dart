@@ -9,11 +9,11 @@ class PdfInvoiceApi {
       List tableHeaders, List<List> tableData) async {
     final pdf = pw.Document();
 
-    final topImage = (await rootBundle.load('assets/bawari_top.png'))
+    final topImage = (await rootBundle.load('assets/images/bawari_top.png'))
         .buffer
         .asUint8List();
     final bottomImage =
-        (await rootBundle.load('assets/bawari_bottom.png'))
+        (await rootBundle.load('assets/images/bawari_bottom.png'))
             .buffer
             .asUint8List();
 
