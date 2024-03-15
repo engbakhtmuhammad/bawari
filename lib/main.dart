@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.almaraiTextTheme(), 
       ),
       getPages: pages,
-      home:   InvoiceScreen(),
+      home:   DashboardScrreen(),
     );
   }
 }
