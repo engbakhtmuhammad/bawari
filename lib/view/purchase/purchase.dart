@@ -21,6 +21,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
   GoodsController goodsController = Get.put(GoodsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  String goodsId='';
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -110,16 +111,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       purchaseController.name = value;
                       var goodsModel =
                           await goodsController.getGoodsByName(value);
+                          goodsId=goodsModel!.id!;
                       purchaseController.goodsNo.text =
-                          goodsModel!.goodsNo!.toString();
+                          goodsModel.goodsNo!.toString();
                       purchaseController.perCartonCount.text =
                           goodsModel.perCartonCount.toString();
                       purchaseController.price.text =
-                          goodsModel.salePrice.toString();
-                      // purchaseController.cartonCount.text =
-                      //     goodsModel.cartonCount.toString();
-                      purchaseController.price.text =
-                          goodsModel.salePrice.toString();
+                          goodsModel.purchasePrice.toString();
                       
                     },
                   ),
@@ -167,6 +165,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
                       onPressed: () {
+                        goodsController.updateGoodsCount(goodsId, int.parse(purchaseController.cartonCount.text));
                         purchaseController.addPurchase();
                       },
                     ),

@@ -50,7 +50,7 @@ class CreditController extends GetxController {
         await db.collection("credits").doc(existingCustomer.id!).update({
           'credits': existingCustomer.credits!.map((d) => d.toJson()).toList(),
         });
-        autoBillNo++;
+        autoBillNo+10;
       } else {
         // If customer name doesn't exist, add a new entry
         var creditEntry = CreditModel(
@@ -61,7 +61,7 @@ class CreditController extends GetxController {
               price: int.parse(credits.text),
               date: _parseDate(date.text),
               address: address.text,
-              billNo: autoBillNo++
+              billNo: autoBillNo
             ),
           ],
           received: [
@@ -69,7 +69,7 @@ class CreditController extends GetxController {
               price: int.parse(received.text),
               date: _parseDate(date.text),
               address: address.text,
-              billNo: autoBillNo++
+              billNo: autoBillNo
             ),
           ],
         );
@@ -84,7 +84,7 @@ class CreditController extends GetxController {
         creditEntry.id = creditId;
 
         await db.collection("credits").doc(creditId).update({'id': creditId});
-        autoBillNo++;
+        autoBillNo+10;
       }
 
       // Clear the text editing controllers after adding/updating the entry
@@ -146,7 +146,7 @@ class CreditController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
-            autoBillNo++;
+            autoBillNo+10;
       } else {
         Get.snackbar('Error', 'Customer Not Found!',
             snackPosition: SnackPosition.BOTTOM,
@@ -159,6 +159,7 @@ class CreditController extends GetxController {
       credits.clear();
       received.clear();
       address.clear();
+      
     } catch (e) {
       print('Error adding/updating credits entry: $e');
       // Handle the error

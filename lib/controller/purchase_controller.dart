@@ -13,7 +13,7 @@ class PurchaseController extends GetxController {
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController endDate = TextEditingController(
-      text: DateFormat('yyyy-MM-dd').format(DateTime(2024, 3, 3)));
+      text: DateFormat('yyyy-MM-dd').format(DateTime(2040, 3, 3)));
   TextEditingController date = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   String name = "";
@@ -85,7 +85,7 @@ class PurchaseController extends GetxController {
       price.clear();
 
       // Update bill controller value by adding 1
-      autoBillNo++;
+      autoBillNo+10;
       bill.text = autoBillNo.toString();
     } catch (e) {
       print('Error adding purchase: $e');

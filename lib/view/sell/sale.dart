@@ -3,6 +3,7 @@ import 'package:bawari/controller/customer_controller.dart';
 import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/controller/sale_controller.dart';
+import 'package:bawari/controller/savings_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:bawari/utils/text_styles.dart';
@@ -25,12 +26,16 @@ class _SellScreenState extends State<SellScreen> {
   CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
   PurchaseController purchaseController = Get.put(PurchaseController());
+  SavingsController savingsController = Get.put(SavingsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int totalCarton = 0;
   int? totalBill = 0;
   int remainingBill=0;
   int received=0;
   String customerId = '';
+  int purchasePrice=0;
+  int savings=0;
+  int cartonCount=0;
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -38,6 +43,7 @@ class _SellScreenState extends State<SellScreen> {
     "پیس تعداد",
     "کارتن تعداد",
     "في كارتن تعداد",
+    "جمله تعداد",
     "في تعدادقيمت",
     "مکمل تعدادقيمت",
   ];
@@ -126,6 +132,7 @@ class _SellScreenState extends State<SellScreen> {
                           await goodsController.getGoodsByName(value);
                       saleController.goodsNo.text =
                           goodsModel!.goodsNo!.toString();
+                          cartonCount=goodsModel.cartonCount!;
                       saleController.perCartonCount.text =
                           goodsModel.perCartonCount.toString();
                       saleController.price.text =
@@ -187,7 +194,7 @@ class _SellScreenState extends State<SellScreen> {
                         }
                       },
                       prefixText:
-                          "Cartons: ${goodsController.getTotalCartonCount()}"),
+                          "$cartonCount  :کارٹن تعداد"),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/corton_count.png",
@@ -204,13 +211,15 @@ class _SellScreenState extends State<SellScreen> {
                       label: "قیمت",
                       imgPath: "assets/icons/price.png",
                       inputType: TextInputType.number,
-                      controller: saleController.totalPrice,
-                      prefixText: "Sale Price: ${saleController.price.text}"),
+                      controller: saleController.price,
+                      prefixText: calculateTotal(),),
                       textFieldWidget(
                       label: "وصول",
                       imgPath: "assets/icons/income.png",
                       inputType: TextInputType.number,
-                      controller: saleController.receivedPrice,),
+                      controller: saleController.receivedPrice,onChange: (Value){
+                        received=int.parse(Value);
+                      }),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
@@ -224,11 +233,10 @@ class _SellScreenState extends State<SellScreen> {
                         goodsController.getGoods();
                         var goods = await goodsController
                             .getGoodsByName(saleController.name);
+                            purchasePrice = goods!.purchasePrice!;
+                            savingsController.addSavings(customerName: saleController.customerName, billNo: int.parse(saleController.bill.text), savings: savings, goodsName: saleController.name, totalCount: int.parse(saleController.totalCount.text), perPrice: int.parse(saleController.price.text), totalPrice: int.parse(saleController.totalPrice.text));
                         goodsController.updateGoodsCount(
-                            goods!.id.toString(),
-                            goods.cartonCount! -
-                                int.parse(saleController.cartonCount.text
-                                    .toString()));
+                            goods.id.toString(),-int.parse(saleController.cartonCount.text));
                         creditController.addCreditEntry();
 
                         saleController.addSale();
@@ -244,7 +252,6 @@ class _SellScreenState extends State<SellScreen> {
                   EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
               child: SellContainerWidget(
                 isBaqaya: false,
-                btnTitle: "نقد وصولي",
                 bill: totalBill,
                 cortonCount: totalCarton,
                 remaining: totalBill!-received,
@@ -257,11 +264,10 @@ class _SellScreenState extends State<SellScreen> {
               padding:
                   EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
               child: SellContainerWidget(
-                btnTitle: "سابقہ قیم وصولی",
                 isBaqaya: true,
-                bill: totalBill,
+                bill: totalBill!-received,
                 cortonCount: creditController.calculateNetAmountById(customerId),
-                remaining: totalBill!-creditController.calculateNetAmountById(customerId),
+                remaining: (totalBill!+creditController.calculateNetAmountById(customerId))-received,
               ),
             ),
             const SizedBox(
@@ -314,7 +320,7 @@ class _SellScreenState extends State<SellScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].price
+                                    saleController.saleList[row].totalPrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -323,6 +329,14 @@ class _SellScreenState extends State<SellScreen> {
                                 DataCell(
                                   Text(
                                     saleController.saleList[row].price
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                 DataCell(
+                                  Text(
+                                    saleController.saleList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -398,5 +412,22 @@ class _SellScreenState extends State<SellScreen> {
         ),
       ),
     );
+  }
+   String calculateTotal() {
+    try {
+      int price = int.parse(saleController.price.text ?? '0');
+      int totalCount = int.parse(saleController.totalCount.text ?? '0');
+      int total = price * totalCount;
+      setState(() {
+        saleController.totalPrice.text=total.toString();
+      savings=total-purchasePrice*totalCount;
+      print(">>>>>>>>>>>>>>>>>>>>SAVINGS: $savings");
+      });
+      return "$total :ٹوٹل";
+    } catch (e) {
+      // Handle the case where parsing fails
+      print("Error: Invalid input. Please enter valid numbers.");
+      return "ٹوٹل";
+    }
   }
 }

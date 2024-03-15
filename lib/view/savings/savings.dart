@@ -1,4 +1,5 @@
 import 'package:bawari/controller/sale_controller.dart';
+import 'package:bawari/controller/savings_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:bawari/utils/text_styles.dart';
@@ -14,16 +15,17 @@ class SavingScreen extends StatefulWidget {
 }
 
 class _SavingScreenState extends State<SavingScreen> {
-  SaleController saleController = Get.put(SaleController());
+  SavingsController savingsController = Get.put(SavingsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String customerId = '';
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
+    "بل نمبر",
+    "بچت",
+    "گراک",
     "سامان",
-    "پیس تعداد",
-    "کارتن تعداد",
-    "في كارتن تعداد",
+    "جمله تعداد",
     "في تعدادقيمت",
     "مکمل تعدادقيمت",
   ];
@@ -45,18 +47,18 @@ class _SavingScreenState extends State<SavingScreen> {
               imgPath: "assets/icons/calendar.png",
               title2: "اختتامي",
               imgPath2: "assets/icons/calendar.png",
-              dateController: saleController.endDate,
-              onPressed2: () => selectDate(saleController.endDate),
-              billController: saleController.startDate,
-              onPressed: () => selectDate(saleController.startDate),
+              dateController: savingsController.endDate,
+              onPressed2: () => selectDate(savingsController.endDate),
+              billController: savingsController.startDate,
+              onPressed: () => selectDate(savingsController.startDate),
             ),
             SizedBox(
               height: defaultPadding,
             ),
             Obx(() {
-              saleController.getSale();
+              savingsController.getSavings();
               return SizedBox(
-                  height: saleController.saleList.length * 50 + 60,
+                  height: savingsController.savingsList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -81,7 +83,7 @@ class _SavingScreenState extends State<SavingScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < saleController.saleList.length;
+                              row < savingsController.savingsList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -99,7 +101,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].price
+                                    savingsController.savingsList[row].totalPrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -107,7 +109,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].price
+                                    savingsController.savingsList[row].perPrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -115,7 +117,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].perCartonCount
+                                    savingsController.savingsList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -123,7 +125,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].cartonCount
+                                    savingsController.savingsList[row].goodsName
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -131,7 +133,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].pieceCount
+                                    savingsController.savingsList[row].customerName
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -139,12 +141,20 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].name
+                                    savingsController.savingsList[row].savings
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14,color: Colors.green),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    savingsController.savingsList[row].billNo
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
-                                ),
+                                )
                               ],
                             ),
                         ],

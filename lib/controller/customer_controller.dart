@@ -13,8 +13,6 @@ class CustomerController extends GetxController {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   var customerList = RxList<CustomerModel>();
-  int autoCustomerNo = 1;
-
   @override
   void onInit() async {
     await getCustomers();
@@ -50,9 +48,6 @@ void addCustomer() async {
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 3),
         backgroundColor: primaryColor);
-
-    // Increment autoCustomerNo
-    autoCustomerNo++;
 
     name.clear();
     address.clear();

@@ -18,8 +18,6 @@ class GoodsScreen extends StatefulWidget {
 class _GoodsScreenState extends State<GoodsScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  String? selectedValue;
-  // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "سامان",
     // "پیس تعداد",
@@ -62,6 +60,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                 textFieldWidget(
                     label: "کارٹن تعداد",
                     imgPath: "assets/icons/cortons.png",
+                    isReadOnly: true,
                     controller: goodsController.cartonCount,inputType: TextInputType.number),
                 textFieldWidget(
                     label: "في كارتن تعداد",

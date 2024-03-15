@@ -82,7 +82,7 @@ class SaleController extends GetxController {
         price.clear();
 
         // Update bill controller value by adding 1
-        autoBillNo++;
+        autoBillNo+10;
         bill.text = autoBillNo.toString();
       });
     } catch (e) {

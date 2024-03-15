@@ -32,7 +32,7 @@ class GoodsController extends GetxController {
         salePrice: int.tryParse(salePrice.text) ?? 0,
         purchasePrice: int.tryParse(purchasePrice.text) ?? 0,
         name: name.text,
-        cartonCount: int.tryParse(cartonCount.text) ?? 0,
+        cartonCount: 0,
         perCartonCount: int.tryParse(perCartonCount.text) ?? 0,
         pieceCount: int.tryParse(pieceCount.text) ?? 0,
         lineItem: lineItem,
@@ -118,33 +118,39 @@ int getTotalCartonCount() {
     return null; // Return null if no matching customer found
   }
 
-  Future<void> updateGoodsCount(
-      String goodsId,int newCartonCount) async {
-    try {
-      var goodsData = {
-        'cartonCount': newCartonCount,
-      };
+Future<void> updateGoodsCount(String goodsId, int newCartonCount) async {
+  try {
+    // Retrieve the current carton count from Firestore
+    var goodsDoc = await db.collection("goods").doc(goodsId).get();
+    var currentCartonCount = goodsDoc.data()?['cartonCount'] ?? 0;
 
-      await db
-          .collection("goods")
-          .doc(goodsId)
-          .update(goodsData)
-          .whenComplete(() {
-        print("Goods Count Updated");
-        getGoods();
+    // Calculate the new carton count based on the increment/decrement
+    var updatedCartonCount = currentCartonCount + newCartonCount;
 
-        Get.snackbar('Success', 'Goods count updated successfully!',
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 3),
-            backgroundColor: primaryColor);
-      });
-    } catch (e) {
-      print('Error updating goods count: $e');
+    // Ensure the updated carton count is not negative
+    updatedCartonCount = updatedCartonCount < 0 ? 0 : updatedCartonCount;
 
-      Get.snackbar('Error', 'Failed to update goods count. Please try again.',
+    var goodsData = {
+      'cartonCount': updatedCartonCount,
+    };
+
+    await db.collection("goods").doc(goodsId).update(goodsData).whenComplete(() {
+      print("Goods Count Updated");
+      getGoods();
+
+      Get.snackbar('Success', 'Goods count updated successfully!',
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
-          backgroundColor: Colors.red);
-    }
+          backgroundColor: primaryColor);
+    });
+  } catch (e) {
+    print('Error updating goods count: $e');
+
+    Get.snackbar('Error', 'Failed to update goods count. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red);
   }
+}
+
 }

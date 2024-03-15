@@ -1,4 +1,4 @@
-import 'package:bawari/view/widgets/custom_btn.dart';
+
 import 'package:flutter/material.dart';
 
 import '../../utils/colors.dart';
@@ -10,14 +10,13 @@ class SellContainerWidget extends StatelessWidget {
   final int? bill;
   final int? remaining;
   final bool? isBaqaya;
-  final String? btnTitle;
   const SellContainerWidget(
-      {super.key, this.bill, this.cortonCount, this.remaining, this.btnTitle,this.isBaqaya});
+      {super.key, this.bill, this.cortonCount, this.remaining,this.isBaqaya});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160,
+      height: 100,
       padding: EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
       width: double.infinity,
       decoration: BoxDecoration(
@@ -83,11 +82,6 @@ class SellContainerWidget extends StatelessWidget {
               
             ],
           ),
-          CustomButton(
-            onPressed: () {},
-            label: btnTitle,
-            backgroundColor: secondaryColor,
-          )
         ],
       ),
     );

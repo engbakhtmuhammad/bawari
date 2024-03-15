@@ -61,7 +61,7 @@ class ExpenseController extends GetxController {
           backgroundColor: primaryColor);
 
       // Increment autoBillNo for the next expense
-      autoBillNo++;
+      autoBillNo+10;
 
       price.clear();
       expenseType = "خرچه";

@@ -63,7 +63,7 @@ class DuesController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
-            autoBillNo++;
+            autoBillNo+10;
       } else {
         // If customer name doesn't exist, add a new entry
         var duesEntry = DuesModel(
@@ -95,7 +95,7 @@ class DuesController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
-            autoBillNo++;
+            autoBillNo+10;
       }
 
       // Clear the text editing controllers after adding/updating the entry
@@ -140,7 +140,7 @@ class DuesController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
-            autoBillNo++;
+            autoBillNo+10;
       } else {
         Get.snackbar('Error', 'Customer Not Found!',
             snackPosition: SnackPosition.BOTTOM,
