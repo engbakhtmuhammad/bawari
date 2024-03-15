@@ -24,6 +24,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
     "پیس تعداد",
     "کارتن تعداد",
     "في كارتن تعداد",
+    "جمله تعداد",
     "في تعدادقيمت",
     "مکمل تعدادقيمت",
   ];
@@ -78,6 +79,10 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 style: boldTextStyle(color: whiteColor),
                               ),
                             ),
+                            const DataColumn(
+                            label: SizedBox
+                                .shrink(), // Empty space for the trash icon
+                          ),
                         ],
                         rows: [
                           for (var row = 0;
@@ -99,6 +104,15 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 //8
                                 DataCell(
                                   Text(
+                                    "${int.parse(saleController.saleList[row].price
+                                        .toString())*int.parse(saleController.saleList[row].totalCount
+                                        .toString())}",
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
                                     saleController.saleList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
@@ -107,7 +121,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].price
+                                    saleController.saleList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -143,6 +157,19 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Center(
+                                    child: GestureDetector(
+                                      child: Padding(
+                                        padding:  EdgeInsets.only(left: defaultPadding),
+                                        child: Image.asset("assets/icons/print.png"),
+                                      ),
+                                      onTap: (){
+                                        // Add print option
+                                      }
+                                    )
                                   ),
                                 ),
                               ],

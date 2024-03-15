@@ -29,6 +29,7 @@ class _SellScreenState extends State<SellScreen> {
   int totalCarton = 0;
   int? totalBill = 0;
   int remainingBill=0;
+  int received=0;
   String customerId = '';
 
 // Example data, you can replace it with your dynamic data
@@ -205,12 +206,20 @@ class _SellScreenState extends State<SellScreen> {
                       inputType: TextInputType.number,
                       controller: saleController.totalPrice,
                       prefixText: "Sale Price: ${saleController.price.text}"),
+                      textFieldWidget(
+                      label: "وصول",
+                      imgPath: "assets/icons/income.png",
+                      inputType: TextInputType.number,
+                      controller: saleController.receivedPrice,),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
                       onPressed: () async {
+                        received=int.parse(saleController.receivedPrice.text);
                         creditController.credits.text =
                             saleController.totalPrice.text;
+                            creditController.received.text =
+                            saleController.receivedPrice.text;
                         creditController.date.text = saleController.date.text;
                         goodsController.getGoods();
                         var goods = await goodsController
@@ -238,7 +247,7 @@ class _SellScreenState extends State<SellScreen> {
                 btnTitle: "نقد وصولي",
                 bill: totalBill,
                 cortonCount: totalCarton,
-                remaining: totalBill,
+                remaining: totalBill!-received,
               ),
             ),
             const SizedBox(

@@ -25,6 +25,7 @@ class SaleController extends GetxController {
   TextEditingController perCartonCount = TextEditingController();
   TextEditingController totalCount = TextEditingController();
   TextEditingController totalPrice = TextEditingController();
+  TextEditingController receivedPrice= TextEditingController();
   TextEditingController price = TextEditingController();
 
   FirebaseFirestore db = FirebaseFirestore.instance;
