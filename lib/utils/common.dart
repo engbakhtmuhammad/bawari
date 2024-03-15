@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 
+import '../view/savings/savings.dart';
 import 'constants.dart';
 import 'text_styles.dart';
 
@@ -129,7 +130,7 @@ Widget drawerWidget() {
               )),
           onTap: () {
             Get.back();
-            Get.to(SellScreen());
+            Get.to(SavingScreen());
           },
         ),
         const Divider(),
