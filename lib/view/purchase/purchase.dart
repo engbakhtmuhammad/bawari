@@ -3,6 +3,7 @@ import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
+import 'package:bawari/view/invoice/mobile_invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +22,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
   GoodsController goodsController = Get.put(GoodsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  String goodsId='';
+  String goodsId = '';
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -111,14 +112,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       purchaseController.name = value;
                       var goodsModel =
                           await goodsController.getGoodsByName(value);
-                          goodsId=goodsModel!.id!;
+                      goodsId = goodsModel!.id!;
                       purchaseController.goodsNo.text =
                           goodsModel.goodsNo!.toString();
                       purchaseController.perCartonCount.text =
                           goodsModel.perCartonCount.toString();
                       purchaseController.price.text =
                           goodsModel.purchasePrice.toString();
-                      
                     },
                   ),
                   textFieldWidget(
@@ -135,14 +135,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       label: "کارٹن تعداد",
                       imgPath: "assets/icons/cortons.png",
                       inputType: TextInputType.number,
-                      
                       controller: purchaseController.cartonCount,
                       onChange: (value) {
                         purchaseController.totalCount.text = (int.parse(value) *
                                 int.parse(
                                     purchaseController.perCartonCount.text))
                             .toString();
-                            
                       }),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
@@ -165,7 +163,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
                       onPressed: () {
-                        goodsController.updateGoodsCount(goodsId, int.parse(purchaseController.cartonCount.text));
+                        goodsController.updateGoodsCount(goodsId,
+                            int.parse(purchaseController.cartonCount.text));
                         purchaseController.addPurchase();
                       },
                     ),
@@ -198,7 +197,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 style: boldTextStyle(color: whiteColor),
                               ),
                             ),
-                            const DataColumn(
+                          const DataColumn(
                             label: SizedBox
                                 .shrink(), // Empty space for the trash icon
                           ),
@@ -223,8 +222,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                   "${ DateFormat('yyyy-MM-dd').format(purchaseController.purchaseList[row].date!
-                                        )}",
+                                    "${DateFormat('yyyy-MM-dd').format(purchaseController.purchaseList[row].date!)}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -232,7 +230,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    "${int.parse(purchaseController.purchaseList[row].price.toString())*int.parse(purchaseController.purchaseList[row].totalCount.toString())}",
+                                    "${int.parse(purchaseController.purchaseList[row].price.toString()) * int.parse(purchaseController.purchaseList[row].totalCount.toString())}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -269,23 +267,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 //3
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].cartonCount
+                                    purchaseController
+                                        .purchaseList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-
-                                //2
-                                // DataCell(
-                                //   Text(
-                                //     purchaseController.purchaseList[row].piec
-                                //         .toString(),
-                                //     textAlign: TextAlign.center,
-                                //     style: primaryTextStyle(size: 14),
-                                //   ),
-                                // ),
-                                //1
                                 DataCell(
                                   Text(
                                     purchaseController.purchaseList[row].name
@@ -296,16 +284,21 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 ),
                                 DataCell(
                                   Center(
-                                    child: GestureDetector(
-                                      child: Padding(
-                                        padding:  EdgeInsets.only(left: defaultPadding),
-                                        child: Image.asset("assets/icons/print.png"),
-                                      ),
-                                      onTap: (){
-                                        // Add print option
-                                      }
-                                    )
-                                  ),
+                                      child: GestureDetector(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: defaultPadding),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Get.to(InvoiceScreen());
+                                              },
+                                              child: Image.asset(
+                                                  "assets/icons/print.png"),
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            // Add print option
+                                          })),
                                 ),
                               ],
                             ),
