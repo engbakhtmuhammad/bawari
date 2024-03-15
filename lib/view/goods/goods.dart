@@ -47,10 +47,10 @@ class _GoodsScreenState extends State<GoodsScreen> {
             backContainerWidget(
                 child: Column(
               children: [
-                textFieldWidget(
-                    label: "سامان کا نمبر",
-                    imgPath: "assets/icons/bill.png",
-                    controller: goodsController.goodsNo,inputType: TextInputType.number),
+                // textFieldWidget(
+                //     label: "سامان کا نمبر",
+                //     imgPath: "assets/icons/bill.png",
+                //     controller: goodsController.goodsNo,inputType: TextInputType.number),
                 textFieldWidget(
                     label: "سامان کا نام",
                     imgPath: "assets/icons/name.png",

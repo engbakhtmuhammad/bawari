@@ -6,8 +6,6 @@ import '../model/customer_model.dart';
 import '../utils/colors.dart';
 
 class CustomerController extends GetxController {
-  TextEditingController customerNo = TextEditingController();
-  TextEditingController price = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController phone = TextEditingController();
@@ -26,8 +24,6 @@ class CustomerController extends GetxController {
 void addCustomer() async {
   try {
     var customer = CustomerModel(
-      customerNo: int.parse(customerNo.text),
-      price: int.tryParse(price.text) ?? 0,
       name: name.text,
       address: address.text,
       phone: phone.text,
@@ -58,13 +54,10 @@ void addCustomer() async {
     // Increment autoCustomerNo
     autoCustomerNo++;
 
-    customerNo.clear();
-    price.clear();
     name.clear();
     address.clear();
     phone.clear();
     isActive = true;
-    customerNo.text = autoCustomerNo.toString();
   } catch (e) {
     print('Error adding customer: $e');
 

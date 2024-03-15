@@ -24,8 +24,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
     "کسٹمر کا نمبر",
     "کسٹمر کا نام",
     "کسٹمر کا پتہ",
-    "کسٹمر کا فون",
-    "قیمت فروخت",
     "دی او کھ نا"
   ];
   List<List<String>> tableRows = [
@@ -155,15 +153,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //7
-                                DataCell(
-                                  Text(
-                                    customerController.customerList[row].price
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
                                 //6
                                 DataCell(
                                   Text(
@@ -186,16 +175,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 DataCell(
                                   Text(
                                     customerController.customerList[row].name
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //3
-                                DataCell(
-                                  Text(
-                                    customerController
-                                        .customerList[row].customerNo
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
