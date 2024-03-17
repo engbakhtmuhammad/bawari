@@ -57,8 +57,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     ),
   ];
 
-
-
   final tableData = [
     [
       'Coffee',
@@ -311,23 +309,44 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                           child: Padding(
                                             padding: EdgeInsets.only(
                                                 left: defaultPadding),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                // generate pdf file
-
-                                                final pdfFile =
-                                                    await PdfInvoiceApi.generate(particulars: particulars, pieces: pieces, cartonCount: cartonCount, perCartonCount: perCartonCount, totalCount: totalCount, perPrice: perPrice, totalPrice: totalPrice, customerName: customerName, billNo: billNo, dues: dues, credit: credit, billTotal: billTotal, totalBagaya: totalBagaya)
-
-                                                // opening the pdf file
-                                                FileHandleApi.openFile(pdfFile);
-                                                // Get.to(InvoiceScreen());
-                                              },
-                                              child: Image.asset(
-                                                  "assets/icons/print.png"),
-                                            ),
+                                            child: Image.asset(
+                                                "assets/icons/print.png"),
                                           ),
-                                          onTap: () {
-                                            // Add print option
+                                          onTap: () async {
+                                            final pdfFile = await PdfInvoiceApi.generate(
+                                                particulars: purchaseController
+                                                    .purchaseList[row].name!,
+                                                pieces: purchaseController
+                                                    .purchaseList[row]
+                                                    .perCartonCount
+                                                    .toString(),
+                                                cartonCount: purchaseController
+                                                    .purchaseList[row]
+                                                    .cartonCount
+                                                    .toString(),
+                                                perCartonCount: purchaseController
+                                                    .purchaseList[row]
+                                                    .perCartonCount
+                                                    .toString(),
+                                                totalCount: purchaseController
+                                                    .purchaseList[row]
+                                                    .totalCount
+                                                    .toString(),
+                                                perPrice: purchaseController
+                                                    .purchaseList[row].price
+                                                    .toString(),
+                                                totalPrice:
+                                                    "${int.parse(purchaseController.purchaseList[row].totalCount.toString()) * int.parse(purchaseController.purchaseList[row].price.toString())}",
+                                                customerName: "0",
+                                                billNo: purchaseController.purchaseList[row].billNo.toString(),
+                                                dues: "0",
+                                                credit: "0",
+                                                billTotal: "0",
+                                                totalBagaya: "0");
+
+                                            // opening the pdf file
+                                            FileHandleApi.openFile(pdfFile);
+                                            // Get.to(InvoiceScreen());
                                           })),
                                 ),
                               ],

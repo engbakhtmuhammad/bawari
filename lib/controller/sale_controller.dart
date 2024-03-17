@@ -54,6 +54,7 @@ class SaleController extends GetxController {
         price: int.tryParse(price.text) ?? 0,
         billNo: int.tryParse(bill.text) ?? 0,
         date: DateFormat('MM/dd/yyyy').parse(date.text),
+        recievedCash: int.tryParse(receivedPrice.text) ?? 0,
       );
       var documentReference = await db.collection("sales").add(sale.toJson());
       var saleId = documentReference.id;
@@ -80,6 +81,7 @@ class SaleController extends GetxController {
         totalCount.clear();
         totalPrice.clear();
         price.clear();
+        receivedPrice.clear();
 
         // Update bill controller value by adding 1
         autoBillNo+10;

@@ -300,4 +300,31 @@ class CreditController extends GetxController {
 
     return netAmount;
   }
+
+  double getTotalDuesByName(String name) {
+  // Initialize the total dues variable
+  double totalDues = 0;
+
+  // Find the credit model for the customer by their name
+  var creditModel = creditList.firstWhere(
+    (element) => element.customerName == name,
+    orElse: () => CreditModel(), // Return an empty CreditModel if not found
+  );
+
+  // Calculate the total dues if the credit model is found
+  if (creditModel != null) {
+    // Calculate the total credits
+    double totalCredits = calculateCreditTotal(creditModel.credits ?? []);
+
+    // Calculate the total received
+    double totalReceived = calculateCreditTotal(creditModel.received ?? []);
+
+    // Calculate the total dues
+    totalDues = totalCredits - totalReceived;
+  }
+
+  // Return the total dues
+  return totalDues;
+}
+
 }

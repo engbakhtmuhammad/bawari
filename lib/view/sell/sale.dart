@@ -5,8 +5,10 @@ import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/controller/savings_controller.dart';
 import 'package:bawari/utils/common.dart';
+import 'package:bawari/view/invoice/sale_invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:bawari/utils/text_styles.dart';
+import '../invoice/file_handle_api.dart';
 import '../widgets/custom_btn.dart';
 import 'package:get/get.dart';
 import 'package:bawari/utils/colors.dart';
@@ -299,6 +301,7 @@ class _SellScreenState extends State<SellScreen> {
                                 style: boldTextStyle(color: whiteColor),
                               ),
                             ),
+                            DataColumn(label: SizedBox.shrink())
                         ],
                         rows: [
                           for (var row = 0;
@@ -373,6 +376,23 @@ class _SellScreenState extends State<SellScreen> {
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
+                                ),
+                                DataCell(
+                                  Center(
+                                      child: GestureDetector(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: defaultPadding),
+                                            child: Image.asset(
+                                                "assets/icons/print.png"),
+                                          ),
+                                          onTap: () async {
+                                            final baqaya = await creditController.getTotalDuesByName(saleController.saleList[row].customerName!);
+                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.saleList[row], baqaya: '0');
+                                            // opening the pdf file
+                                            FileHandleApi.openFile(pdfFile);
+                                            // Get.to(InvoiceScreen());
+                                          })),
                                 ),
                               ],
                             ),

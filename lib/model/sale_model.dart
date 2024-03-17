@@ -15,24 +15,24 @@ class SaleModel {
   int? price; // qeemat
   DateTime? date;
   int? totalPrice;
+  int? recievedCash;
 
-
-  SaleModel({
-    this.id,
-    this.goodsNo,
-    this.cartonCount,
-    this.perCartonCount,
-    this.totalCount,
-    this.price,
-    this.billNo,
-    this.name,
-    this.note,
-    this.pieceCount,
-    this.date,
-    this.totalPrice
-    ,this.customerId,
-    this.customerName
-  });
+  SaleModel(
+      {this.id,
+      this.goodsNo,
+      this.cartonCount,
+      this.perCartonCount,
+      this.totalCount,
+      this.price,
+      this.billNo,
+      this.name,
+      this.note,
+      this.pieceCount,
+      this.date,
+      this.totalPrice,
+      this.customerId,
+      this.customerName,
+      this.recievedCash});
 
   factory SaleModel.fromJson(Map<String, dynamic> json) {
     return SaleModel(
@@ -45,6 +45,7 @@ class SaleModel {
       price: json["price"],
       billNo: json["billNo"],
       name: json["name"],
+      recievedCash: json["recievedCash"],
       pieceCount: json['pieceCount'],
       customerId: json['customerId'],
       customerName: json['customerName'],
@@ -63,6 +64,7 @@ class SaleModel {
     data["price"] = price;
     data["billNo"] = billNo;
     data["name"] = name;
+    data["recievedCash"] = recievedCash;
     data['pieceCount'] = pieceCount;
     data['customerId'] = customerId;
     data['customerName'] = customerName;
