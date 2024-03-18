@@ -5,6 +5,8 @@ import 'package:bawari/utils/text_styles.dart';
 import 'package:get/get.dart';
 import 'package:bawari/utils/colors.dart';
 import '../../utils/constants.dart';
+import '../invoice/file_handle_api.dart';
+import '../invoice/sale_invoice.dart';
 
 class SaleInfoScreen extends StatefulWidget {
   const SaleInfoScreen({super.key});
@@ -166,9 +168,12 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                         padding:  EdgeInsets.only(left: defaultPadding),
                                         child: Image.asset("assets/icons/print.png"),
                                       ),
-                                      onTap: (){
-                                        // Add print option
-                                      }
+                                      onTap: () async {
+                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.saleList[row]);
+                                            // opening the pdf file
+                                            FileHandleApi.openFile(pdfFile);
+                                            // Get.to(InvoiceScreen());
+                                          }
                                     )
                                   ),
                                 ),

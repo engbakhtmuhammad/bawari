@@ -1,20 +1,15 @@
 import 'dart:io';
-import 'package:bawari/controller/credit_controller.dart';
+import 'package:bawari/model/purchase_model.dart';
 import 'package:bawari/model/sale_model.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'file_handle_api.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-class SaleInvoicePdf {
+class PurchaseInvoicePdf {
   static Future<File> generate(
-      {required SaleModel sale}) async {
+      {required PurchaseModel purchase}) async {
     final pdf = pw.Document();
-
-    CreditController creditController = Get.put(CreditController());
-    final baqaya = await creditController.getTotalDuesByName(sale.customerName.toString());
-    print(">>>>>>>Invoice Bagaya: $baqaya");
     final topImage = (await rootBundle.load('assets/images/bawari_top.png'))
         .buffer
         .asUint8List();
@@ -28,7 +23,6 @@ class SaleInvoicePdf {
 
     final tableHeaders = [
       'Particulars',
-      'Pieces',
       'Carton Qty',
       'Cartoon Price',
       'Total Qty',
@@ -37,7 +31,6 @@ class SaleInvoicePdf {
     ];
     final tableHeadersUrdu = [
       'تفصيل',
-      'بيس تعداد',
       'کارتن تعداد',
       'یو کارتن قیمت',
       'جمله تعداد',
@@ -47,13 +40,12 @@ class SaleInvoicePdf {
 
     final tableData = [
       [
-        sale.name,
-        sale.pieceCount.toString(),
-        sale.cartonCount.toString(),
-        sale.perCartonCount.toString(),
-        sale.totalCount.toString(),
-        sale.price.toString(),
-        sale.totalPrice.toString()
+        purchase.name,
+        purchase.cartonCount.toString(),
+        purchase.perCartonCount.toString(),
+        purchase.totalCount.toString(),
+        purchase.price.toString(),
+        "${int.parse(purchase.price.toString())*int.parse(purchase.totalCount.toString())}"
       ],
     ];
 
@@ -88,7 +80,7 @@ class SaleInvoicePdf {
                 ),
                 pw.SizedBox(width: 3),
                 pw.Text(
-                  "     ${sale.billNo.toString()}     ",
+                  "     ${purchase.billNo.toString()}     ",
                   style: pw.TextStyle(
                     font: ttf,
                     decoration: pw.TextDecoration.underline,
@@ -109,7 +101,7 @@ class SaleInvoicePdf {
               mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
                 pw.Text(
-                  "     ${sale.customerName.toString()}     ",
+                  " حاجی صالح محمد باوری ",
                   style: pw.TextStyle(
                     font: ttf,
                     decoration: pw.TextDecoration.underline,
@@ -178,7 +170,7 @@ class SaleInvoicePdf {
                 pw.SizedBox(
                   width: 50,
                   child: pw.Text(
-                  sale.totalPrice.toString(),
+                  "${int.parse(purchase.price.toString())*int.parse(purchase.totalCount.toString())}",
                   style: pw.TextStyle(
                     font: ttf,
                     fontWeight: pw.FontWeight.bold,
@@ -206,7 +198,7 @@ class SaleInvoicePdf {
                 ),
                 pw.SizedBox(width: 70),
                 pw.SizedBox(width: 50,child: pw.Text(
-                  sale.cartonCount.toString(),
+                  purchase.cartonCount.toString(),
                   style: pw.TextStyle(
                     font: ttf,
                     fontWeight: pw.FontWeight.bold,
@@ -236,65 +228,7 @@ class SaleInvoicePdf {
               pw.SizedBox(height: 10),
               pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(children: [
                 pw.SizedBox(width: 50,child: pw.Text(
-                  baqaya.toString(),
-                  style: pw.TextStyle(
-                    font: ttf,
-                    fontWeight: pw.FontWeight.bold,
-                    
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                )),
-                pw.SizedBox(width: 10),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "زوڑ حساب",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
-                      ),
-                      textDirection: pw.TextDirection.rtl,
-                    ),
-                  ),
-                ),
-                pw.SizedBox(width: 70),
-                pw.SizedBox(width: 50,child: pw.Text(
-                  sale.recievedCash.toString(),
-                  style: pw.TextStyle(
-                    font: ttf,
-                    fontWeight: pw.FontWeight.bold,
-                    
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                )),
-                pw.SizedBox(width: 10),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "نقد وصول",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
-                      ),
-                      textDirection: pw.TextDirection.rtl,
-                    ),
-                  ),
-                ),
-              ])),
-              pw.SizedBox(height: 10),
-              pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(children: [
-                pw.SizedBox(width: 50,child: pw.Text(
-                  "${sale.totalPrice! + double.parse(baqaya.toString())}",
+                  "${int.parse(purchase.price.toString())*int.parse(purchase.totalCount.toString())}",
                   style: pw.TextStyle(
                     font: ttf,
                     fontWeight: pw.FontWeight.bold,

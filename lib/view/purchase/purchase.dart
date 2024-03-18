@@ -4,6 +4,7 @@ import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
 import 'package:bawari/view/invoice/mobile_invoice.dart';
+import 'package:bawari/view/invoice/purchase_invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -312,38 +313,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                             child: Image.asset(
                                                 "assets/icons/print.png"),
                                           ),
-                                          onTap: () async {
-                                            final pdfFile = await PdfInvoiceApi.generate(
-                                                particulars: purchaseController
-                                                    .purchaseList[row].name!,
-                                                pieces: purchaseController
-                                                    .purchaseList[row]
-                                                    .perCartonCount
-                                                    .toString(),
-                                                cartonCount: purchaseController
-                                                    .purchaseList[row]
-                                                    .cartonCount
-                                                    .toString(),
-                                                perCartonCount: purchaseController
-                                                    .purchaseList[row]
-                                                    .perCartonCount
-                                                    .toString(),
-                                                totalCount: purchaseController
-                                                    .purchaseList[row]
-                                                    .totalCount
-                                                    .toString(),
-                                                perPrice: purchaseController
-                                                    .purchaseList[row].price
-                                                    .toString(),
-                                                totalPrice:
-                                                    "${int.parse(purchaseController.purchaseList[row].totalCount.toString()) * int.parse(purchaseController.purchaseList[row].price.toString())}",
-                                                customerName: "0",
-                                                billNo: purchaseController.purchaseList[row].billNo.toString(),
-                                                dues: "0",
-                                                credit: "0",
-                                                billTotal: "0",
-                                                totalBagaya: "0");
-
+                                         onTap: () async {
+                                            final pdfFile = await PurchaseInvoicePdf.generate(purchase: purchaseController.purchaseList[row]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());

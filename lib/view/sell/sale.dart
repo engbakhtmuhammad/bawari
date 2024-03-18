@@ -387,8 +387,7 @@ class _SellScreenState extends State<SellScreen> {
                                                 "assets/icons/print.png"),
                                           ),
                                           onTap: () async {
-                                            final baqaya = await creditController.getTotalDuesByName(saleController.saleList[row].customerName!);
-                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.saleList[row], baqaya: '0');
+                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.saleList[row]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());

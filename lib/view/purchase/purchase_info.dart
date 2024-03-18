@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import '../../utils/colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/text_styles.dart';
+import '../invoice/file_handle_api.dart';
+import '../invoice/purchase_invoice.dart';
 
 class PurchaseInfoScreen extends StatefulWidget {
   const PurchaseInfoScreen({super.key});
@@ -153,17 +155,6 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-
-                                //2
-                                // DataCell(
-                                //   Text(
-                                //     purchaseController.purchaseList[row].piec
-                                //         .toString(),
-                                //     textAlign: TextAlign.center,
-                                //     style: primaryTextStyle(size: 14),
-                                //   ),
-                                // ),
-                                //1
                                 DataCell(
                                   Text(
                                     purchaseController.purchaseList[row].name
@@ -179,9 +170,12 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                         padding:  EdgeInsets.only(left: defaultPadding),
                                         child: Image.asset("assets/icons/print.png"),
                                       ),
-                                      onTap: (){
-                                        // Add print option
-                                      }
+                                      onTap: () async {
+                                            final pdfFile = await PurchaseInvoicePdf.generate(purchase: purchaseController.purchaseList[row]);
+                                            // opening the pdf file
+                                            FileHandleApi.openFile(pdfFile);
+                                            // Get.to(InvoiceScreen());
+                                          }
                                     )
                                   ),
                                 ),
