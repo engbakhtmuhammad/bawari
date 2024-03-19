@@ -3,17 +3,13 @@ import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
-import 'package:bawari/view/invoice/mobile_invoice.dart';
 import 'package:bawari/view/invoice/purchase_invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 import '../../utils/constants.dart';
 import '../invoice/file_handle_api.dart';
-import '../invoice/pdf_invoice_api.dart';
 import '../widgets/custom_btn.dart';
 
 class PurchaseScreen extends StatefulWidget {
@@ -27,6 +23,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
   GoodsController goodsController = Get.put(GoodsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController _searchController = TextEditingController();
   String goodsId = '';
 
 // Example data, you can replace it with your dynamic data
@@ -195,9 +192,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               ),
             ),
             Obx(() {
-              purchaseController.getPurchasesBetweenDates();
+              purchaseController.filterPurchases(_searchController.text);
               return SizedBox(
-                  height: purchaseController.purchaseList.length * 50 + 60,
+                  height: purchaseController.filteredPurchases.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -226,7 +223,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < purchaseController.purchaseList.length;
+                              row < purchaseController.filteredPurchases.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -244,7 +241,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    "${DateFormat('yyyy-MM-dd').format(purchaseController.purchaseList[row].date!)}",
+                                    "${DateFormat('yyyy-MM-dd').format(purchaseController.filteredPurchases[row].date!)}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -252,7 +249,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    "${int.parse(purchaseController.purchaseList[row].price.toString()) * int.parse(purchaseController.purchaseList[row].totalCount.toString())}",
+                                    "${int.parse(purchaseController.filteredPurchases[row].price.toString()) * int.parse(purchaseController.filteredPurchases[row].totalCount.toString())}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -260,7 +257,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 //6
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].price
+                                    purchaseController.filteredPurchases[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -270,7 +267,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 DataCell(
                                   Text(
                                     purchaseController
-                                        .purchaseList[row].totalCount
+                                        .filteredPurchases[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -280,7 +277,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 DataCell(
                                   Text(
                                     purchaseController
-                                        .purchaseList[row].perCartonCount
+                                        .filteredPurchases[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -290,7 +287,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 DataCell(
                                   Text(
                                     purchaseController
-                                        .purchaseList[row].cartonCount
+                                        .filteredPurchases[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -298,7 +295,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].name
+                                    purchaseController.filteredPurchases[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -313,8 +310,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                             child: Image.asset(
                                                 "assets/icons/print.png"),
                                           ),
-                                         onTap: () async {
-                                            final pdfFile = await PurchaseInvoicePdf.generate(purchase: purchaseController.purchaseList[row]);
+                                          onTap: () async {
+                                            final pdfFile =
+                                                await PurchaseInvoicePdf.generate(
+                                                    purchase: purchaseController
+                                                        .filteredPurchases[row]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());
@@ -344,7 +344,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true)),
+                          label: "search",
+                          imgPath: "",
+                          isSearch: true,
+                          controller: _searchController,
+                          onChange: (value) =>
+                              purchaseController.filterPurchases(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",

@@ -30,11 +30,13 @@ class SaleController extends GetxController {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   var saleList = RxList<SaleModel>();
+  var filteredSaleList = <SaleModel>[].obs;
 
   @override
   void onInit() {
     bill.text = autoBillNo.toString(); // Assign autoBillNo to bill controller
     getSale();
+    filterSales('');
     super.onInit();
   }
 
@@ -133,5 +135,19 @@ class SaleController extends GetxController {
     }
 
     return totalPieceCount;
+  }
+
+      void filterSales(String query) {
+    if (query.isEmpty) {
+      // If the search query is empty, show all purchases
+      filteredSaleList.assignAll(saleList);
+    } else {
+      // If the search query is not empty, filter purchases by name
+      filteredSaleList.assignAll(
+        saleList.where(
+          (sale) => sale.name!.toLowerCase().contains(query.toLowerCase()),
+        ),
+      );
+    }
   }
 }

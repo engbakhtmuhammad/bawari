@@ -1,20 +1,25 @@
 import 'dart:io';
 import 'package:bawari/controller/credit_controller.dart';
+import 'package:bawari/controller/customer_controller.dart';
 import 'package:bawari/model/sale_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'file_handle_api.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class SaleInvoicePdf {
-  static Future<File> generate(
-      {required SaleModel sale}) async {
+  static Future<File> generate({required SaleModel sale}) async {
     final pdf = pw.Document();
 
     CreditController creditController = Get.put(CreditController());
-    final baqaya = await creditController.getTotalDuesByName(sale.customerName.toString());
-    print(">>>>>>>Invoice Bagaya: $baqaya");
+    CustomerController customerController = Get.put(CustomerController());
+    final baqaya =
+        await creditController.getTotalDuesByName(sale.customerName.toString());
+    var customer = await customerController
+        .getCustomerByName(sale.customerName.toString());
     final topImage = (await rootBundle.load('assets/images/bawari_top.png'))
         .buffer
         .asUint8List();
@@ -68,63 +73,114 @@ class SaleInvoicePdf {
               child: pw.Image(pw.MemoryImage(topImage), fit: pw.BoxFit.fill),
             ),
             pw.SizedBox(height: 1 * PdfPageFormat.mm),
-            pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              children: [
-                pw.Text(
-                  "     ${DateTime.now().toString()}     ",
-                  style: pw.TextStyle(
-                    font: ttf,
-                    decoration: pw.TextDecoration.underline,
+            pw.Directionality(
+              textDirection: pw.TextDirection.ltr,
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.end,
+                children: [
+                  pw.Column(children: [
+                    pw.Text(
+                      "     ${DateFormat('yyyy-MM-dd').format(DateTime.now())}     ",
+                      style: pw.TextStyle(
+                        font: ttf,
+                      ),
+                      textDirection: pw.TextDirection.rtl,
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Container(width: 100, height: 1, color: PdfColors.black)
+                  ]),
+                  pw.Text(
+                    "تاریخ",
+                    style:
+                        pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
+                    textDirection: pw.TextDirection.rtl,
                   ),
-                  textDirection: pw.TextDirection.rtl,
-                ),
-                pw.Text(
-                  "تاریخ",
-                  style: pw.TextStyle(
-                    font: ttf,
+                  pw.SizedBox(width: 10),
+                  pw.Column(children: [
+                    pw.Text(
+                      "     ${sale.billNo.toString()}     ",
+                      style: pw.TextStyle(
+                        font: ttf,
+                      ),
+                      textDirection: pw.TextDirection.rtl,
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Container(width: 100, height: 1, color: PdfColors.black)
+                  ]),
+                  pw.Text(
+                    "بل نمبر",
+                    style:
+                        pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
+                    textDirection: pw.TextDirection.rtl,
                   ),
-                  textDirection: pw.TextDirection.rtl,
-                ),
-                pw.SizedBox(width: 3),
-                pw.Text(
-                  "     ${sale.billNo.toString()}     ",
-                  style: pw.TextStyle(
-                    font: ttf,
-                    decoration: pw.TextDecoration.underline,
+                  pw.SizedBox(width: 10)
+                ],
+              ),
+            ),
+            pw.SizedBox(
+              height: 10,
+            ),
+            pw.Directionality(
+              textDirection: pw.TextDirection.ltr,
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.end,
+                children: [
+                  pw.Column(children: [
+                    pw.Text(
+                      "     ${customer!.phone.toString()}     ",
+                      style: pw.TextStyle(
+                        font: ttf,
+                      ),
+                      textDirection: pw.TextDirection.rtl,
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Container(width: 100, height: 1, color: PdfColors.black)
+                  ]),
+                  pw.Text(
+                    "فون نمبر",
+                    style:
+                        pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
+                    textDirection: pw.TextDirection.rtl,
                   ),
-                  textDirection: pw.TextDirection.rtl,
-                ),
-                pw.Text(
-                  "بل نمبر",
-                  style: pw.TextStyle(
-                    font: ttf,
+                  pw.SizedBox(width: 10),
+                  pw.Column(children: [
+                    pw.Text(
+                      "     ${customer.address.toString()}     ",
+                      style: pw.TextStyle(
+                        font: ttf,
+                      ),
+                      textDirection: pw.TextDirection.rtl,
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Container(width: 100, height: 1, color: PdfColors.black)
+                  ]),
+                  pw.Text(
+                    "حوالا ادرس",
+                    style:
+                        pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
+                    textDirection: pw.TextDirection.rtl,
                   ),
-                  textDirection: pw.TextDirection.rtl,
-                ),
-                pw.SizedBox(width: 3)
-              ],
-            ),),
-            pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              children: [
-                pw.Text(
-                  "     ${sale.customerName.toString()}     ",
-                  style: pw.TextStyle(
-                    font: ttf,
-                    decoration: pw.TextDecoration.underline,
+                  pw.SizedBox(width: 10),
+                  pw.Column(children: [
+                    pw.Text(
+                      "     ${sale.customerName.toString()}     ",
+                      style: pw.TextStyle(
+                        font: ttf,
+                      ),
+                      textDirection: pw.TextDirection.rtl,
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Container(width: 100, height: 1, color: PdfColors.black)
+                  ]),
+                  pw.Text(
+                    "نام",
+                    style:
+                        pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
+                    textDirection: pw.TextDirection.rtl,
                   ),
-                  textDirection: pw.TextDirection.rtl,
-                ),
-                pw.Text(
-                  "نام",
-                  style: pw.TextStyle(
-                    font: ttf,
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                ),
-              ],
-            ),),
+                ],
+              ),
+            ),
             pw.SizedBox(height: 1 * PdfPageFormat.mm),
             pw.SizedBox(height: 5 * PdfPageFormat.mm),
             pw.Table.fromTextArray(
@@ -138,254 +194,259 @@ class SaleInvoicePdf {
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#023047")),
               cellHeight: 30.0,
-              cellAlignments: {
-                0: pw.Alignment.centerLeft,
-                1: pw.Alignment.centerRight,
-                2: pw.Alignment.centerRight,
-                3: pw.Alignment.centerRight,
-                4: pw.Alignment.centerRight,
-              },
             ),
-           pw.Table.fromTextArray(
+            pw.Table.fromTextArray(
               headers: tableHeadersUrdu.reversed
                   .toList(), // Reverse the order of the headers
               data: tableData
                   .map((row) => row.reversed.toList())
                   .toList(), // Reverse the order of the data rows
-              border: null,
+              border: pw.TableBorder(
+                  verticalInside:
+                      pw.BorderSide(color: PdfColor.fromHex("#D3D3D3"))),
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
               headerStyle: pw.TextStyle(
-                font: ttf,
-                  fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                  font: ttf,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white),
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#EFB768")),
               cellHeight: 30.0,
+
               cellAlignments: {
-                0: pw.Alignment.centerRight,
-                1: pw.Alignment.centerLeft,
-                2: pw.Alignment.centerLeft,
-                3: pw.Alignment.centerLeft,
-                4: pw.Alignment.centerLeft,
-                5: pw.Alignment.centerLeft,
-                6: pw.Alignment.centerLeft,
+                0: pw.Alignment.center,
+                1: pw.Alignment.center,
+                2: pw.Alignment.center,
+                3: pw.Alignment.center,
+                4: pw.Alignment.center,
+                5: pw.Alignment.center,
+                6: pw.Alignment.center,
               },
             ),
             pw.Divider(),
             pw.Column(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
               pw.SizedBox(height: 100),
-              pw.Directionality(child: pw.Row(children: [
-                pw.SizedBox(
-                  width: 50,
-                  child: pw.Text(
-                  sale.totalPrice.toString(),
-                  style: pw.TextStyle(
-                    font: ttf,
-                    fontWeight: pw.FontWeight.bold,
-                    
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                ),),
-                pw.SizedBox(width: 10),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
+              pw.Directionality(
+                child: pw.Row(children: [
+                  pw.SizedBox(
+                    width: 50,
                     child: pw.Text(
-                      "بل تونل",
+                      sale.totalPrice.toString(),
                       style: pw.TextStyle(
                         font: ttf,
-                        color: PdfColors.white,
                         fontWeight: pw.FontWeight.bold,
-                        
                       ),
                       textDirection: pw.TextDirection.rtl,
                     ),
                   ),
-                ),
-                pw.SizedBox(width: 70),
-                pw.SizedBox(width: 50,child: pw.Text(
-                  sale.cartonCount.toString(),
-                  style: pw.TextStyle(
-                    font: ttf,
-                    fontWeight: pw.FontWeight.bold,
-                    
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                )),
-                pw.SizedBox(width: 10),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "کارتن تعداد",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
+                  pw.SizedBox(width: 10),
+                  pw.Container(
+                    height: 30,
+                    width: 70,
+                    color: PdfColor.fromHex("#EFB768"),
+                    child: pw.Center(
+                      child: pw.Text(
+                        "بل تونل",
+                        style: pw.TextStyle(
+                          font: ttf,
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                        textDirection: pw.TextDirection.rtl,
                       ),
-                      textDirection: pw.TextDirection.rtl,
                     ),
                   ),
-                ),
-              ]), textDirection: pw.TextDirection.ltr,),
+                  pw.SizedBox(width: 70),
+                  pw.SizedBox(
+                      width: 50,
+                      child: pw.Text(
+                        sale.cartonCount.toString(),
+                        style: pw.TextStyle(
+                          font: ttf,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                        textDirection: pw.TextDirection.rtl,
+                      )),
+                  pw.SizedBox(width: 10),
+                  pw.Container(
+                    height: 30,
+                    width: 70,
+                    color: PdfColor.fromHex("#EFB768"),
+                    child: pw.Center(
+                      child: pw.Text(
+                        "کارتن تعداد",
+                        style: pw.TextStyle(
+                          font: ttf,
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                        textDirection: pw.TextDirection.rtl,
+                      ),
+                    ),
+                  ),
+                ]),
+                textDirection: pw.TextDirection.ltr,
+              ),
               pw.SizedBox(height: 10),
-              pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(children: [
-                pw.SizedBox(width: 50,child: pw.Text(
-                  baqaya.toString(),
-                  style: pw.TextStyle(
-                    font: ttf,
-                    fontWeight: pw.FontWeight.bold,
-                    
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                )),
-                pw.SizedBox(width: 10),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "زوڑ حساب",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
+              pw.Directionality(
+                  textDirection: pw.TextDirection.ltr,
+                  child: pw.Row(children: [
+                    pw.SizedBox(
+                        width: 50,
+                        child: pw.Text(
+                          baqaya.toString(),
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.red,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        )),
+                    pw.SizedBox(width: 10),
+                    pw.Container(
+                      height: 30,
+                      width: 70,
+                      color: PdfColor.fromHex("#EFB768"),
+                      child: pw.Center(
+                        child: pw.Text(
+                          "زور حساب",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.white,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        ),
                       ),
-                      textDirection: pw.TextDirection.rtl,
                     ),
-                  ),
-                ),
-                pw.SizedBox(width: 70),
-                pw.SizedBox(width: 50,child: pw.Text(
-                  sale.recievedCash.toString(),
-                  style: pw.TextStyle(
-                    font: ttf,
-                    fontWeight: pw.FontWeight.bold,
-                    
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                )),
-                pw.SizedBox(width: 10),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "نقد وصول",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
+                    pw.SizedBox(width: 70),
+                    pw.SizedBox(
+                        width: 50,
+                        child: pw.Text(
+                          sale.recievedCash.toString(),
+                          style: pw.TextStyle(
+                            font: ttf,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        )),
+                    pw.SizedBox(width: 10),
+                    pw.Container(
+                      height: 30,
+                      width: 70,
+                      color: PdfColor.fromHex("#EFB768"),
+                      child: pw.Center(
+                        child: pw.Text(
+                          "نقد وصول",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.white,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        ),
                       ),
-                      textDirection: pw.TextDirection.rtl,
                     ),
-                  ),
-                ),
-              ])),
+                  ])),
               pw.SizedBox(height: 10),
-              pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(children: [
-                pw.SizedBox(width: 50,child: pw.Text(
-                  "${sale.totalPrice! + double.parse(baqaya.toString())}",
-                  style: pw.TextStyle(
-                    font: ttf,
-                    fontWeight: pw.FontWeight.bold,
-                    
-                  ),
-                  textDirection: pw.TextDirection.rtl,
-                )),
-                pw.SizedBox(width: 10),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "جمله بقايا",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
+              pw.Directionality(
+                  textDirection: pw.TextDirection.ltr,
+                  child: pw.Row(children: [
+                    pw.SizedBox(
+                        width: 50,
+                        child: pw.Text(
+                          "${sale.totalPrice! + double.parse(baqaya.toString())}",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        )),
+                    pw.SizedBox(width: 10),
+                    pw.Container(
+                      height: 30,
+                      width: 70,
+                      color: PdfColor.fromHex("#EFB768"),
+                      child: pw.Center(
+                        child: pw.Text(
+                          "جمله بقايا",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.white,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        ),
                       ),
-                      textDirection: pw.TextDirection.rtl,
                     ),
-                  ),
-                ),
-                pw.SizedBox(width: 200),
-                pw.Container(
-                  height: 30,
-                  width: 70,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "دستخط",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
+                    pw.SizedBox(width: 200),
+                    pw.Container(
+                      height: 30,
+                      width: 70,
+                      color: PdfColor.fromHex("#EFB768"),
+                      child: pw.Center(
+                        child: pw.Text(
+                          "دستخط",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.white,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        ),
                       ),
-                      textDirection: pw.TextDirection.rtl,
                     ),
-                  ),
-                ),
-              ])),
+                  ])),
               pw.SizedBox(height: 10),
-              pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(children: [
-                pw.Container(
-                  height: 30,
-                  width: 70 * 4,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "Salih اکاونٹ نمبر عزیزی بانک",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
+              pw.Directionality(
+                  textDirection: pw.TextDirection.ltr,
+                  child: pw.Row(children: [
+                    pw.Container(
+                      height: 30,
+                      width: 70 * 4,
+                      color: PdfColor.fromHex("#EFB768"),
+                      child: pw.Center(
+                        child: pw.Text(
+                          "Salih اکاونٹ نمبر عزیزی بانک",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.white,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        ),
                       ),
-                      textDirection: pw.TextDirection.rtl,
                     ),
-                  ),
-                ),
-              ])),
+                  ])),
               pw.SizedBox(height: 10),
-              pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(children: [
-                pw.Container(
-                  height: 30,
-                  width: 70 * 4,
-                  color: PdfColor.fromHex("#EFB768"),
-                  child: pw.Center(
-                    child: pw.Text(
-                      "008301201346923",
-                      style: pw.TextStyle(
-                        font: ttf,
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        
+              pw.Directionality(
+                  textDirection: pw.TextDirection.ltr,
+                  child: pw.Row(children: [
+                    pw.Container(
+                      height: 30,
+                      width: 70 * 4,
+                      color: PdfColor.fromHex("#EFB768"),
+                      child: pw.Center(
+                        child: pw.Text(
+                          "008301201346923",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.white,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        ),
                       ),
-                      textDirection: pw.TextDirection.rtl,
                     ),
-                  ),
-                ),
-              ]))
+                  ]))
             ])
           ];
         },
         footer: (context) {
           return pw.SizedBox(
             width: double.infinity,
-            height: 100,
+            height: 40,
             child:
                 pw.Image(pw.MemoryImage(bottomImage), fit: pw.BoxFit.fitWidth),
           );

@@ -30,6 +30,7 @@ class _SellScreenState extends State<SellScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
   SavingsController savingsController = Get.put(SavingsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  var _searchController = TextEditingController();
   int totalCarton = 0;
   int? totalBill = 0;
   int remainingBill=0;
@@ -277,9 +278,9 @@ class _SellScreenState extends State<SellScreen> {
             ),
 
             Obx(() {
-              saleController.getSale();
+              saleController.filterSales(_searchController.text);
               return SizedBox(
-                  height: saleController.saleList.length * 50 + 60,
+                  height: saleController.filteredSaleList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -305,7 +306,7 @@ class _SellScreenState extends State<SellScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < saleController.saleList.length;
+                              row < saleController.filteredSaleList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -323,7 +324,7 @@ class _SellScreenState extends State<SellScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].totalPrice
+                                    saleController.filteredSaleList[row].totalPrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -331,7 +332,7 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].price
+                                    saleController.filteredSaleList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -339,7 +340,7 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                  DataCell(
                                   Text(
-                                    saleController.saleList[row].totalCount
+                                    saleController.filteredSaleList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -347,7 +348,7 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].perCartonCount
+                                    saleController.filteredSaleList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -355,7 +356,7 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].cartonCount
+                                    saleController.filteredSaleList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -363,7 +364,7 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].pieceCount
+                                    saleController.filteredSaleList[row].pieceCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -371,7 +372,7 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].name
+                                    saleController.filteredSaleList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -387,7 +388,7 @@ class _SellScreenState extends State<SellScreen> {
                                                 "assets/icons/print.png"),
                                           ),
                                           onTap: () async {
-                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.saleList[row]);
+                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.filteredSaleList[row]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());
@@ -417,7 +418,7 @@ class _SellScreenState extends State<SellScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true)),
+                          label: "search", imgPath: "", isSearch: true,controller: _searchController,onChange: (value)=>saleController.filterSales(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",

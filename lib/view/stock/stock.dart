@@ -18,9 +18,9 @@ class StockScreen extends StatefulWidget {
 class _StockScreenState extends State<StockScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  var _searchController = TextEditingController();
    List<String> tableColumns = [
     "سامان کا نام",
-    "سامان کا نمبر",
     "کارٹن تعداد",
     "قیمت خرید",
     "قیمت فروخت",
@@ -38,9 +38,9 @@ class _StockScreenState extends State<StockScreen> {
           children: [
             SizedBox(height: defaultPadding,),
             Obx(() {
-              goodsController.getGoods();
+              goodsController.filterGoods(_searchController.text);
               return SizedBox(
-                  height: goodsController.goodsList.length * 50 + 60,
+                  height: goodsController.filterGoodsList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -65,7 +65,7 @@ class _StockScreenState extends State<StockScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < goodsController.goodsList.length;
+                              row < goodsController.filterGoodsList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -82,7 +82,7 @@ class _StockScreenState extends State<StockScreen> {
                               cells: [
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].lineItem
+                                    goodsController.filterGoodsList[row].lineItem
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -90,7 +90,7 @@ class _StockScreenState extends State<StockScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].isActive
+                                    goodsController.filterGoodsList[row].isActive
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -99,7 +99,7 @@ class _StockScreenState extends State<StockScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].salePrice
+                                    goodsController.filterGoodsList[row].salePrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -108,7 +108,7 @@ class _StockScreenState extends State<StockScreen> {
                                 //6
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].purchasePrice
+                                    goodsController.filterGoodsList[row].purchasePrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -117,25 +117,15 @@ class _StockScreenState extends State<StockScreen> {
                                 //5
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].cartonCount
+                                    goodsController.filterGoodsList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                //4
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].goodsNo
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                //3
-                                DataCell(
-                                  Text(
-                                    goodsController.goodsList[row].name
+                                    goodsController.filterGoodsList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -164,7 +154,7 @@ class _StockScreenState extends State<StockScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true)),
+                          label: "search", imgPath: "", isSearch: true,controller: _searchController,onChange: (value)=>goodsController.filterGoods(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",

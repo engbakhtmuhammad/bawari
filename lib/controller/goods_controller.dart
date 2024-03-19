@@ -18,10 +18,12 @@ class GoodsController extends GetxController {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   var goodsList = RxList<GoodsModel>();
+  var filterGoodsList = RxList<GoodsModel>();
 
   @override
   void onInit() async {
     await getGoods();
+    filterGoods('');
     super.onInit();
   }
 
@@ -152,5 +154,19 @@ Future<void> updateGoodsCount(String goodsId, int newCartonCount) async {
         backgroundColor: Colors.red);
   }
 }
+
+    void filterGoods(String query) {
+    if (query.isEmpty) {
+      // If the search query is empty, show all purchases
+      filterGoodsList.assignAll(goodsList);
+    } else {
+      // If the search query is not empty, filter purchases by name
+      filterGoodsList.assignAll(
+        goodsList.where(
+          (goods) => goods.name!.toLowerCase().contains(query.toLowerCase()),
+        ),
+      );
+    }
+  }
 
 }

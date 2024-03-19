@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/view/Expense/expense.dart';
 import 'package:bawari/view/credit/cash_flow_info.dart';
@@ -262,16 +264,14 @@ PreferredSizeWidget appBarWidget(
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pop(false); // User does not want to exit
+                              Get.back();
                             },
                             child: Text('نه',
                                 style: boldTextStyle(color: primaryColor)),
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pop(true); // User wants to exit
+                             exit(0);
                             },
                             child: Text('هو',
                                 style: boldTextStyle(color: primaryColor)),
@@ -280,7 +280,7 @@ PreferredSizeWidget appBarWidget(
                       );
                     },
                   )
-                : Get.to(DashboardScrreen()),
+                : Get.to(()=>DashboardScrreen()),
             icon: Image.asset(
               "assets/icons/back.png",
               width: 24,

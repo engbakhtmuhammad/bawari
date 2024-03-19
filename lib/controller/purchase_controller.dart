@@ -26,6 +26,9 @@ class PurchaseController extends GetxController {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   var purchaseList = RxList<PurchaseModel>();
+  final RxList<PurchaseModel> filteredPurchases = <PurchaseModel>[].obs;
+
+
 
   @override
   void onInit() async {
@@ -35,6 +38,7 @@ class PurchaseController extends GetxController {
     getTotalCartonCount();
     getTotalPrice();
     getPurchasesBetweenDates();
+    filterPurchases('');
     super.onInit();
   }
 
@@ -136,5 +140,19 @@ class PurchaseController extends GetxController {
             purchase.date!
                 .isBefore(DateFormat('yyyy-MM-dd').parse(endDate.text)))
         .toList();
+  }
+
+    void filterPurchases(String query) {
+    if (query.isEmpty) {
+      // If the search query is empty, show all purchases
+      filteredPurchases.assignAll(purchaseList);
+    } else {
+      // If the search query is not empty, filter purchases by name
+      filteredPurchases.assignAll(
+        purchaseList.where(
+          (purchase) => purchase.name!.toLowerCase().contains(query.toLowerCase()),
+        ),
+      );
+    }
   }
 }
