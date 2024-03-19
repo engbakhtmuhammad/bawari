@@ -20,11 +20,11 @@ class SaleInvoicePdf {
         await creditController.getTotalDuesByName(sale.customerName.toString());
     var customer = await customerController
         .getCustomerByName(sale.customerName.toString());
-    final topImage = (await rootBundle.load('assets/images/bawari_top.png'))
+    final topImage = (await rootBundle.load('assets/images/top.png'))
         .buffer
         .asUint8List();
     final bottomImage =
-        (await rootBundle.load('assets/images/bawari_bottom.png'))
+        (await rootBundle.load('assets/images/address.png'))
             .buffer
             .asUint8List();
     // Load the font file for 'Noto Naskh Arabic'
@@ -209,7 +209,7 @@ class SaleInvoicePdf {
               headerStyle: pw.TextStyle(
                   font: ttf,
                   fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.white),
+                  color: PdfColors.black,),
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#EFB768")),
               cellHeight: 30.0,
@@ -250,7 +250,7 @@ class SaleInvoicePdf {
                         "بل تونل",
                         style: pw.TextStyle(
                           font: ttf,
-                          color: PdfColors.white,
+                          color: PdfColors.black,
                           fontWeight: pw.FontWeight.bold,
                         ),
                         textDirection: pw.TextDirection.rtl,
@@ -278,7 +278,7 @@ class SaleInvoicePdf {
                         "کارتن تعداد",
                         style: pw.TextStyle(
                           font: ttf,
-                          color: PdfColors.white,
+                          color: PdfColors.black,
                           fontWeight: pw.FontWeight.bold,
                         ),
                         textDirection: pw.TextDirection.rtl,
@@ -313,7 +313,7 @@ class SaleInvoicePdf {
                           "زور حساب",
                           style: pw.TextStyle(
                             font: ttf,
-                            color: PdfColors.white,
+                            color: PdfColors.black,
                             fontWeight: pw.FontWeight.bold,
                           ),
                           textDirection: pw.TextDirection.rtl,
@@ -341,7 +341,7 @@ class SaleInvoicePdf {
                           "نقد وصول",
                           style: pw.TextStyle(
                             font: ttf,
-                            color: PdfColors.white,
+                            color: PdfColors.black,
                             fontWeight: pw.FontWeight.bold,
                           ),
                           textDirection: pw.TextDirection.rtl,
@@ -373,7 +373,7 @@ class SaleInvoicePdf {
                           "جمله بقايا",
                           style: pw.TextStyle(
                             font: ttf,
-                            color: PdfColors.white,
+                            color: PdfColors.black,
                             fontWeight: pw.FontWeight.bold,
                           ),
                           textDirection: pw.TextDirection.rtl,
@@ -390,7 +390,7 @@ class SaleInvoicePdf {
                           "دستخط",
                           style: pw.TextStyle(
                             font: ttf,
-                            color: PdfColors.white,
+                            color: PdfColors.black,
                             fontWeight: pw.FontWeight.bold,
                           ),
                           textDirection: pw.TextDirection.rtl,
@@ -403,19 +403,21 @@ class SaleInvoicePdf {
                   textDirection: pw.TextDirection.ltr,
                   child: pw.Row(children: [
                     pw.Container(
-                      height: 30,
+                      height: 40,
                       width: 70 * 4,
                       color: PdfColor.fromHex("#EFB768"),
                       child: pw.Center(
+                        child: pw.Padding(padding: pw.EdgeInsets.symmetric(horizontal: 10),
                         child: pw.Text(
-                          "Salih اکاونٹ نمبر عزیزی بانک",
+                          "ادرس: اوله ناحیه اتحاد مارکیت دویم منزل دکان نمبر 32،33 لشکرگاه، هیلمند افغانستان",
                           style: pw.TextStyle(
                             font: ttf,
-                            color: PdfColors.white,
+                            color: PdfColors.black,
                             fontWeight: pw.FontWeight.bold,
                           ),
+                          textAlign: pw.TextAlign.center,
                           textDirection: pw.TextDirection.rtl,
-                        ),
+                        ),)
                       ),
                     ),
                   ])),
@@ -427,30 +429,32 @@ class SaleInvoicePdf {
                       height: 30,
                       width: 70 * 4,
                       color: PdfColor.fromHex("#EFB768"),
-                      child: pw.Center(
+                     child: pw.Center(
+                        child: pw.Padding(padding: pw.EdgeInsets.symmetric(horizontal: 10),
                         child: pw.Text(
-                          "008301201346923",
+                          "SALEH BWARI LTD\nجواز نمبر55708",
                           style: pw.TextStyle(
                             font: ttf,
-                            color: PdfColors.white,
+                            color: PdfColors.black,
                             fontWeight: pw.FontWeight.bold,
                           ),
+                          textAlign: pw.TextAlign.center,
                           textDirection: pw.TextDirection.rtl,
-                        ),
+                        ),)
                       ),
                     ),
                   ]))
             ])
           ];
         },
-        footer: (context) {
-          return pw.SizedBox(
-            width: double.infinity,
-            height: 40,
-            child:
-                pw.Image(pw.MemoryImage(bottomImage), fit: pw.BoxFit.fitWidth),
-          );
-        },
+        // footer: (context) {
+        //   return pw.SizedBox(
+        //     width: double.infinity,
+        //     height: 40,
+        //     child:
+        //         pw.Image(pw.MemoryImage(bottomImage), fit: pw.BoxFit.fitWidth),
+        //   );
+        // },
       ),
     );
 

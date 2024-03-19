@@ -19,6 +19,7 @@ class ExpenseController extends GetxController {
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   var expenseList = RxList<ExpenseModel>();
+  var filterExpenseList = RxList<ExpenseModel>();
   int autoExpenseId = 1;
 
   @override
@@ -26,6 +27,7 @@ class ExpenseController extends GetxController {
     await getExpenses();
     // Assign autoBillNo to the billNo controller
     billNo = TextEditingController(text: autoBillNo.toString());
+    filterExpense('');
     super.onInit();
   }
 
@@ -115,5 +117,19 @@ class ExpenseController extends GetxController {
 
   List<ExpenseModel> getPurchasesByExpenseType(String type) {
     return expenseList.where((expense) => expense.expenseType == type).toList();
+  }
+
+    void filterExpense(String query) {
+    if (query.isEmpty) {
+      // If the search query is empty, show all purchases
+      filterExpenseList.assignAll(expenseList);
+    } else {
+      // If the search query is not empty, filter purchases by name
+      filterExpenseList.assignAll(
+        expenseList.where(
+          (expense) => expense.expenseType!.toLowerCase().contains(query.toLowerCase()),
+        ),
+      );
+    }
   }
 }

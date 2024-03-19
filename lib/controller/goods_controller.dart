@@ -73,9 +73,10 @@ class GoodsController extends GetxController {
     }
   }
 
-int getTotalCartonCount() {
+  int getTotalCartonCount() {
     return goodsList.fold(0, (sum, goods) => sum + goods.cartonCount!);
   }
+
   Future<void> getGoods() async {
     var goods = await db.collection("goods").get();
     goodsList.clear();
@@ -120,42 +121,46 @@ int getTotalCartonCount() {
     return null; // Return null if no matching customer found
   }
 
-Future<void> updateGoodsCount(String goodsId, int newCartonCount) async {
-  try {
-    // Retrieve the current carton count from Firestore
-    var goodsDoc = await db.collection("goods").doc(goodsId).get();
-    var currentCartonCount = goodsDoc.data()?['cartonCount'] ?? 0;
+  Future<void> updateGoodsCount(String goodsId, int newCartonCount) async {
+    try {
+      // Retrieve the current carton count from Firestore
+      var goodsDoc = await db.collection("goods").doc(goodsId).get();
+      var currentCartonCount = goodsDoc.data()?['cartonCount'] ?? 0;
 
-    // Calculate the new carton count based on the increment/decrement
-    var updatedCartonCount = currentCartonCount + newCartonCount;
+      // Calculate the new carton count based on the increment/decrement
+      var updatedCartonCount = currentCartonCount + newCartonCount;
 
-    // Ensure the updated carton count is not negative
-    updatedCartonCount = updatedCartonCount < 0 ? 0 : updatedCartonCount;
+      // Ensure the updated carton count is not negative
+      updatedCartonCount = updatedCartonCount < 0 ? 0 : updatedCartonCount;
 
-    var goodsData = {
-      'cartonCount': updatedCartonCount,
-    };
+      var goodsData = {
+        'cartonCount': updatedCartonCount,
+      };
 
-    await db.collection("goods").doc(goodsId).update(goodsData).whenComplete(() {
-      print("Goods Count Updated");
-      getGoods();
+      await db
+          .collection("goods")
+          .doc(goodsId)
+          .update(goodsData)
+          .whenComplete(() {
+        print("Goods Count Updated");
+        getGoods();
 
-      Get.snackbar('Success', 'Goods count updated successfully!',
+        Get.snackbar('Success', 'Goods count updated successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+            backgroundColor: primaryColor);
+      });
+    } catch (e) {
+      print('Error updating goods count: $e');
+
+      Get.snackbar('Error', 'Failed to update goods count. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
-          backgroundColor: primaryColor);
-    });
-  } catch (e) {
-    print('Error updating goods count: $e');
-
-    Get.snackbar('Error', 'Failed to update goods count. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 3),
-        backgroundColor: Colors.red);
+          backgroundColor: Colors.red);
+    }
   }
-}
 
-    void filterGoods(String query) {
+  void filterGoods(String query) {
     if (query.isEmpty) {
       // If the search query is empty, show all purchases
       filterGoodsList.assignAll(goodsList);
@@ -168,5 +173,4 @@ Future<void> updateGoodsCount(String goodsId, int newCartonCount) async {
       );
     }
   }
-
 }

@@ -19,6 +19,7 @@ class ExpenseInfoScreen extends StatefulWidget {
 class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
   ExpenseController expenseController = Get.put(ExpenseController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  var _searchController = TextEditingController();
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "تمبر",
@@ -73,9 +74,9 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
               onPressed2: () => selectDate(expenseController.endDate),
             ),
             Obx(() {
-              expenseController.getExpenses();
+              expenseController.filterExpense(_searchController.text);
               return SizedBox(
-                  height: expenseController.expenseList.length * 50 + 60,
+                  height: expenseController.filterExpenseList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -104,7 +105,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < expenseController.expenseList.length;
+                              row < expenseController.filterExpenseList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -124,7 +125,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                   Text(
                                     DateFormat('yyyy-MM-dd').format(
                                         expenseController
-                                                .expenseList[row].date ??
+                                                .filterExpenseList[row].date ??
                                             DateTime.now()),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -133,7 +134,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    expenseController.expenseList[row].note
+                                    expenseController.filterExpenseList[row].note
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -142,7 +143,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                 //6
                                 DataCell(
                                   Text(
-                                    expenseController.expenseList[row].price
+                                    expenseController.filterExpenseList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -152,7 +153,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                 DataCell(
                                   Text(
                                     expenseController
-                                        .expenseList[row].expenseType
+                                        .filterExpenseList[row].expenseType
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -161,7 +162,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                 //4
                                 DataCell(
                                   Text(
-                                    expenseController.expenseList[row].billNo
+                                    expenseController.filterExpenseList[row].billNo
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -203,7 +204,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true)),
+                          label: "search", imgPath: "", isSearch: true,controller: _searchController,onChange: (value)=>expenseController.filterExpense(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",

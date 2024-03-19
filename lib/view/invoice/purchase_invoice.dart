@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:bawari/model/purchase_model.dart';
-import 'package:bawari/model/sale_model.dart';
 import 'package:flutter/services.dart';
 import 'file_handle_api.dart';
 import 'package:pdf/pdf.dart';
@@ -10,7 +9,7 @@ class PurchaseInvoicePdf {
   static Future<File> generate(
       {required PurchaseModel purchase}) async {
     final pdf = pw.Document();
-    final topImage = (await rootBundle.load('assets/images/bawari_top.png'))
+    final topImage = (await rootBundle.load('assets/images/top.png'))
         .buffer
         .asUint8List();
     final bottomImage =

@@ -3,6 +3,7 @@ import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
 import 'package:bawari/view/credit/show_credit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -21,6 +22,7 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   CreditController creditController = Get.put(CreditController());
   DuesController customerController = Get.put(DuesController());
+  var _searchController = TextEditingController();
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
     "نمبر",
@@ -35,6 +37,7 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +51,10 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
         child: Column(
           children: [
             Obx(() {
-              creditController.getCreditEntries();
+              creditController.filterCredits(_searchController.text);
+              creditController.updateTotalCredits();
               return SizedBox(
-                  height: creditController.creditList.length * 50 + 60,
+                  height: creditController.filterCreditList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -75,7 +79,7 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < creditController.creditList.length;
+                              row < creditController.filterCreditList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -92,8 +96,8 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
                               cells: [
                                 DataCell(
                                   Text(
-                                    creditController
-                                        .creditList[row].credits![0].address
+                                    creditController.filterCreditList[row]
+                                        .credits![0].address
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -102,8 +106,8 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
                                 DataCell(
                                   Text(
                                     DateFormat('yyyy-MM-dd').format(
-                                        creditController
-                                            .creditList[row].credits![0].date!),
+                                        creditController.filterCreditList[row]
+                                            .credits![0].date!),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -112,7 +116,7 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
                                   Text(
                                     creditController
                                         .calculateCreditTotal(creditController
-                                            .creditList[row].credits!)
+                                            .filterCreditList[row].credits!)
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -121,7 +125,7 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
                                 DataCell(
                                   Text(
                                     creditController
-                                        .creditList[row].customerName
+                                        .filterCreditList[row].customerName
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -129,9 +133,11 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
                                   onTap: () async {
                                     var creditModel = await creditController
                                         .getCreditByName(creditController
-                                            .creditList[row].customerName
+                                            .filterCreditList[row].customerName
                                             .toString());
-                                            var transaction = await creditController.getTransactionsList(creditModel!.id.toString());
+                                    var transaction = await creditController
+                                        .getTransactionsList(
+                                            creditModel!.id.toString());
                                     Get.to(ShowCreditScreen(
                                         transactionsList: transaction));
                                   },
@@ -166,11 +172,18 @@ class _CreditInfoScreenState extends State<CreditInfoScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true)),
+                          label: "search",
+                          imgPath: "",
+                          isSearch: true,
+                          controller: _searchController,
+                          onChange: (value) =>
+                              creditController.filterCredits(value))),
                   Spacer(),
                   Text(
-                    "Total: ${creditController.getTotalCreditsForAllCustomers()}",
-                    style: primaryTextStyle(color: whiteColor, size: 12),
+                    "توثل بقايا  ${creditController.totalNetCredits}",
+                    style: boldTextStyle(
+                      color: whiteColor,
+                    ),
                   )
                 ],
               ),

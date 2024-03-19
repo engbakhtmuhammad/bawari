@@ -18,6 +18,7 @@ class CustomerScreen extends StatefulWidget {
 class _CustomerScreenState extends State<CustomerScreen> {
   CustomerController customerController = Get.put(CustomerController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  var _searchController = TextEditingController();
   bool isActive = true;
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -97,9 +98,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
             )),
             // TableWidget(tableRows: tableRows, tableColumns: tableColumns),
             Obx(() {
-              customerController.getCustomers();
+              customerController.filterCustomers(_searchController.text);
               return SizedBox(
-                  height: customerController.customerList.length * 50 + 60,
+                  height: customerController.filteredCustomerList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -128,7 +129,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < customerController.customerList.length;
+                              row < customerController.filteredCustomerList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -147,7 +148,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 DataCell(
                                   Text(
                                     customerController
-                                        .customerList[row].isActive
+                                        .filteredCustomerList[row].isActive
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -156,7 +157,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 //6
                                 DataCell(
                                   Text(
-                                    customerController.customerList[row].phone
+                                    customerController.filteredCustomerList[row].phone
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -165,7 +166,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 //5
                                 DataCell(
                                   Text(
-                                    customerController.customerList[row].address
+                                    customerController.filteredCustomerList[row].address
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -174,7 +175,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 //4
                                 DataCell(
                                   Text(
-                                    customerController.customerList[row].name
+                                    customerController.filteredCustomerList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -197,7 +198,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                           // Add your delete logic here using customerController
                                           customerController.deleteCustomer(
                                               customerController
-                                                  .customerList[row].id
+                                                  .filteredCustomerList[row].id
                                                   .toString());
                                           Get.back();
                                         }),
@@ -226,7 +227,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true)),
+                          label: "search", imgPath: "", isSearch: true,controller: _searchController,onChange: (value)=>customerController.filterCustomers(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",

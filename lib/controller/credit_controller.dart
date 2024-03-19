@@ -10,6 +10,9 @@ import '../utils/colors.dart';
 class CreditController extends GetxController {
   FirebaseFirestore db = FirebaseFirestore.instance;
   var creditList = RxList<CreditModel>();
+  var filterCreditList = RxList<CreditModel>();
+  
+  int totalNetCredits = 0;
 
   TextEditingController date = TextEditingController(
     text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
@@ -23,6 +26,8 @@ class CreditController extends GetxController {
   @override
   void onInit() async {
     await getCreditEntries();
+    filterCredits('');
+    getTotalCreditsForAllCustomers();
     super.onInit();
   }
 
@@ -39,18 +44,17 @@ class CreditController extends GetxController {
         // If customer name exists, update the existing entry
         existingCustomer.credits!.add(
           Credit(
-            price: int.parse(credits.text),
-            date: _parseDate(date.text),
-            address: address.text,
-            billNo: autoBillNo
-          ),
+              price: int.parse(credits.text),
+              date: _parseDate(date.text),
+              address: address.text,
+              billNo: autoBillNo),
         );
 
         // Update the existing document in Firestore
         await db.collection("credits").doc(existingCustomer.id!).update({
           'credits': existingCustomer.credits!.map((d) => d.toJson()).toList(),
         });
-        autoBillNo+10;
+        autoBillNo + 10;
       } else {
         // If customer name doesn't exist, add a new entry
         var creditEntry = CreditModel(
@@ -58,19 +62,17 @@ class CreditController extends GetxController {
           customerName: customerName,
           credits: [
             Credit(
-              price: int.parse(credits.text),
-              date: _parseDate(date.text),
-              address: address.text,
-              billNo: autoBillNo
-            ),
+                price: int.parse(credits.text),
+                date: _parseDate(date.text),
+                address: address.text,
+                billNo: autoBillNo),
           ],
           received: [
             Credit(
-              price: int.parse(received.text),
-              date: _parseDate(date.text),
-              address: address.text,
-              billNo: autoBillNo
-            ),
+                price: int.parse(received.text),
+                date: _parseDate(date.text),
+                address: address.text,
+                billNo: autoBillNo),
           ],
         );
 
@@ -84,7 +86,7 @@ class CreditController extends GetxController {
         creditEntry.id = creditId;
 
         await db.collection("credits").doc(creditId).update({'id': creditId});
-        autoBillNo+10;
+        autoBillNo + 10;
       }
 
       // Clear the text editing controllers after adding/updating the entry
@@ -129,11 +131,10 @@ class CreditController extends GetxController {
         // If customer name exists, update the existing entry
         existingCustomer.received!.add(
           Credit(
-            price: int.parse("-${received.text}"),
-            date: _parseDate(date.text),
-            address: address.text,
-            billNo: autoBillNo
-          ),
+              price: int.parse("-${received.text}"),
+              date: _parseDate(date.text),
+              address: address.text,
+              billNo: autoBillNo),
         );
 
         // Update the existing document in Firestore
@@ -146,7 +147,7 @@ class CreditController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
-            autoBillNo+10;
+        autoBillNo + 10;
       } else {
         Get.snackbar('Error', 'Customer Not Found!',
             snackPosition: SnackPosition.BOTTOM,
@@ -159,7 +160,6 @@ class CreditController extends GetxController {
       credits.clear();
       received.clear();
       address.clear();
-      
     } catch (e) {
       print('Error adding/updating credits entry: $e');
       // Handle the error
@@ -177,16 +177,29 @@ class CreditController extends GetxController {
     return total;
   }
 
-   int getTotalCreditsForAllCustomers() {
-    int totalCredits = 0;
+ int getTotalCreditsForAllCustomers() {
+  int total=0;
+  for (var creditModel in creditList) {
+    // Calculate the total credits for each customer
+    int totalCredits = getTotalCredits(creditModel.credits ?? []);
 
-    for (var duesModel in creditList) {
-      var allTransactions = [...duesModel.credits ?? [], ...duesModel.received ?? []];
-      totalCredits += getTotalCredits(allTransactions);
-    }
+    // Calculate the total received for each customer
+    int totalReceived = getTotalCredits(creditModel.received ?? []);
 
-    return totalCredits;
+    // Calculate the net credits for each customer
+    int netCredits = totalCredits - totalReceived;
+
+    // Add the net credits to the total net credits
+    total += netCredits;
   }
+
+  return total;
+}
+ void updateTotalCredits() {
+    totalNetCredits = getTotalCreditsForAllCustomers();
+    update();
+  }
+
 
   int getTotalCredits(List transactionsList) {
     int totalDues = 0;
@@ -274,7 +287,7 @@ class CreditController extends GetxController {
     return total;
   }
 
- int calculateNetAmountById(String customerId) {
+  int calculateNetAmountById(String customerId) {
     var creditModel = creditList.firstWhere(
       (element) => element.customerId == customerId,
       orElse: () => CreditModel(),
@@ -294,7 +307,6 @@ class CreditController extends GetxController {
     }
     // print(">>>>>>>>>>>.. ${creditModel.received![0].price}");
 
-
     // Convert to int if you want to discard the decimal part
     int netAmount = (totalCredit - totalReceived).toInt();
 
@@ -302,29 +314,42 @@ class CreditController extends GetxController {
   }
 
   double getTotalDuesByName(String name) {
-  // Initialize the total dues variable
-  double totalDues = 0;
+    // Initialize the total dues variable
+    double totalDues = 0;
 
-  // Find the credit model for the customer by their name
-  var creditModel = creditList.firstWhere(
-    (element) => element.customerName == name,
-    orElse: () => CreditModel(), // Return an empty CreditModel if not found
-  );
+    // Find the credit model for the customer by their name
+    var creditModel = creditList.firstWhere(
+      (element) => element.customerName == name,
+      orElse: () => CreditModel(), // Return an empty CreditModel if not found
+    );
 
-  // Calculate the total dues if the credit model is found
-  if (creditModel != null) {
-    // Calculate the total credits
-    double totalCredits = calculateCreditTotal(creditModel.credits ?? []);
+    // Calculate the total dues if the credit model is found
+    if (creditModel != null) {
+      // Calculate the total credits
+      double totalCredits = calculateCreditTotal(creditModel.credits ?? []);
 
-    // Calculate the total received
-    double totalReceived = calculateCreditTotal(creditModel.received ?? []);
+      // Calculate the total received
+      double totalReceived = calculateCreditTotal(creditModel.received ?? []);
 
-    // Calculate the total dues
-    totalDues = totalCredits - totalReceived;
+      // Calculate the total dues
+      totalDues = totalCredits - totalReceived;
+    }
+
+    // Return the total dues
+    return totalDues;
   }
-
-  // Return the total dues
-  return totalDues;
-}
-
+   void filterCredits(String query) {
+    if (query.isEmpty) {
+      // If the search query is empty, show all purchases
+      filterCreditList.assignAll(creditList);
+    } else {
+      // If the search query is not empty, filter purchases by name
+      filterCreditList.assignAll(
+        creditList.where(
+          (credit) =>
+              credit.customerName!.toLowerCase().contains(query.toLowerCase()),
+        ),
+      );
+    }
+  }
 }
