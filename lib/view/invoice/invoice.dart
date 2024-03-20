@@ -19,18 +19,24 @@ class InvoiceScreen extends StatefulWidget {
 class _InvoiceScreenState extends State<InvoiceScreen> {
   final double containerWidth = 2480.0;
   final double containerHeight = 1748.0;
-  List<String> tableColumns = [
-    "گیراک نمبر",
-    "گیراک نام",
-    "بقیہ پیسے",
-  ];
-  List<List<String>> tableRows = [
-    ["1", "محمد صادق لشکرگاه", "12453"],
-    ["2", "با خان لشکرقا", "12453"],
-    ["3", "عبد الغفار كرئش", "12453"],
-    ["4", "حاجی محمد جان", "12453"],
-    ["5", "جیلانی لشکرگاه", "12453"],
-  ];
+  final tableHeaders = [
+      'Particulars',
+      'Pieces',
+      'Carton Qty',
+      'Cartoon Price',
+      'Total Qty',
+      'Price',
+      'Total Amount'
+    ];
+    final tableHeadersUrdu = [
+      'تفصيل',
+      'بيس تعداد',
+      'کارتن تعداد',
+      'یو کارتن قیمت',
+      'جمله تعداد',
+      'قیمت',
+      'جمله قیمت'
+    ];
 
   @override
   Widget build(BuildContext context) {
@@ -125,22 +131,22 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   Row(
                     children: [
                       titleContainer(
-                          title: "Total Price",
+                          title: tableHeaders[6],
                           color: Color(0xff87292A),
                           width: 63),
                       titleContainer(
-                          title: "Guess", color: Color(0xff87292A), width: 28),
+                          title: tableHeaders[5], color: Color(0xff87292A), width: 28),
                       titleContainer(
-                          title: "Guess", color: Color(0xff87292A), width: 28),
+                          title: tableHeaders[4], color: Color(0xff87292A), width: 28),
                       titleContainer(
-                          title: "Guess", color: Color(0xff87292A), width: 28),
+                          title: tableHeaders[3], color: Color(0xff87292A), width: 28),
                       titleContainer(
-                          title: "Guess", color: Color(0xff87292A), width: 28),
+                          title: tableHeaders[2], color: Color(0xff87292A), width: 28),
                       titleContainer(
-                          title: "Guess", color: Color(0xff87292A), width: 28),
+                          title: tableHeaders[1], color: Color(0xff87292A), width: 28),
                       Expanded(
                         child: titleContainer(
-                            title: "Guess", color: Color(0xff87292A), width: 100),
+                            title: tableHeaders[0], color: Color(0xff87292A), width: 100),
                       ),
                       titleContainer(
                           title: "No", color: Color(0xff87292A), width: 15),
@@ -149,32 +155,32 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   Row(
                     children: [
                       titleContainer(
-                          title: "Total Price",
+                          title: tableHeadersUrdu[6],
                           color: secondaryColor,
                           width: 63),
                       titleContainer(
-                          title: "Guess", color: secondaryColor, width: 28),
+                          title: tableHeadersUrdu[5], color: secondaryColor, width: 28),
                       titleContainer(
-                          title: "Guess", color: secondaryColor, width: 28),
+                          title: tableHeadersUrdu[4], color: secondaryColor, width: 28),
                       titleContainer(
-                          title: "Guess", color: secondaryColor, width: 28),
+                          title: tableHeadersUrdu[3], color: secondaryColor, width: 28),
                       titleContainer(
-                          title: "Guess", color: secondaryColor, width: 28),
+                          title: tableHeadersUrdu[2], color: secondaryColor, width: 28),
                       titleContainer(
-                          title: "Guess", color: secondaryColor, width: 28),
+                          title: tableHeadersUrdu[1], color: secondaryColor, width: 28),
                       Expanded(
                         child: titleContainer(
-                            title: "Guess", color: secondaryColor, width: 100),
+                            title: tableHeadersUrdu[6], color: secondaryColor, width: 100),
                       ),
                       titleContainer(
-                          title: "No", color: secondaryColor, width: 15),
+                          title: "نمبر", color: secondaryColor, width: 15),
                     ],
                   ),
-                  for (int i = 0; i < 9; i++)
+                  for (int i = 0; i < 11; i++)
                     Row(
                       children: [
                         dataContainer(data: "", width: 63),
-                        dataContainer(data: "", width: 28),
+                        i==8?dataContainer(data: "ٹوٹل بل", width: 28,color: Color(0xff87292A)):i==9?dataContainer(data: "زور حساب", width: 28,color: Color(0xff87292A)):i==10? dataContainer(data: "جمله", width: 28,color: Color(0xff87292A)):dataContainer(data: "", width: 28),
                         dataContainer(data: "", width: 28),
                         dataContainer(data: "", width: 28),
                         dataContainer(data: "", width: 28),
@@ -261,23 +267,23 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       child: Center(
           child: Text(
         title,
-        style: boldTextStyle(size: 10, color: whiteColor),
+        style: boldTextStyle(size: 6, color: whiteColor),
         textAlign: TextAlign.center,
       )),
     );
   }
 
   Container dataContainer(
-      {required String data, double? width, double? height}) {
+      {required String data, double? width, double? height,Color? color}) {
     return Container(
       margin: EdgeInsets.all(1),
       height: height ?? 20,
       width: width ?? 50,
-      decoration: BoxDecoration(border: Border.all()),
+      decoration: BoxDecoration(border: Border.all(),color: color??Colors.transparent),
       child: Center(
           child: Text(
         data,
-        style: primaryTextStyle(size: 10, color: blackColor),
+        style: primaryTextStyle(size: 6, color: color!=null?whiteColor:blackColor),
         textAlign: TextAlign.center,
       )),
     );

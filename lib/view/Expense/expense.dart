@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../controller/bill_controller.dart';
 import '../../utils/text_styles.dart';
 
 class ExpenseInfoScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class ExpenseInfoScreen extends StatefulWidget {
 class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
   ExpenseController expenseController = Get.put(ExpenseController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  BillNumberController billNumberController = Get.put(BillNumberController());
   var _searchController = TextEditingController();
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -56,6 +58,7 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    billNumberController.getBillNumber();
     return Scaffold(
       key: scaffoldKey,
       appBar: appBarWidget(title: "ده خرچے معلومات",openDrawer: () => scaffoldKey.currentState?.openDrawer(),),

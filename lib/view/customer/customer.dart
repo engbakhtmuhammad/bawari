@@ -22,14 +22,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
   bool isActive = true;
   // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
+    
     "کسٹمر کا نمبر",
     "کسٹمر کا نام",
     "کسٹمر کا پتہ",
-    "دی او کھ نا"
-  ];
-  List<List<String>> tableRows = [
-    ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
-    ["باوری لمیت (1 لیتر)", "5", "5", "12", "112", "12453"],
+    "کسٹمر کا فون",
+    "دی او کھ نا",
   ];
   @override
   Widget build(BuildContext context) {
@@ -176,6 +174,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                 DataCell(
                                   Text(
                                     customerController.filteredCustomerList[row].name
+                                        .toString(),
+                                    textAlign: TextAlign.center,
+                                    style: primaryTextStyle(size: 14),
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    "${row+1}"
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),

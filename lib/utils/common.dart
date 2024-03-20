@@ -3,13 +3,10 @@ import 'dart:io';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/view/Expense/expense.dart';
 import 'package:bawari/view/credit/cash_flow_info.dart';
-import 'package:bawari/view/credit/credit.dart';
 import 'package:bawari/view/credit/credit_info.dart';
 import 'package:bawari/view/dashboard/dashboard.dart';
-import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/dues/loan_info.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
-import 'package:bawari/view/sell/sale.dart';
 import 'package:bawari/view/sell/sale_info.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:flutter/foundation.dart';
@@ -20,8 +17,6 @@ import 'package:intl/intl.dart' as intl;
 import '../view/savings/savings.dart';
 import 'constants.dart';
 import 'text_styles.dart';
-
-int autoBillNo = 1;
 
 Widget emptyWidget({String? text}) {
   return Center(

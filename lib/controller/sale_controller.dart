@@ -1,3 +1,4 @@
+import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/model/sale_model.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../utils/common.dart';
 
 class SaleController extends GetxController {
   TextEditingController bill = TextEditingController();
+  BillNumberController billNumberController= Get.put(BillNumberController());
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController endDate = TextEditingController(
@@ -34,7 +35,8 @@ class SaleController extends GetxController {
 
   @override
   void onInit() {
-    bill.text = autoBillNo.toString(); // Assign autoBillNo to bill controller
+    billNumberController.getBillNumber();
+    bill.text = billNumberController.billNumber.toString(); // Assign autoBillNo to bill controller
     getSale();
     filterSales('');
     super.onInit();
@@ -86,8 +88,9 @@ class SaleController extends GetxController {
         receivedPrice.clear();
 
         // Update bill controller value by adding 1
-        autoBillNo+10;
-        bill.text = autoBillNo.toString();
+        // autoBillNo+10;
+        billNumberController.saveBillNumber(billNumberController.billNumber+10);
+        bill.text = billNumberController.billNumber.toString();
       });
     } catch (e) {
       print('Error adding sale: $e');

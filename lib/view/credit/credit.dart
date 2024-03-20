@@ -1,3 +1,4 @@
+import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/controller/credit_controller.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
@@ -19,6 +20,7 @@ class CreditScreen extends StatefulWidget {
 class _CreditScreenState extends State<CreditScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   CreditController creditController = Get.put(CreditController());
+  BillNumberController billNumberController = Get.put(BillNumberController());
 
   List<String> tableColumns = [
     "بل نمبر",
@@ -40,6 +42,7 @@ class _CreditScreenState extends State<CreditScreen> {
 
 // Inside a method where you fetch customers, such as in the initState method
   void fetchCredits() async {
+    billNumberController.getBillNumber();
     List<String?> customerNames = await creditController.getCreditNames();
     // Update the dropDownList based on the fetched customer names
     dropDownList = customerNames.map((customerName) {

@@ -1,5 +1,5 @@
+import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/model/credit_model.dart';
-import 'package:bawari/utils/common.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +11,7 @@ class CreditController extends GetxController {
   FirebaseFirestore db = FirebaseFirestore.instance;
   var creditList = RxList<CreditModel>();
   var filterCreditList = RxList<CreditModel>();
-  
+  BillNumberController billNumberController = Get.put(BillNumberController());
   int totalNetCredits = 0;
 
   TextEditingController date = TextEditingController(
@@ -47,14 +47,15 @@ class CreditController extends GetxController {
               price: int.parse(credits.text),
               date: _parseDate(date.text),
               address: address.text,
-              billNo: autoBillNo),
+              billNo: billNumberController.billNumber),
         );
 
         // Update the existing document in Firestore
         await db.collection("credits").doc(existingCustomer.id!).update({
           'credits': existingCustomer.credits!.map((d) => d.toJson()).toList(),
         });
-        autoBillNo + 10;
+        // autoBillNo + 10;
+        billNumberController.saveBillNumber(billNumberController.billNumber+10);
       } else {
         // If customer name doesn't exist, add a new entry
         var creditEntry = CreditModel(
@@ -65,14 +66,14 @@ class CreditController extends GetxController {
                 price: int.parse(credits.text),
                 date: _parseDate(date.text),
                 address: address.text,
-                billNo: autoBillNo),
+                billNo: billNumberController.billNumber),
           ],
           received: [
             Credit(
                 price: int.parse(received.text),
                 date: _parseDate(date.text),
                 address: address.text,
-                billNo: autoBillNo),
+                billNo: billNumberController.billNumber),
           ],
         );
 
@@ -86,7 +87,7 @@ class CreditController extends GetxController {
         creditEntry.id = creditId;
 
         await db.collection("credits").doc(creditId).update({'id': creditId});
-        autoBillNo + 10;
+        billNumberController.saveBillNumber(billNumberController.billNumber+10);
       }
 
       // Clear the text editing controllers after adding/updating the entry
@@ -134,7 +135,7 @@ class CreditController extends GetxController {
               price: int.parse("-${received.text}"),
               date: _parseDate(date.text),
               address: address.text,
-              billNo: autoBillNo),
+              billNo: billNumberController.billNumber),
         );
 
         // Update the existing document in Firestore
@@ -147,7 +148,8 @@ class CreditController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
-        autoBillNo + 10;
+        // autoBillNo + 10;
+        billNumberController.saveBillNumber(billNumberController.billNumber+10);
       } else {
         Get.snackbar('Error', 'Customer Not Found!',
             snackPosition: SnackPosition.BOTTOM,

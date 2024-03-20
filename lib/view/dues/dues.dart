@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../controller/bill_controller.dart';
 import '../../controller/customer_controller.dart';
 import '../../controller/dues_controller.dart';
 import '../../utils/constants.dart';
@@ -22,6 +23,7 @@ class _DueScreenState extends State<DueScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   DuesController duesController = Get.put(DuesController());
   CustomerController customerController = Get.put(CustomerController());
+  BillNumberController billNumberController = Get.put(BillNumberController());
 List<String> tableColumns = [
     "را باندی نوم",
     "پیسے",
@@ -41,6 +43,7 @@ List<String> tableColumns = [
 
 // Inside a method where you fetch customers, such as in the initState method
   void fetchCustomers() async {
+    billNumberController.getBillNumber();
     List<String?> customerNames = await duesController.getDuesNames();
     // print('Customer Names: $customerNames');
 

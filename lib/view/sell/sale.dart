@@ -1,3 +1,4 @@
+import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/controller/credit_controller.dart';
 import 'package:bawari/controller/customer_controller.dart';
 import 'package:bawari/controller/goods_controller.dart';
@@ -28,6 +29,7 @@ class _SellScreenState extends State<SellScreen> {
   CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
   PurchaseController purchaseController = Get.put(PurchaseController());
+  BillNumberController billNumberController = Get.put(BillNumberController());
   SavingsController savingsController = Get.put(SavingsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   var _searchController = TextEditingController();
@@ -65,6 +67,8 @@ class _SellScreenState extends State<SellScreen> {
 
 // Inside a method where you fetch customers, such as in the initState method
   void fetchGoods() async {
+    billNumberController.getBillNumber();
+    saleController.bill.text=billNumberController.billNumber.toString();
     List<String?> goodsName = await goodsController.getGoodsNames();
     List<String?> customerName = await customerController.getCustomerNames();
 

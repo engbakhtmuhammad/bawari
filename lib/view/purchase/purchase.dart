@@ -1,5 +1,7 @@
+import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/purchase_controller.dart';
+import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
@@ -22,6 +24,7 @@ class PurchaseScreen extends StatefulWidget {
 class _PurchaseScreenState extends State<PurchaseScreen> {
   PurchaseController purchaseController = Get.put(PurchaseController());
   GoodsController goodsController = Get.put(GoodsController());
+  BillNumberController billNumberController = Get.put(BillNumberController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _searchController = TextEditingController();
   String goodsId = '';
@@ -82,6 +85,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
 // Inside a method where you fetch customers, such as in the initState method
   void fetchGoods() async {
+    billNumberController.getBillNumber();
+    purchaseController.bill.text= billNumberController.billNumber.toString();
     List<String?> goodsName = await goodsController.getGoodsNames();
 
     goodsDropDownList = goodsName.map((goods) {

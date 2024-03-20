@@ -72,7 +72,8 @@ class SaleInvoicePdf {
               height: 120,
               child: pw.Image(pw.MemoryImage(topImage), fit: pw.BoxFit.fill),
             ),
-            pw.SizedBox(height: 1 * PdfPageFormat.mm),
+           pw.SizedBox(height: 1 * PdfPageFormat.mm),
+            pw.SizedBox(height: 5 * PdfPageFormat.mm),
             pw.Directionality(
               textDirection: pw.TextDirection.ltr,
               child: pw.Row(
@@ -155,7 +156,7 @@ class SaleInvoicePdf {
                     pw.Container(width: 100, height: 1, color: PdfColors.black)
                   ]),
                   pw.Text(
-                    "حوالا ادرس",
+                    "ادرس",
                     style:
                         pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
                     textDirection: pw.TextDirection.rtl,
@@ -426,7 +427,7 @@ class SaleInvoicePdf {
                   textDirection: pw.TextDirection.ltr,
                   child: pw.Row(children: [
                     pw.Container(
-                      height: 30,
+                      height: 40,
                       width: 70 * 4,
                       color: PdfColor.fromHex("#EFB768"),
                      child: pw.Center(
@@ -449,7 +450,7 @@ class SaleInvoicePdf {
         },
         // footer: (context) {
         //   return pw.SizedBox(
-        //     width: double.infinity,
+        //     width: double.infinity, 
         //     height: 40,
         //     child:
         //         pw.Image(pw.MemoryImage(bottomImage), fit: pw.BoxFit.fitWidth),

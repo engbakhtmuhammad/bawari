@@ -1,3 +1,4 @@
+import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import '../utils/colors.dart';
 
 class ExpenseController extends GetxController {
   TextEditingController price = TextEditingController();
+  BillNumberController billNumberController = Get.put(BillNumberController());
   late TextEditingController billNo;
   String expenseType = "خرچه";
   TextEditingController note = TextEditingController();
@@ -26,7 +28,7 @@ class ExpenseController extends GetxController {
   void onInit() async {
     await getExpenses();
     // Assign autoBillNo to the billNo controller
-    billNo = TextEditingController(text: autoBillNo.toString());
+    billNo = TextEditingController(text: billNumberController.billNumber.toString());
     filterExpense('');
     super.onInit();
   }
@@ -34,7 +36,7 @@ class ExpenseController extends GetxController {
   void addExpense() async {
     try {
       var expense = ExpenseModel(
-        billNo: autoBillNo, // Use the autoBillNo directly
+        billNo: billNumberController.billNumber, // Use the autoBillNo directly
         price: int.parse(price.text),
         expenseType: expenseType,
         note: note.text,
@@ -63,7 +65,8 @@ class ExpenseController extends GetxController {
           backgroundColor: primaryColor);
 
       // Increment autoBillNo for the next expense
-      autoBillNo+10;
+      // autoBillNo+10;
+      billNumberController.saveBillNumber(billNumberController.billNumber+10);
 
       price.clear();
       expenseType = "خرچه";

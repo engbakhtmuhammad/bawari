@@ -1,15 +1,15 @@
+import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/model/purchase_model.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../utils/common.dart';
 
 class PurchaseController extends GetxController {
   TextEditingController bill = TextEditingController();
+  BillNumberController billNumberController = Get.put(BillNumberController());
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController endDate = TextEditingController(
@@ -32,7 +32,8 @@ class PurchaseController extends GetxController {
 
   @override
   void onInit() async {
-    bill.text = autoBillNo.toString(); // Assign autoBillNo to the bill controller
+    billNumberController.getBillNumber();
+    bill.text = billNumberController.billNumber.toString(); // Assign autoBillNo to the bill controller
     await getPurchases();
     getTotalBill();
     getTotalCartonCount();
@@ -89,8 +90,9 @@ class PurchaseController extends GetxController {
       price.clear();
 
       // Update bill controller value by adding 1
-      autoBillNo+10;
-      bill.text = autoBillNo.toString();
+      // autoBillNo+10;
+      billNumberController.saveBillNumber(billNumberController.billNumber+10);
+      bill.text = billNumberController.billNumber.toString();
     } catch (e) {
       print('Error adding purchase: $e');
 
