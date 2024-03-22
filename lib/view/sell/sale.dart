@@ -5,6 +5,7 @@ import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/controller/savings_controller.dart';
+import 'package:bawari/model/sale_model.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/view/invoice/sale_invoice.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class _SellScreenState extends State<SellScreen> {
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
+    "پرنٹ",
     "سامان",
     "پیس تعداد",
     "کارتن تعداد",
@@ -300,13 +302,22 @@ class _SellScreenState extends State<SellScreen> {
                           for (var i = tableColumns.length; i > 0; i--)
                             DataColumn(
                               numeric: true,
-                              label: Text(
-                                "${tableColumns[i - 1]}   ",
-                                textAlign: TextAlign.center,
-                                style: boldTextStyle(color: whiteColor),
+                              label: GestureDetector(
+                                onTap: () async {
+                                            if(i==1){
+                                              final pdfFile = await SaleInvoicePdf.generate(sale: saleController.filteredSaleList );
+                                            // opening the pdf file
+                                            FileHandleApi.openFile(pdfFile);
+                                            // Get.to(InvoiceScreen());
+                                            }
+                                          },
+                                child: Text(
+                                  "${tableColumns[i - 1]}   ",
+                                  textAlign: TextAlign.center,
+                                  style: boldTextStyle(color: whiteColor),
+                                ),
                               ),
                             ),
-                            DataColumn(label: SizedBox.shrink())
                         ],
                         rows: [
                           for (var row = 0;
@@ -392,7 +403,7 @@ class _SellScreenState extends State<SellScreen> {
                                                 "assets/icons/print.png"),
                                           ),
                                           onTap: () async {
-                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.filteredSaleList[row]);
+                                            final pdfFile = await SaleInvoicePdf.generate(sale: [saleController.filteredSaleList[row] ]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());

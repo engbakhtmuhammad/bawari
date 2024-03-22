@@ -1,4 +1,5 @@
 import 'package:bawari/controller/sale_controller.dart';
+import 'package:bawari/model/sale_model.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:bawari/utils/text_styles.dart';
@@ -169,7 +170,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                         child: Image.asset("assets/icons/print.png"),
                                       ),
                                       onTap: () async {
-                                            final pdfFile = await SaleInvoicePdf.generate(sale: saleController.saleList[row]);
+                                            final pdfFile = await SaleInvoicePdf.generate(sale: [saleController.saleList[row]]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());
