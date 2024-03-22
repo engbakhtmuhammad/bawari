@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:bawari/controller/credit_controller.dart';
 import 'package:bawari/controller/customer_controller.dart';
 import 'package:bawari/model/sale_model.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +31,7 @@ class SaleInvoicePdf {
     final ttf = pw.Font.ttf(fontData.buffer.asByteData());
 
     final tableHeaders = [
+      "No",
       'Particulars',
       'Pieces',
       'Carton Qty',
@@ -41,6 +41,7 @@ class SaleInvoicePdf {
       'Total Amount'
     ];
     final tableHeadersUrdu = [
+      "شمارہ",
       'تفصيل',
       'بيس تعداد',
       'کارتن تعداد',
@@ -52,6 +53,7 @@ class SaleInvoicePdf {
 
     final tableData = [
       [
+        '1',
         sale.name,
         sale.pieceCount.toString(),
         sale.cartonCount.toString(),
@@ -64,6 +66,7 @@ class SaleInvoicePdf {
 
     pdf.addPage(
       pw.MultiPage(
+        margin: pw.EdgeInsetsDirectional.all(20),
         textDirection: pw.TextDirection.rtl,
         build: (context) {
           return [
@@ -81,7 +84,7 @@ class SaleInvoicePdf {
                 children: [
                   pw.Column(children: [
                     pw.Text(
-                      "     ${DateFormat('yyyy-MM-dd').format(DateTime.now())}     ",
+                      "     ${DateFormat('dd-MM-yyyy').format(DateTime.now())}     ",
                       style: pw.TextStyle(
                         font: ttf,
                       ),
@@ -130,7 +133,7 @@ class SaleInvoicePdf {
                     pw.Text(
                       "     ${customer!.phone.toString()}     ",
                       style: pw.TextStyle(
-                        font: ttf,
+                        font: ttf,color: PdfColors.red
                       ),
                       textDirection: pw.TextDirection.rtl,
                     ),
@@ -138,7 +141,7 @@ class SaleInvoicePdf {
                     pw.Container(width: 100, height: 1, color: PdfColors.black)
                   ]),
                   pw.Text(
-                    "فون نمبر",
+                    "تلفون شمارہ",
                     style:
                         pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
                     textDirection: pw.TextDirection.rtl,
@@ -179,6 +182,7 @@ class SaleInvoicePdf {
                         pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
                     textDirection: pw.TextDirection.rtl,
                   ),
+                   pw.SizedBox(width: 10)
                 ],
               ),
             ),
@@ -223,6 +227,7 @@ class SaleInvoicePdf {
                 4: pw.Alignment.center,
                 5: pw.Alignment.center,
                 6: pw.Alignment.center,
+                7: pw.Alignment.center,
               },
             ),
             pw.Divider(),
@@ -258,34 +263,7 @@ class SaleInvoicePdf {
                       ),
                     ),
                   ),
-                  pw.SizedBox(width: 70),
-                  pw.SizedBox(
-                      width: 50,
-                      child: pw.Text(
-                        sale.cartonCount.toString(),
-                        style: pw.TextStyle(
-                          font: ttf,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                        textDirection: pw.TextDirection.rtl,
-                      )),
-                  pw.SizedBox(width: 10),
-                  pw.Container(
-                    height: 30,
-                    width: 70,
-                    color: PdfColor.fromHex("#EFB768"),
-                    child: pw.Center(
-                      child: pw.Text(
-                        "کارتن تعداد",
-                        style: pw.TextStyle(
-                          font: ttf,
-                          color: PdfColors.black,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                        textDirection: pw.TextDirection.rtl,
-                      ),
-                    ),
-                  ),
+                  
                 ]),
                 textDirection: pw.TextDirection.ltr,
               ),
@@ -321,14 +299,16 @@ class SaleInvoicePdf {
                         ),
                       ),
                     ),
-                    pw.SizedBox(width: 70),
+                  ])),
+                  pw.SizedBox(height: 10),
+                  pw.Directionality(textDirection: pw.TextDirection.ltr,child: pw.Row(children: [
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
                           sale.recievedCash.toString(),
                           style: pw.TextStyle(
                             font: ttf,
-                            fontWeight: pw.FontWeight.bold,
+                            fontWeight: pw.FontWeight.bold,color: PdfColors.green
                           ),
                           textDirection: pw.TextDirection.rtl,
                         )),
@@ -381,23 +361,7 @@ class SaleInvoicePdf {
                         ),
                       ),
                     ),
-                    pw.SizedBox(width: 200),
-                    pw.Container(
-                      height: 30,
-                      width: 70,
-                      color: PdfColor.fromHex("#EFB768"),
-                      child: pw.Center(
-                        child: pw.Text(
-                          "دستخط",
-                          style: pw.TextStyle(
-                            font: ttf,
-                            color: PdfColors.black,
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                          textDirection: pw.TextDirection.rtl,
-                        ),
-                      ),
-                    ),
+                   
                   ])),
               pw.SizedBox(height: 10),
               pw.Directionality(
@@ -442,6 +406,50 @@ class SaleInvoicePdf {
                           textAlign: pw.TextAlign.center,
                           textDirection: pw.TextDirection.rtl,
                         ),)
+                      ),
+                    ),
+                    pw.SizedBox(
+                      width: 50,
+                      child: pw.Text(
+                        sale.cartonCount.toString(),
+                        style: pw.TextStyle(
+                          font: ttf,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                        textDirection: pw.TextDirection.rtl,
+                      )),
+                  pw.SizedBox(width: 10),
+                  pw.Container(
+                    height: 30,
+                    width: 70,
+                    color: PdfColor.fromHex("#EFB768"),
+                    child: pw.Center(
+                      child: pw.Text(
+                        "کارتن تعداد",
+                        style: pw.TextStyle(
+                          font: ttf,
+                          color: PdfColors.black,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                        textDirection: pw.TextDirection.rtl,
+                      ),
+                    ),
+                  ),
+                   pw.SizedBox(width: 60),
+                    pw.Container(
+                      height: 30,
+                      width: 70,
+                      color: PdfColor.fromHex("#EFB768"),
+                      child: pw.Center(
+                        child: pw.Text(
+                          "دستخط",
+                          style: pw.TextStyle(
+                            font: ttf,
+                            color: PdfColors.black,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                          textDirection: pw.TextDirection.rtl,
+                        ),
                       ),
                     ),
                   ]))

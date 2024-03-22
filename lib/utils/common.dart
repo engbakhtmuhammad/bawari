@@ -542,7 +542,7 @@ Future<bool?> selectDate(TextEditingController controller) async {
   );
 
   if (picked != null && picked != controller) {
-    controller.text = intl.DateFormat('dd MMM yyyy').format(picked);
+    controller.text = intl.DateFormat('yyyy-MM-dd').format(picked);
   }
   return true;
 }

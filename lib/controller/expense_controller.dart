@@ -15,9 +15,9 @@ class ExpenseController extends GetxController {
   String expenseType = "خرچه";
   TextEditingController note = TextEditingController();
   TextEditingController startDate = TextEditingController(
-      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      text: DateFormat('yyyy-MM-dd').format(DateTime(2024,01,01)));
   TextEditingController endDate = TextEditingController(
-      text: DateFormat('yyyy-MM-dd').format(DateTime(2034, 3, 3)));
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   var expenseList = RxList<ExpenseModel>();
@@ -28,7 +28,8 @@ class ExpenseController extends GetxController {
   void onInit() async {
     await getExpenses();
     // Assign autoBillNo to the billNo controller
-    billNo = TextEditingController(text: billNumberController.billNumber.toString());
+    billNo =
+        TextEditingController(text: billNumberController.billNumber.toString());
     filterExpense('');
     super.onInit();
   }
@@ -52,10 +53,7 @@ class ExpenseController extends GetxController {
       // Update the expense model with the ID
       expense.id = expenseId;
 
-      await db
-          .collection("expenses")
-          .doc(expenseId)
-          .update({'id': expenseId});
+      await db.collection("expenses").doc(expenseId).update({'id': expenseId});
 
       getExpenses();
 
@@ -63,10 +61,7 @@ class ExpenseController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
           backgroundColor: primaryColor);
-
-      // Increment autoBillNo for the next expense
-      // autoBillNo+10;
-      billNumberController.saveBillNumber(billNumberController.billNumber+10);
+      billNumberController.saveBillNumber(billNumberController.billNumber + 10);
 
       price.clear();
       expenseType = "خرچه";
@@ -83,19 +78,19 @@ class ExpenseController extends GetxController {
     }
   }
 
- Future<void> getExpenses() async {
-  var expenses = await db.collection("expenses")
-      .orderBy("date", descending: true) // Order by date in descending order
-      .get();
+  Future<void> getExpenses() async {
+    var expenses = await db
+        .collection("expenses")
+        .orderBy("date", descending: true) // Order by date in descending order
+        .get();
 
-  expenseList.clear();
-  for (var expense in expenses.docs) {
-    expenseList.add(ExpenseModel.fromJson(expense.data()));
+    expenseList.clear();
+    for (var expense in expenses.docs) {
+      expenseList.add(ExpenseModel.fromJson(expense.data()));
+    }
+    update();
+    print("$expenseList >>>>>>>. Expenses List");
   }
-  update();
-  print("$expenseList >>>>>>>. Expenses List");
-}
-
 
   void deleteExpense(String expenseId) async {
     try {
@@ -122,7 +117,8 @@ class ExpenseController extends GetxController {
     return expenseList.where((expense) => expense.expenseType == type).toList();
   }
 
-    void filterExpense(String query) {
+  void filterExpense(String query) {
+    print(">>>>>>>>>>>>>>>>>> $filterExpenseList");
     if (query.isEmpty) {
       // If the search query is empty, show all purchases
       filterExpenseList.assignAll(expenseList);
@@ -130,9 +126,25 @@ class ExpenseController extends GetxController {
       // If the search query is not empty, filter purchases by name
       filterExpenseList.assignAll(
         expenseList.where(
-          (expense) => expense.expenseType!.toLowerCase().contains(query.toLowerCase()),
+          (expense) =>
+              expense.expenseType!.toLowerCase().contains(query.toLowerCase()),
         ),
       );
     }
+    filterExpenseByDateRange();
   }
+
+  void filterExpenseByDateRange() {
+    if (startDate == null || endDate == null) return;
+    DateTime start = DateFormat('yyyy-MM-dd').parse(startDate.text);
+    DateTime end = DateFormat('yyyy-MM-dd').parse(endDate.text);
+    filterExpenseList.assignAll(
+      expenseList.where(
+        (expense) =>
+            expense.date!.isAfter(start) && expense.date!.isBefore(end),
+      ),
+    );
+    print(">>>>>>>>>>>>>>>>>> $filterExpenseList");
+  }
+  
 }

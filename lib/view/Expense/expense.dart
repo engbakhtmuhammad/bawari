@@ -30,13 +30,6 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
     "تفصيل",
     "تاریخ",
   ];
-  List<List<String>> tableRows = [
-    ["1", "محمد صادق لشکرگاه", "12453"],
-    ["2", "با خان لشکرقا", "12453"],
-    ["3", "عبد الغفار كرئش", "12453"],
-    ["4", "حاجی محمد جان", "12453"],
-    ["5", "جیلانی لشکرگاه", "12453"],
-  ];
 
   var dropDownList = const [
     DropdownMenuItem(
@@ -61,7 +54,10 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
     billNumberController.getBillNumber();
     return Scaffold(
       key: scaffoldKey,
-      appBar: appBarWidget(title: "ده خرچے معلومات",openDrawer: () => scaffoldKey.currentState?.openDrawer(),),
+      appBar: appBarWidget(
+        title: "ده خرچے معلومات",
+        openDrawer: () => scaffoldKey.currentState?.openDrawer(),
+      ),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
@@ -74,9 +70,15 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
               billController: expenseController.startDate,
               dateController: expenseController.endDate,
               onPressed: () => selectDate(expenseController.startDate),
-              onPressed2: () => selectDate(expenseController.endDate),
+              onPressed2: () {
+                selectDate(expenseController.endDate);
+                setState(() {
+                  expenseController.filterExpenseByDateRange();
+                });
+              },
             ),
             Obx(() {
+              // expenseController.filterExpenseByDateRange();
               expenseController.filterExpense(_searchController.text);
               return SizedBox(
                   height: expenseController.filterExpenseList.length * 50 + 60,
@@ -137,7 +139,8 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    expenseController.filterExpenseList[row].note
+                                    expenseController
+                                        .filterExpenseList[row].note
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -146,7 +149,8 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                 //6
                                 DataCell(
                                   Text(
-                                    expenseController.filterExpenseList[row].price
+                                    expenseController
+                                        .filterExpenseList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -165,7 +169,8 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                 //4
                                 DataCell(
                                   Text(
-                                    expenseController.filterExpenseList[row].billNo
+                                    expenseController
+                                        .filterExpenseList[row].billNo
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -178,8 +183,8 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                                     child: Padding(
                                       padding:
                                           EdgeInsets.only(left: defaultPadding),
-                                      child: Image.asset(
-                                          "assets/icons/print.png"),
+                                      child:
+                                          Image.asset("assets/icons/print.png"),
                                     ),
                                     onTap: () {},
                                   )),
@@ -207,7 +212,12 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true,controller: _searchController,onChange: (value)=>expenseController.filterExpense(value))),
+                          label: "search",
+                          imgPath: "",
+                          isSearch: true,
+                          controller: _searchController,
+                          onChange: (value) =>
+                              expenseController.filterExpense(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",
@@ -240,11 +250,13 @@ class _ExpenseInfoScreenState extends State<ExpenseInfoScreen> {
               textFieldWidget(
                   label: "تمبر",
                   imgPath: "assets/icons/invoice.png",
-                  controller: expenseController.billNo,inputType: TextInputType.number),
+                  controller: expenseController.billNo,
+                  inputType: TextInputType.number),
               textFieldWidget(
                   label: "تاریخ",
                   imgPath: "assets/icons/calendar.png",
-                  controller: expenseController.startDate,onPressed:()=> selectDate(expenseController.startDate)),
+                  controller: expenseController.startDate,
+                  onPressed: () => selectDate(expenseController.startDate)),
               textFieldWidget(
                   label: "پیسے",
                   inputType: TextInputType.number,
