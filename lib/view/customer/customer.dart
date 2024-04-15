@@ -79,8 +79,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       tristate: true,
                       onChanged: (value) {
                         setState(() {
-                          isActive = value!;
-                          customerController.isActive = value;
+                          isActive = value??false;
+                          customerController.isActive = isActive;
                         });
                       },
                     ),
