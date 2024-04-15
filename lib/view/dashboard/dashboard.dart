@@ -35,7 +35,7 @@ class DashboardScrreen extends StatelessWidget {
               DashboardWidget(title: "سامان فروخت",imgPath: "assets/icons/sell.png",onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>SellScreen())),),
               DashboardWidget(title: "گودام سٹاک",imgPath: "assets/icons/cortons.png",onPressed: () => Get.to(StockScreen())),
               DashboardWidget(title: "ورباندی کهاته",imgPath: "assets/icons/recieve.png",onPressed: () => Get.to(CreditScreen())),
-              DashboardWidget(title: "دوا لوم",imgPath: "assets/icons/bag.png",onPressed: ()=>Get.to(GoodsScreen()),),
+              DashboardWidget(title: "دوا نوم",imgPath: "assets/icons/bag.png",onPressed: ()=>Get.to(GoodsScreen()),),
               DashboardWidget(title: "لوی گراک نوم",imgPath: "assets/icons/customer.png",onPressed: () => Get.to(CustomerScreen()),),
               DashboardWidget(title: "خرچہ",imgPath: "assets/icons/expense.png",onPressed: () => Get.to(ExpenseInfoScreen()),),
               DashboardWidget(title: "را باندی",imgPath: "assets/icons/dues.png",onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>DueScreen())),),
