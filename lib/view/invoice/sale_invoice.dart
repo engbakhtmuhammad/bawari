@@ -229,7 +229,7 @@ class SaleInvoicePdf {
               border: null,
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
-              headerStyle: pw.TextStyle(
+              headerStyle: pw.TextStyle( font: ttf,
                   fontWeight: pw.FontWeight.bold, color: PdfColors.white),
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#023047")),
@@ -244,6 +244,7 @@ class SaleInvoicePdf {
               border: pw.TableBorder(
                   verticalInside:
                       pw.BorderSide(color: PdfColor.fromHex("#D3D3D3"))),
+                    cellStyle: pw.TextStyle(font: ttf),
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
               headerStyle: pw.TextStyle(
@@ -375,7 +376,8 @@ class SaleInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          "${totalCartonCount + double.parse(totalBaqaya.toString())}",
+                          "${(totalBaqaya < 0 ? -(totalPrice) : totalPrice) + double.parse(totalBaqaya.toString()) + (totalBaqaya < 0 ? totalReceivedCash : -totalReceivedCash)}",
+
                           style: pw.TextStyle(
                             font: ttf,
                             fontWeight: pw.FontWeight.bold,

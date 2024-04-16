@@ -5,7 +5,6 @@ import 'package:bawari/view/credit/credit.dart';
 import 'package:bawari/view/customer/customer.dart';
 import 'package:bawari/view/dues/dues.dart';
 import 'package:bawari/view/goods/goods.dart';
-import 'package:bawari/view/loan/on_people_Loan.dart';
 import 'package:bawari/view/purchase/purchase.dart';
 import 'package:bawari/view/sell/sale.dart';
 import 'package:bawari/view/stock/stock.dart';

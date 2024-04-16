@@ -49,9 +49,19 @@ class CreditController extends GetxController {
               address: address.text,
               billNo: billNumberController.billNumber),
         );
+        existingCustomer.received!.add(
+            Credit(
+                price: int.parse("-${received.text}"),
+                date: _parseDate(date.text),
+                address: address.text,
+                billNo: billNumberController.billNumber),
+        );
 
         // Update the existing document in Firestore
         await db.collection("credits").doc(existingCustomer.id!).update({
+          'received': existingCustomer.received!.map((d) => d.toJson()).toList(),
+        });
+         await db.collection("credits").doc(existingCustomer.id!).update({
           'credits': existingCustomer.credits!.map((d) => d.toJson()).toList(),
         });
         // autoBillNo + 10;
@@ -288,6 +298,9 @@ class CreditController extends GetxController {
 
     return total;
   }
+   int calculateDuesAmountById(String customerId) {
+    return getTotalCreditsById(customerId).toInt()-getTotalReceivedById(customerId).toInt();
+    }
 
   int calculateNetAmountById(String customerId) {
     var creditModel = creditList.firstWhere(

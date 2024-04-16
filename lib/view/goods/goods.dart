@@ -18,6 +18,7 @@ class GoodsScreen extends StatefulWidget {
 class _GoodsScreenState extends State<GoodsScreen> {
   GoodsController goodsController = Get.put(GoodsController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  var _searchController = TextEditingController();
   List<String> tableColumns = [
     "سامان",
     // "پیس تعداد",
@@ -61,19 +62,23 @@ class _GoodsScreenState extends State<GoodsScreen> {
                     label: "کارٹن تعداد",
                     imgPath: "assets/icons/cortons.png",
                     isReadOnly: true,
-                    controller: goodsController.cartonCount,inputType: TextInputType.number),
+                    controller: goodsController.cartonCount,
+                    inputType: TextInputType.number),
                 textFieldWidget(
                     label: "في كارتن تعداد",
                     imgPath: "assets/icons/per_corton.png",
-                    controller: goodsController.perCartonCount,inputType: TextInputType.number),
+                    controller: goodsController.perCartonCount,
+                    inputType: TextInputType.number),
                 textFieldWidget(
                     label: "قیمت خرید",
                     imgPath: "assets/icons/price.png",
-                    controller: goodsController.purchasePrice,inputType: TextInputType.number),
+                    controller: goodsController.purchasePrice,
+                    inputType: TextInputType.number),
                 textFieldWidget(
                     label: "قیمت فروخت",
                     imgPath: "assets/icons/income.png",
-                    controller: goodsController.salePrice,inputType: TextInputType.number),
+                    controller: goodsController.salePrice,
+                    inputType: TextInputType.number),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -128,9 +133,9 @@ class _GoodsScreenState extends State<GoodsScreen> {
             )),
             // TableWidget(tableRows: tableRows, tableColumns: tableColumns),
             Obx(() {
-              goodsController.getGoods();
+              goodsController.filterGoods(_searchController.text);
               return SizedBox(
-                  height: goodsController.goodsList.length * 50 + 60,
+                  height: goodsController.filterGoodsList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -159,7 +164,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < goodsController.goodsList.length;
+                              row < goodsController.filterGoodsList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -176,7 +181,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                               cells: [
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].lineItem
+                                    goodsController.filterGoodsList[row].lineItem
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -184,7 +189,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].isActive
+                                    goodsController.filterGoodsList[row].isActive
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -192,7 +197,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    "${(goodsController.goodsList[row].salePrice ?? 0) * (goodsController.goodsList[row].cartonCount ?? 0) * (goodsController.goodsList[row].perCartonCount ?? 0)}",
+                                    "${(goodsController.filterGoodsList[row].salePrice ?? 0) * (goodsController.filterGoodsList[row].cartonCount ?? 0) * (goodsController.filterGoodsList[row].perCartonCount ?? 0)}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -200,7 +205,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].salePrice
+                                    goodsController.filterGoodsList[row].salePrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -210,7 +215,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 DataCell(
                                   Text(
                                     goodsController
-                                        .goodsList[row].perCartonCount
+                                        .filterGoodsList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -219,7 +224,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 //5
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].cartonCount
+                                    goodsController.filterGoodsList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -227,7 +232,7 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    goodsController.goodsList[row].name
+                                    goodsController.filterGoodsList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -243,13 +248,17 @@ class _GoodsScreenState extends State<GoodsScreen> {
                                       child:
                                           Image.asset("assets/icons/trash.png"),
                                     ),
-                                    onTap: () =>alertDialog(title: "ایا تاسو ډاډه یاست چې توکي حذف کړئ",onPressed: (){
-                                      // Add your delete logic here using goodsController
-                                      goodsController.deleteGoods(
-                                          goodsController.goodsList[row].id
-                                              .toString());
-                                              Get.back();
-                                    },),
+                                    onTap: () => alertDialog(
+                                      title:
+                                          "ایا تاسو ډاډه یاست چې توکي حذف کړئ",
+                                      onPressed: () {
+                                        // Add your delete logic here using goodsController
+                                        goodsController.deleteGoods(
+                                            goodsController.filterGoodsList[row].id
+                                                .toString());
+                                        Get.back();
+                                      },
+                                    ),
                                   )),
                                 ),
                               ],
@@ -275,10 +284,15 @@ class _GoodsScreenState extends State<GoodsScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true)),
+                          label: "search",
+                          imgPath: "",
+                          isSearch: true,
+                          controller: _searchController,
+                          onChange: (value) =>
+                              goodsController.filterGoods(value))),
                   Spacer(),
                   Text(
-                    "1-3 of 6 Columns",
+                    "1-3 of 7 Columns",
                     style: primaryTextStyle(color: whiteColor, size: 12),
                   )
                 ],

@@ -36,12 +36,12 @@ class _SellScreenState extends State<SellScreen> {
   var _searchController = TextEditingController();
   int totalCarton = 0;
   int? totalBill = 0;
-  int remainingBill=0;
-  int received=0;
+  int remainingBill = 0;
+  int received = 0;
   String customerId = '';
-  int purchasePrice=0;
-  int savings=0;
-  int cartonCount=0;
+  int purchasePrice = 0;
+  int savings = 0;
+  int cartonCount = 0;
 
 // Example data, you can replace it with your dynamic data
   List<String> tableColumns = [
@@ -70,7 +70,7 @@ class _SellScreenState extends State<SellScreen> {
 // Inside a method where you fetch customers, such as in the initState method
   void fetchGoods() async {
     billNumberController.getBillNumber();
-    saleController.bill.text=billNumberController.billNumber.toString();
+    saleController.bill.text = billNumberController.billNumber.toString();
     List<String?> goodsName = await goodsController.getGoodsNames();
     List<String?> customerName = await customerController.getCustomerNames();
 
@@ -126,7 +126,6 @@ class _SellScreenState extends State<SellScreen> {
                         creditController.customerId.text =
                             creditModel!.id.toString();
                         customerId = creditModel.id.toString();
-                        print('>>>>>>>>>>>>>>>ID CUstomer: $customerId');
                         saleController.customerId = creditModel.id.toString();
                         saleController.customerName = value;
                       }),
@@ -141,7 +140,7 @@ class _SellScreenState extends State<SellScreen> {
                           await goodsController.getGoodsByName(value);
                       saleController.goodsNo.text =
                           goodsModel!.goodsNo!.toString();
-                          cartonCount=goodsModel.cartonCount!;
+                      cartonCount = goodsModel.cartonCount!;
                       saleController.perCartonCount.text =
                           goodsModel.perCartonCount.toString();
                       saleController.price.text =
@@ -192,8 +191,9 @@ class _SellScreenState extends State<SellScreen> {
                               (cartCount * perCartCount +
                                       int.parse(saleController.pieceCount.text))
                                   .toString();
-                                  totalBill=int.parse(saleController.totalPrice.text);
-                                  totalCarton=int.parse(saleController.cartonCount.text);
+                          totalBill = int.parse(saleController.totalPrice.text);
+                          totalCarton =
+                              int.parse(saleController.cartonCount.text);
                           saleController.update();
 
                           print(
@@ -202,8 +202,7 @@ class _SellScreenState extends State<SellScreen> {
                           print("Error parsing values: $e");
                         }
                       },
-                      prefixText:
-                          "$cartonCount  :کارٹن تعداد"),
+                      prefixText: "$cartonCount  :کارٹن تعداد"),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/corton_count.png",
@@ -217,35 +216,46 @@ class _SellScreenState extends State<SellScreen> {
                       isReadOnly: true,
                       controller: saleController.totalCount),
                   textFieldWidget(
-                      label: "قیمت",
-                      imgPath: "assets/icons/price.png",
-                      inputType: TextInputType.number,
-                      controller: saleController.price,
-                      prefixText: calculateTotal(),),
-                      textFieldWidget(
+                    label: "قیمت",
+                    imgPath: "assets/icons/price.png",
+                    inputType: TextInputType.number,
+                    controller: saleController.price,
+                    prefixText: calculateTotal(),
+                  ),
+                  textFieldWidget(
                       label: "وصول",
                       imgPath: "assets/icons/income.png",
                       inputType: TextInputType.number,
-                      controller: saleController.receivedPrice,onChange: (Value){
-                        received=int.parse(Value);
+                      controller: saleController.receivedPrice,
+                      onChange: (Value) {
+                        received = int.parse(Value);
                       }),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButton(
                       onPressed: () async {
-                        received=int.parse(saleController.receivedPrice.text);
+                        received = int.parse(saleController.receivedPrice.text);
                         creditController.credits.text =
                             saleController.totalPrice.text;
-                            creditController.received.text =
+                        creditController.received.text =
                             saleController.receivedPrice.text;
                         creditController.date.text = saleController.date.text;
                         goodsController.getGoods();
                         var goods = await goodsController
                             .getGoodsByName(saleController.name);
-                            purchasePrice = goods!.purchasePrice!;
-                            savingsController.addSavings(customerName: saleController.customerName, billNo: int.parse(saleController.bill.text), savings: savings, goodsName: saleController.name, totalCount: int.parse(saleController.totalCount.text), perPrice: int.parse(saleController.price.text), totalPrice: int.parse(saleController.totalPrice.text));
-                        goodsController.updateGoodsCount(
-                            goods.id.toString(),-int.parse(saleController.cartonCount.text));
+                        purchasePrice = goods!.purchasePrice!;
+                        savingsController.addSavings(
+                            customerName: saleController.customerName,
+                            billNo: int.parse(saleController.bill.text),
+                            savings: savings,
+                            goodsName: saleController.name,
+                            totalCount:
+                                int.parse(saleController.totalCount.text),
+                            perPrice: int.parse(saleController.price.text),
+                            totalPrice:
+                                int.parse(saleController.totalPrice.text));
+                        goodsController.updateGoodsCount(goods.id.toString(),
+                            -int.parse(saleController.cartonCount.text));
                         creditController.addCreditEntry();
 
                         saleController.addSale();
@@ -255,15 +265,15 @@ class _SellScreenState extends State<SellScreen> {
                 ],
               ),
             ),
-            
+
             Padding(
               padding:
                   EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
               child: SellContainerWidget(
                 isBaqaya: false,
-                bill: totalBill,
                 cortonCount: totalCarton,
-                remaining: totalBill!-received,
+                bill: totalBill,
+                remaining: totalBill! - received,
               ),
             ),
             const SizedBox(
@@ -274,9 +284,18 @@ class _SellScreenState extends State<SellScreen> {
                   EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
               child: SellContainerWidget(
                 isBaqaya: true,
-                bill: totalBill!-received,
-                cortonCount: creditController.calculateNetAmountById(customerId),
-                remaining: (totalBill!+creditController.calculateNetAmountById(customerId))-received,
+                cortonCount: customerId == ''
+                    ? 0
+                    : creditController
+                        .calculateDuesAmountById(customerId)
+                        .toInt(),
+                bill: customerId == '' ? 0 : totalBill! - received,
+                remaining: customerId == ''
+                    ? 0
+                    : (totalBill! +
+                            creditController
+                                .calculateDuesAmountById(customerId)) -
+                        received,
               ),
             ),
             const SizedBox(
@@ -304,13 +323,16 @@ class _SellScreenState extends State<SellScreen> {
                               numeric: true,
                               label: GestureDetector(
                                 onTap: () async {
-                                            if(i==1){
-                                              final pdfFile = await SaleInvoicePdf.generate(sale: saleController.filteredSaleList );
-                                            // opening the pdf file
-                                            FileHandleApi.openFile(pdfFile);
-                                            // Get.to(InvoiceScreen());
-                                            }
-                                          },
+                                  if (i == 1) {
+                                    final pdfFile =
+                                        await SaleInvoicePdf.generate(
+                                            sale: saleController
+                                                .filteredSaleList);
+                                    // opening the pdf file
+                                    FileHandleApi.openFile(pdfFile);
+                                    // Get.to(InvoiceScreen());
+                                  }
+                                },
                                 child: Text(
                                   "${tableColumns[i - 1]}   ",
                                   textAlign: TextAlign.center,
@@ -339,7 +361,8 @@ class _SellScreenState extends State<SellScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    saleController.filteredSaleList[row].totalPrice
+                                    saleController
+                                        .filteredSaleList[row].totalPrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -353,9 +376,10 @@ class _SellScreenState extends State<SellScreen> {
                                     style: primaryTextStyle(size: 14),
                                   ),
                                 ),
-                                 DataCell(
+                                DataCell(
                                   Text(
-                                    saleController.filteredSaleList[row].totalCount
+                                    saleController
+                                        .filteredSaleList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -363,7 +387,8 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.filteredSaleList[row].perCartonCount
+                                    saleController
+                                        .filteredSaleList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -371,7 +396,8 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.filteredSaleList[row].cartonCount
+                                    saleController
+                                        .filteredSaleList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -379,7 +405,8 @@ class _SellScreenState extends State<SellScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.filteredSaleList[row].pieceCount
+                                    saleController
+                                        .filteredSaleList[row].pieceCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -403,7 +430,12 @@ class _SellScreenState extends State<SellScreen> {
                                                 "assets/icons/print.png"),
                                           ),
                                           onTap: () async {
-                                            final pdfFile = await SaleInvoicePdf.generate(sale: [saleController.filteredSaleList[row] ]);
+                                            final pdfFile =
+                                                await SaleInvoicePdf.generate(
+                                                    sale: [
+                                                  saleController
+                                                      .filteredSaleList[row]
+                                                ]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());
@@ -433,7 +465,12 @@ class _SellScreenState extends State<SellScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
-                          label: "search", imgPath: "", isSearch: true,controller: _searchController,onChange: (value)=>saleController.filterSales(value))),
+                          label: "search",
+                          imgPath: "",
+                          isSearch: true,
+                          controller: _searchController,
+                          onChange: (value) =>
+                              saleController.filterSales(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",
@@ -448,15 +485,16 @@ class _SellScreenState extends State<SellScreen> {
       ),
     );
   }
-   String calculateTotal() {
+
+  String calculateTotal() {
     try {
       int price = int.parse(saleController.price.text ?? '0');
       int totalCount = int.parse(saleController.totalCount.text ?? '0');
       int total = price * totalCount;
       setState(() {
-        saleController.totalPrice.text=total.toString();
-      savings=total-purchasePrice*totalCount;
-      print(">>>>>>>>>>>>>>>>>>>>SAVINGS: $savings");
+        saleController.totalPrice.text = total.toString();
+        savings = total - purchasePrice * totalCount;
+        print(">>>>>>>>>>>>>>>>>>>>SAVINGS: $savings");
       });
       return "$total :ٹوٹل";
     } catch (e) {

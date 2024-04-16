@@ -21,6 +21,7 @@ class _CreditScreenState extends State<CreditScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   CreditController creditController = Get.put(CreditController());
   BillNumberController billNumberController = Get.put(BillNumberController());
+  var _searchController = TextEditingController();
 
   List<String> tableColumns = [
     "بل نمبر",
