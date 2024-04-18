@@ -142,7 +142,7 @@ List<String> tableColumns = [
                     duesController.customerName = value;
                     var duesModel =
                         await duesController.getDuesByName(value);
-                        transactionsList= await duesController.getTransactionsList(duesModel!.id.toString());
+                        transactionsList= await duesController.getTransactionsList(duesModel!.id.toString(),date: DateTime.now());
                     duesController.customerId.text = duesModel.id.toString();
                     duesController.address.text = duesModel.dues![0].address.toString();
                     duesController.dues.text = duesController.getTotalDues(transactionsList).toString();
@@ -153,7 +153,7 @@ List<String> tableColumns = [
                     imgPath: "assets/icons/price.png",
                     controller: duesController.address),
                 textFieldWidget(
-                    label: "را باندی",
+                    label: "راباندی",
                     imgPath: "assets/icons/dues.png",
                     controller: duesController.dues),
                 textFieldWidget(
@@ -194,7 +194,7 @@ List<String> tableColumns = [
                   padding: EdgeInsets.symmetric(
                       horizontal: defaultHorizontalPadding),
                   child: Text(
-                    "راناندی کهاته",
+                    "را باندی کهاته",
                     style: boldTextStyle(),
                   ),
                 )),

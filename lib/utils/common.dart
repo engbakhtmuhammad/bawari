@@ -454,6 +454,7 @@ Widget textFieldWidget(
     Function(String)? onChange,
     VoidCallback? onPressed,
     String? prefixText,
+    Color? prefixTextColor,
     bool? isReadOnly,
     int? maxLine}) {
   return Padding(
@@ -477,7 +478,7 @@ Widget textFieldWidget(
                   height: defaultIconsSize,
                 ),
               ),
-        prefix: Text(prefixText ?? ''),
+        prefix: Text(prefixText ?? '',style: TextStyle(color: prefixTextColor??greyColor),),
         hintText: label,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

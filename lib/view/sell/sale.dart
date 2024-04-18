@@ -167,6 +167,7 @@ class _SellScreenState extends State<SellScreen> {
                       imgPath: "assets/icons/cortons.png",
                       inputType: TextInputType.number,
                       controller: saleController.cartonCount,
+                      prefixTextColor: Colors.red,
                       onChange: (value) async {
                         print("Received value: $value");
                         var goodsModel = await goodsController
@@ -303,7 +304,7 @@ class _SellScreenState extends State<SellScreen> {
             ),
 
             Obx(() {
-              saleController.filterSales(_searchController.text);
+              saleController.filterSales(_searchController.text,date: DateTime.now());
               return SizedBox(
                   height: saleController.filteredSaleList.length * 50 + 60,
                   width: double.infinity,

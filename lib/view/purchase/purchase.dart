@@ -197,7 +197,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               ),
             ),
             Obx(() {
-              purchaseController.filterPurchases(_searchController.text);
+              purchaseController.filterPurchases(_searchController.text,date: DateTime.now());
               return SizedBox(
                   height: purchaseController.filteredPurchases.length * 50 + 60,
                   width: double.infinity,

@@ -149,7 +149,7 @@ class _CreditScreenState extends State<CreditScreen> {
                     var duesModel =
                         await creditController.getCreditByName(value);
                     transactionsList = await creditController
-                        .getTransactionsList(duesModel!.id.toString());
+                        .getTransactionsList(duesModel!.id.toString(),date: DateTime.now());
                     creditController.customerId.text = duesModel.id.toString();
                     creditController.address.text =
                         duesModel.credits![0].address.toString();
@@ -407,7 +407,7 @@ class _CreditScreenState extends State<CreditScreen> {
             // Obx(() {
             // creditController.getDuesEntries();
             StreamBuilder(
-                stream: creditController.getCreditEntries().asStream(),
+                stream: creditController.getCreditEntries(date: DateTime.now()).asStream(),
                 builder: (context, snapshot) {
                   return SizedBox(
                       height: transactionsList.length * 50 + 60,

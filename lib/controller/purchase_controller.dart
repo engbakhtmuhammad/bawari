@@ -144,17 +144,42 @@ class PurchaseController extends GetxController {
         .toList();
   }
 
-    void filterPurchases(String query) {
-    if (query.isEmpty) {
-      // If the search query is empty, show all purchases
-      filteredPurchases.assignAll(purchaseList);
-    } else {
-      // If the search query is not empty, filter purchases by name
-      filteredPurchases.assignAll(
-        purchaseList.where(
-          (purchase) => purchase.name!.toLowerCase().contains(query.toLowerCase()),
-        ),
-      );
-    }
+void filterPurchases(String query, {DateTime? date}) {
+  if (query.isEmpty && date == null) {
+    // If both query and date are null, show all purchases
+    filteredPurchases.assignAll(purchaseList);
+  } else if (query.isEmpty) {
+    // If only query is null, filter purchases by date
+    filteredPurchases.assignAll(
+      purchaseList.where(
+        (purchase) =>
+            purchase.date != null &&
+            purchase.date!.year == date!.year &&
+            purchase.date!.month == date.month &&
+            purchase.date!.day == date.day,
+      ),
+    );
+  } else if (date == null) {
+    // If only date is null, filter purchases by name
+    filteredPurchases.assignAll(
+      purchaseList.where(
+        (purchase) =>
+            purchase.name!.toLowerCase().contains(query.toLowerCase()),
+      ),
+    );
+  } else {
+    // If both query and date are not null, filter purchases by name and date
+    filteredPurchases.assignAll(
+      purchaseList.where(
+        (purchase) =>
+            purchase.name!.toLowerCase().contains(query.toLowerCase()) &&
+            purchase.date != null &&
+            purchase.date!.year == date.year &&
+            purchase.date!.month == date.month &&
+            purchase.date!.day == date.day,
+      ),
+    );
   }
+}
+
 }

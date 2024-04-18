@@ -118,7 +118,7 @@ class _AddDueScreenState extends State<AddDueScreen> {
                   padding: EdgeInsets.symmetric(
                       horizontal: defaultHorizontalPadding),
                   child: Text(
-                    "راناندی کهاته",
+                    "را باندی کهاته",
                     style: boldTextStyle(),
                   ),
                 )),

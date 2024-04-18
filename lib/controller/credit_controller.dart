@@ -225,36 +225,66 @@ class CreditController extends GetxController {
     return totalDues;
   }
 
-  Future<List> getTransactionsList(String documentId) async {
-    var creditModel = creditList.firstWhere(
-      (element) => element.id == documentId,
-      orElse: () => CreditModel(),
-    );
+Future<List<Credit>> getTransactionsList(String documentId, {DateTime? date}) async {
+  var creditModel = creditList.firstWhere(
+    (element) => element.id == documentId,
+    orElse: () => CreditModel(),
+  );
 
-    var allTransactions = [
-      ...creditModel.credits ?? [],
-      ...creditModel.received ?? []
-    ];
-    allTransactions.sort((a, b) {
-      if (a.date == null || b.date == null) {
-        return 0;
-      }
-      return a.date!.compareTo(b.date!);
-    });
+  var allTransactions = <Credit>[
+    ...creditModel.credits ?? [],
+    ...creditModel.received ?? []
+  ];
 
-    return allTransactions;
+  if (date != null) {
+    allTransactions = allTransactions.where((transaction) =>
+      transaction.date != null &&
+      transaction.date!.year == date.year &&
+      transaction.date!.month == date.month &&
+      transaction.date!.day == date.day
+    ).toList();
   }
 
-  Future<void> getCreditEntries() async {
-    var duesEntries = await db.collection("credits").get();
-    creditList.clear();
-    for (var creditEntry in duesEntries.docs) {
-      var creditModel = CreditModel.fromJson(creditEntry.data());
-      creditList.add(creditModel);
+  allTransactions.sort((a, b) {
+    if (a.date == null || b.date == null) {
+      return 0;
     }
-    update();
-    // print("$creditList >>>>>>>. Credit Entries List");
+    return a.date!.compareTo(b.date!);
+  });
+
+  return allTransactions;
+}
+
+
+Future<void> getCreditEntries({DateTime? date}) async {
+  var duesEntries = await db.collection("credits").get();
+  creditList.clear();
+  for (var creditEntry in duesEntries.docs) {
+    var creditModel = CreditModel.fromJson(creditEntry.data());
+    if (date == null) {
+      // If date is null, add all credit entries
+      creditList.add(creditModel);
+    } else {
+      // If date is not null, add credit entries that match the specified date
+      if (creditModel.credits != null &&
+          creditModel.credits!.any((credit) => isCreditOnDate(credit, date)) ||
+          creditModel.received != null &&
+          creditModel.received!.any((credit) => isCreditOnDate(credit, date))) {
+        creditList.add(creditModel);
+      }
+    }
   }
+  update();
+}
+
+bool isCreditOnDate(Credit credit, DateTime date) {
+  return credit.date != null &&
+      credit.date!.year == date.year &&
+      credit.date!.month == date.month &&
+      credit.date!.day == date.day;
+}
+
+
 
   CreditModel? getCreditByName(String name) {
     for (var credits in creditList) {

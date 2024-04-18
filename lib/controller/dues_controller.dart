@@ -187,25 +187,37 @@ class DuesController extends GetxController {
     return totalDues;
   }
 
-  Future<List> getTransactionsList(String documentId) async {
-    var duesModel = duesList.firstWhere(
-      (element) => element.id == documentId,
-      orElse: () => DuesModel(),
-    );
 
-    var allTransactions = [
-      ...duesModel.dues ?? [],
-      ...duesModel.received ?? []
-    ];
-    allTransactions.sort((a, b) {
-      if (a.date == null || b.date == null) {
-        return 0;
-      }
-      return a.date!.compareTo(b.date!);
-    });
+Future<List<Dues>> getTransactionsList(String documentId, {DateTime? date}) async {
+  var duesModel = duesList.firstWhere(
+    (element) => element.id == documentId,
+    orElse: () => DuesModel(),
+  );
 
-    return allTransactions;
+  var allTransactions = <Dues>[
+    ...duesModel.dues ?? [],
+    ...duesModel.received ?? []
+  ];
+
+  if (date != null) {
+    allTransactions = allTransactions.where((transaction) =>
+      transaction.date != null &&
+      transaction.date!.year == date.year &&
+      transaction.date!.month == date.month &&
+      transaction.date!.day == date.day
+    ).toList();
   }
+
+  allTransactions.sort((a, b) {
+    if (a.date == null || b.date == null) {
+      return 0;
+    }
+    return a.date!.compareTo(b.date!);
+  });
+
+  return allTransactions;
+}
+
 
   Future<void> getDuesEntries() async {
     var duesEntries = await db.collection("dues").get();
