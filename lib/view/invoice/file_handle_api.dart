@@ -12,7 +12,10 @@ class FileHandleApi {
     final bytes = await pdf.save();
 
     // final dir = await getApplicationDocumentsDirectory();
-    final dir = await getExternalStorageDirectory();
+    final dir = Platform.isAndroid
+    ? await getExternalStorageDirectory() //FOR ANDROID
+    : await getApplicationSupportDirectory();
+    
     final file = File('${dir?.path}/$name');
     await file.writeAsBytes(bytes);
     return file;
