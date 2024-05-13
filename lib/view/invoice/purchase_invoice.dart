@@ -141,18 +141,7 @@ class PurchaseInvoicePdf {
             pw.Table.fromTextArray(
               headers: tableHeaders.reversed.toList(),
               data: [],
-              border: pw.TableBorder(
-                // Set border color for each side
-                left: pw.BorderSide(color: PdfColor.fromHex('#023047')),
-                top: pw.BorderSide(color: PdfColor.fromHex('#023047')),
-                right: pw.BorderSide(color: PdfColor.fromHex('#023047')),
-                bottom: pw.BorderSide(color: PdfColor.fromHex('#023047')),
-                verticalInside: pw.BorderSide(
-                    color: PdfColor.fromHex('#023047')), // Vertical lines
-                horizontalInside: pw.BorderSide(
-                    color: PdfColor.fromHex('#023047')), // Horizontal lines
-              ),
-              cellStyle: pw.TextStyle(font: ttf),
+              border: null,
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
               headerStyle: pw.TextStyle(
@@ -166,10 +155,19 @@ class PurchaseInvoicePdf {
                   .toList(), // Reverse the order of the headers
               data: tableData
                   .map((row) => row.reversed.toList())
-                  .toList(), // Reverse the order of the data rows
-              border: pw.TableBorder(
-                  verticalInside:
-                      pw.BorderSide(color: PdfColor.fromHex("#D3D3D3"))),
+                  .toList(),
+                  border: pw.TableBorder(
+                // Set border color for each side
+                left: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                top: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                right: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                bottom: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                verticalInside: pw.BorderSide(
+                    color: PdfColor.fromHex('#023047')), // Vertical lines
+                horizontalInside: pw.BorderSide(
+                    color: PdfColor.fromHex('#023047')), // Horizontal lines
+              ),
+              cellStyle: pw.TextStyle(font: ttf),
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
               headerStyle: pw.TextStyle(
