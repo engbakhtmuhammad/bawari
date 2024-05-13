@@ -229,8 +229,10 @@ class SaleInvoicePdf {
               border: null,
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
-              headerStyle: pw.TextStyle( font: ttf,
-                  fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+              headerStyle: pw.TextStyle(
+                  font: ttf,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white),
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#023047")),
               cellHeight: 30.0,
@@ -242,9 +244,17 @@ class SaleInvoicePdf {
                   .map((row) => row.reversed.toList())
                   .toList(), // Reverse the order of the data rows
               border: pw.TableBorder(
-                  verticalInside:
-                      pw.BorderSide(color: PdfColor.fromHex("#D3D3D3"))),
-                    cellStyle: pw.TextStyle(font: ttf),
+                // Set border color for each side
+                left: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                top: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                right: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                bottom: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                verticalInside: pw.BorderSide(
+                    color: PdfColor.fromHex('#023047')), // Vertical lines
+                horizontalInside: pw.BorderSide(
+                    color: PdfColor.fromHex('#023047')), // Horizontal lines
+              ),
+              cellStyle: pw.TextStyle(font: ttf),
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
               headerStyle: pw.TextStyle(
@@ -377,7 +387,6 @@ class SaleInvoicePdf {
                         width: 50,
                         child: pw.Text(
                           "${(totalBaqaya < 0 ? -(totalPrice) : totalPrice) + double.parse(totalBaqaya.toString()) + (totalBaqaya < 0 ? totalReceivedCash : -totalReceivedCash)}",
-
                           style: pw.TextStyle(
                             font: ttf,
                             fontWeight: pw.FontWeight.bold,

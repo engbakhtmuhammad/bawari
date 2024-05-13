@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:bawari/controller/credit_controller.dart';
-import 'package:bawari/controller/customer_controller.dart';
 import 'package:bawari/model/purchase_model.dart';
-import 'package:bawari/model/sale_model.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -14,12 +12,11 @@ class PurchaseInvoicePdf {
   static Future<File> generate({required PurchaseModel purchase}) async {
     final pdf = pw.Document();
 
-    CreditController creditController = Get.put(CreditController());
+    Get.put(CreditController());
     final topImage = (await rootBundle.load('assets/images/top.png'))
         .buffer
         .asUint8List();
-    final bottomImage =
-        (await rootBundle.load('assets/images/address.png'))
+    (await rootBundle.load('assets/images/address.png'))
             .buffer
             .asUint8List();
     // Load the font file for 'Noto Naskh Arabic'
@@ -144,7 +141,18 @@ class PurchaseInvoicePdf {
             pw.Table.fromTextArray(
               headers: tableHeaders.reversed.toList(),
               data: [],
-              border: null,
+              border: pw.TableBorder(
+                // Set border color for each side
+                left: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                top: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                right: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                bottom: pw.BorderSide(color: PdfColor.fromHex('#023047')),
+                verticalInside: pw.BorderSide(
+                    color: PdfColor.fromHex('#023047')), // Vertical lines
+                horizontalInside: pw.BorderSide(
+                    color: PdfColor.fromHex('#023047')), // Horizontal lines
+              ),
+              cellStyle: pw.TextStyle(font: ttf),
               rowDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
               headerStyle: pw.TextStyle(

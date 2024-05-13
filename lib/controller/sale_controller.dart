@@ -139,42 +139,69 @@ class SaleController extends GetxController {
 
     return totalPieceCount;
   }
-
-   void filterSales(String query, {DateTime? date}) {
-  if (query.isEmpty && date == null) {
-    // If both query and date are null, show all purchases
+  void filterSales(String query, {String? selectedCustomerId, DateTime? date}) {
+  if (query.isEmpty && date == null && selectedCustomerId == null) {
+    // If query, date, and selectedCustomerId are all null, show all sales
     filteredSaleList.assignAll(saleList);
-  } else if (query.isEmpty) {
-    // If only query is null, filter purchases by date
-    filteredSaleList.assignAll(
-      saleList.where(
-        (sale) =>
-            sale.date != null &&
-            sale.date!.year == date!.year &&
-            sale.date!.month == date.month &&
-            sale.date!.day == date.day,
-      ),
-    );
-  } else if (date == null) {
-    // If only date is null, filter purchases by name
-    filteredSaleList.assignAll(
-      saleList.where(
-        (sale) => sale.name!.toLowerCase().contains(query.toLowerCase()),
-      ),
-    );
   } else {
-    // If both query and date are not null, filter purchases by name and date
+    // Filter sales based on query, date, and selectedCustomerId
     filteredSaleList.assignAll(
-      saleList.where(
-        (sale) =>
-            sale.name!.toLowerCase().contains(query.toLowerCase()) &&
-            sale.date != null &&
+      saleList.where((sale) {
+        // Filter by name (query)
+        final bool matchesName = query.isEmpty || sale.name!.toLowerCase().contains(query.toLowerCase());
+        
+        // Filter by date
+        final bool matchesDate = date == null || (sale.date != null &&
             sale.date!.year == date.year &&
             sale.date!.month == date.month &&
-            sale.date!.day == date.day,
-      ),
+            sale.date!.day == date.day);
+        
+        // Filter by customer ID
+        final bool matchesCustomerId = selectedCustomerId == null || sale.customerId == selectedCustomerId;
+
+        // Return true if all conditions are met
+        return matchesName && matchesDate && matchesCustomerId;
+      }),
     );
   }
 }
+
+
+//    void filterSales(String query, {DateTime? date}) {
+//   if (query.isEmpty && date == null) {
+//     // If both query and date are null, show all purchases
+//     filteredSaleList.assignAll(saleList);
+//   } else if (query.isEmpty) {
+//     // If only query is null, filter purchases by date
+//     filteredSaleList.assignAll(
+//       saleList.where(
+//         (sale) =>
+//             sale.date != null &&
+//             sale.date!.year == date!.year &&
+//             sale.date!.month == date.month &&
+//             sale.date!.day == date.day,
+//       ),
+//     );
+//   } else if (date == null) {
+//     // If only date is null, filter purchases by name
+//     filteredSaleList.assignAll(
+//       saleList.where(
+//         (sale) => sale.name!.toLowerCase().contains(query.toLowerCase()),
+//       ),
+//     );
+//   } else {
+//     // If both query and date are not null, filter purchases by name and date
+//     filteredSaleList.assignAll(
+//       saleList.where(
+//         (sale) =>
+//             sale.name!.toLowerCase().contains(query.toLowerCase()) &&
+//             sale.date != null &&
+//             sale.date!.year == date.year &&
+//             sale.date!.month == date.month &&
+//             sale.date!.day == date.day,
+//       ),
+//     );
+//   }
+// }
 
 }

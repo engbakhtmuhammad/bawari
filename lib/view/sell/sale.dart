@@ -304,7 +304,7 @@ class _SellScreenState extends State<SellScreen> {
             ),
 
             Obx(() {
-              saleController.filterSales(_searchController.text,date: DateTime.now());
+              saleController.filterSales(_searchController.text,selectedCustomerId: customerId,date: DateTime.now());
               return SizedBox(
                   height: saleController.filteredSaleList.length * 50 + 60,
                   width: double.infinity,
