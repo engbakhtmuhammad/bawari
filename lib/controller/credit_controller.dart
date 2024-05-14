@@ -80,7 +80,7 @@ class CreditController extends GetxController {
           ],
           received: [
             Credit(
-                price: int.parse(received.text),
+                price: int.parse("-${received.text}"),
                 date: _parseDate(date.text),
                 address: address.text,
                 billNo: billNumberController.billNumber),
@@ -101,8 +101,6 @@ class CreditController extends GetxController {
       }
 
       // Clear the text editing controllers after adding/updating the entry
-      customerId.clear();
-      customerName = "";
       credits.clear();
       received.clear();
       address.clear();
@@ -168,7 +166,6 @@ class CreditController extends GetxController {
       }
 
       // Clear the text editing controllers after adding/updating the entry
-      customerId.clear();
       credits.clear();
       received.clear();
       address.clear();
@@ -225,35 +222,44 @@ class CreditController extends GetxController {
     return totalDues;
   }
 
-Future<List<Credit>> getTransactionsList(String documentId, {DateTime? date}) async {
-  var creditModel = creditList.firstWhere(
-    (element) => element.id == documentId,
-    orElse: () => CreditModel(),
-  );
-
-  var allTransactions = <Credit>[
-    ...creditModel.credits ?? [],
-    ...creditModel.received ?? []
-  ];
-
-  if (date != null) {
-    allTransactions = allTransactions.where((transaction) =>
-      transaction.date != null &&
-      transaction.date!.year == date.year &&
-      transaction.date!.month == date.month &&
-      transaction.date!.day == date.day
-    ).toList();
+Future<List<Credit>> getTransactionsList(String customerId, {DateTime? date}) async {
+  List<Credit> transactionsList = [];
+  
+  // Iterate through each credit entry in the credit list
+  for (var creditModel in creditList) {
+    // Check if the credit entry belongs to the specified customer
+    if (creditModel.customerId == customerId) {
+      // Add the credits and received amounts to the transactions list
+      if (creditModel.credits != null) {
+        transactionsList.addAll(creditModel.credits!);
+      }
+      if (creditModel.received != null) {
+        transactionsList.addAll(creditModel.received!);
+      }
+    }
   }
 
-  allTransactions.sort((a, b) {
+  // If date is provided, filter transactions by date
+  if (date != null) {
+    transactionsList = transactionsList.where((transaction) =>
+        transaction.date != null &&
+        transaction.date!.year == date.year &&
+        transaction.date!.month == date.month &&
+        transaction.date!.day == date.day).toList();
+  }
+
+  // Sort transactions by date in descending order
+  transactionsList.sort((a, b) {
     if (a.date == null || b.date == null) {
       return 0;
     }
-    return a.date!.compareTo(b.date!);
+    return b.date!.compareTo(a.date!); // Compare in descending order
   });
 
-  return allTransactions;
+  return transactionsList;
 }
+
+
 
 
 Future<void> getCreditEntries({DateTime? date}) async {

@@ -3,11 +3,13 @@ import 'package:bawari/controller/credit_controller.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';
+import 'package:bawari/view/invoice/cash_invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/constants.dart';
+import '../invoice/file_handle_api.dart';
 import '../widgets/custom_btn.dart';
 
 class CreditScreen extends StatefulWidget {
@@ -124,10 +126,8 @@ class _CreditScreenState extends State<CreditScreen> {
     return Scaffold(
       key: scaffoldKey,
       appBar: appBarWidget(
-        
-        title: "وصولی",
-        openDrawer: ()=>scaffoldKey.currentState?.openDrawer()
-      ),
+          title: "وصولی",
+          openDrawer: () => scaffoldKey.currentState?.openDrawer()),
       drawer: drawerWidget(),
       body: SingleChildScrollView(
         child: Column(
@@ -149,7 +149,8 @@ class _CreditScreenState extends State<CreditScreen> {
                     var duesModel =
                         await creditController.getCreditByName(value);
                     transactionsList = await creditController
-                        .getTransactionsList(duesModel!.id.toString(),date: DateTime.now());
+                        .getTransactionsList(duesModel!.customerId.toString(),
+                            date: DateTime.now());
                     creditController.customerId.text = duesModel.id.toString();
                     creditController.address.text =
                         duesModel.credits![0].address.toString();
@@ -170,7 +171,8 @@ class _CreditScreenState extends State<CreditScreen> {
                 textFieldWidget(
                     label: "وصول",
                     imgPath: "assets/icons/income.png",
-                    controller: creditController.received,inputType: TextInputType.number),
+                    controller: creditController.received,
+                    inputType: TextInputType.number),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 //   children: [
@@ -388,9 +390,22 @@ class _CreditScreenState extends State<CreditScreen> {
                   height: 10,
                 ),
                 CustomButton(
-                  onPressed: () {creditController.addRecieveEntry();},
+                  onPressed: () {
+                    creditController.addRecieveEntry();
+                  },
                   label: "سابقہ بل وصولی",
                   icon: "assets/icons/file_sync.png",
+                ),
+                CustomButton(
+                  onPressed: () async {
+                    final pdfFile = await CashInvoicePdf.generate(
+                        cash: transactionsList, name: creditController.customerName);
+                    // opening the pdf file
+                    FileHandleApi.openFile(pdfFile);
+                    // Get.to(InvoiceScreen());
+                  },
+                  label: "بل پرنٹ",
+                  icon: "assets/icons/print.png",
                 )
               ],
             )),
@@ -407,7 +422,9 @@ class _CreditScreenState extends State<CreditScreen> {
             // Obx(() {
             // creditController.getDuesEntries();
             StreamBuilder(
-                stream: creditController.getCreditEntries(date: DateTime.now()).asStream(),
+                stream: creditController
+                    .getCreditEntries(date: DateTime.now())
+                    .asStream(),
                 builder: (context, snapshot) {
                   return SizedBox(
                       height: transactionsList.length * 50 + 60,
@@ -476,7 +493,8 @@ class _CreditScreenState extends State<CreditScreen> {
       ),
     );
   }
-    void showAddCreditDialog() {
+
+  void showAddCreditDialog() {
     Get.defaultDialog(
       title: 'پہ خلکو باندے',
       content: SingleChildScrollView(
@@ -489,7 +507,7 @@ class _CreditScreenState extends State<CreditScreen> {
                 imgPath: "assets/icons/id.png",
                 dropDownList: dropDownList,
                 onChanged: (value) {
-                  creditController.customerName=value;
+                  creditController.customerName = value;
                 },
               ),
               textFieldWidget(
@@ -497,7 +515,6 @@ class _CreditScreenState extends State<CreditScreen> {
                   inputType: TextInputType.number,
                   imgPath: "assets/icons/profits.png",
                   controller: creditController.credits),
-              
               textFieldWidget(
                   label: "حوالا ادرس",
                   imgPath: "assets/icons/note.png",

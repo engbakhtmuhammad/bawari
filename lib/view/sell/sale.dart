@@ -145,17 +145,8 @@ class _SellScreenState extends State<SellScreen> {
                           goodsModel.perCartonCount.toString();
                       saleController.price.text =
                           goodsModel.salePrice.toString();
-                      // saleController.totalPrice.text =
-                      //     (int.parse(saleController.cartonCount.text) *
-                      //             int.parse(saleController.price.text))
-                      //         .toString();
                     },
                   ),
-                  // textFieldWidget(
-                  //     label: "سامان نمبر",
-                  //     imgPath: "assets/icons/number.png",
-                  //     inputType: TextInputType.number,
-                  //     controller: saleController.goodsNo),
                   textFieldWidget(
                     label: "پیس تعداد",
                     imgPath: "assets/icons/count.png",
@@ -260,6 +251,7 @@ class _SellScreenState extends State<SellScreen> {
                         creditController.addCreditEntry();
 
                         saleController.addSale();
+                        
                       },
                     ),
                   )
@@ -304,7 +296,8 @@ class _SellScreenState extends State<SellScreen> {
             ),
 
             Obx(() {
-              saleController.filterSales(_searchController.text,selectedCustomerId: customerId,date: DateTime.now());
+              saleController.filterSales(_searchController.text,
+                  selectedCustomerId: customerId, date: DateTime.now());
               return SizedBox(
                   height: saleController.filteredSaleList.length * 50 + 60,
                   width: double.infinity,
