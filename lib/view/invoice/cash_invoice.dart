@@ -12,15 +12,15 @@ class CashInvoicePdf {
       {required List cash, required String name}) async {
     final pdf = pw.Document();
     CreditController creditController = Get.put(CreditController());
-    double baqaya = 0;
     double totalBaqaya = 0;
+    double lastRecieved = 0;
 
-    for (var item in cash) {
-      // Add the value to the baqaya variable
-      baqaya += item.price;
+    for (var cashItem in cash) {
+      final baqaya = await creditController
+          .getTotalDuesByName(cashItem.customerName.toString());
+      totalBaqaya += baqaya;
     }
-    totalBaqaya=baqaya;
-    totalBaqaya+=cash.last.price;
+    lastRecieved+=cash.last.price;
 
     final topImage =
         (await rootBundle.load('assets/images/top.png')).buffer.asUint8List();
@@ -194,7 +194,7 @@ class CashInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          totalBaqaya.toString(),
+                          "${totalBaqaya+ cash.last.price}",
                           style: pw.TextStyle(
                             font: ttf,
                             fontWeight: pw.FontWeight.bold,
@@ -250,7 +250,7 @@ class CashInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          baqaya.toString(),
+                          totalBaqaya.toString(),
                           style: pw.TextStyle(
                             font: ttf,
                             color: PdfColors.red,

@@ -22,11 +22,13 @@ class SaleInvoicePdf {
           .getTotalDuesByName(saleItem.customerName.toString());
       totalBaqaya += baqaya;
     }
+     String totalBaqayaString=totalBaqaya.toStringAsFixed(0);
     double totalPrice = 0;
 
     for (var saleItem in sale) {
       totalPrice += saleItem.totalPrice ?? 0;
     }
+    String totalPriceString = totalPrice.toStringAsFixed(0);
     int totalCartonCount = 0;
 
     for (var saleItem in sale) {
@@ -37,6 +39,13 @@ class SaleInvoicePdf {
     for (var saleItem in sale) {
       totalReceivedCash += saleItem.recievedCash ?? 0;
     }
+    String totalReceivedCashString = totalReceivedCash.toStringAsFixed(0);
+
+    // Calculate the remaining amount
+    final remainingAmount = (totalBaqaya < 0 ? -(totalPrice) : totalPrice) +
+        double.parse(totalBaqayaString) +
+        (totalBaqaya < 0 ? totalReceivedCash : -totalReceivedCash);
+    final remainingAmountString = remainingAmount.toStringAsFixed(0);
 
     print('Total Received Cash: $totalReceivedCash');
 
@@ -72,7 +81,7 @@ class SaleInvoicePdf {
       'تفصيل',
       'بيس تعداد',
       'کارتن تعداد',
-      'یو کارتن قیمت',
+      'یو کارتن تعداد',
       'جمله تعداد',
       'قیمت',
       'جمله قیمت'
@@ -231,10 +240,21 @@ class SaleInvoicePdf {
                   pw.BoxDecoration(color: PdfColor.fromHex("#F7EBC3")),
               headerStyle: pw.TextStyle(
                   font: ttf,
+                  fontSize: 10,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.white),
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#023047")),
+                  columnWidths: {
+                0: pw.FlexColumnWidth(1),
+                1: pw.FlexColumnWidth(1),
+                2: pw.FlexColumnWidth(1),
+                3: pw.FlexColumnWidth(1),
+                4: pw.FlexColumnWidth(1),
+                5: pw.FlexColumnWidth(1),
+                6: pw.FlexColumnWidth(1),
+                7: pw.FlexColumnWidth(1),
+              },
               cellHeight: 30.0,
             ),
             pw.Table.fromTextArray(
@@ -265,7 +285,16 @@ class SaleInvoicePdf {
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#EFB768")),
               cellHeight: 30.0,
-
+              columnWidths: {
+                0: pw.FlexColumnWidth(1),
+                1: pw.FlexColumnWidth(1),
+                2: pw.FlexColumnWidth(1),
+                3: pw.FlexColumnWidth(1),
+                4: pw.FlexColumnWidth(1),
+                5: pw.FlexColumnWidth(1),
+                6: pw.FlexColumnWidth(1),
+                7: pw.FlexColumnWidth(1),
+              },
               cellAlignments: {
                 0: pw.Alignment.center,
                 1: pw.Alignment.center,
@@ -285,7 +314,7 @@ class SaleInvoicePdf {
                   pw.SizedBox(
                     width: 50,
                     child: pw.Text(
-                      totalPrice.toString(),
+                      totalPriceString,
                       style: pw.TextStyle(
                         font: ttf,
                         fontWeight: pw.FontWeight.bold,
@@ -300,7 +329,7 @@ class SaleInvoicePdf {
                     color: PdfColor.fromHex("#EFB768"),
                     child: pw.Center(
                       child: pw.Text(
-                        "بل تونل",
+                        "ٹوٹل بل",
                         style: pw.TextStyle(
                           font: ttf,
                           color: PdfColors.black,
@@ -320,7 +349,7 @@ class SaleInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          totalBaqaya.toString(),
+                          totalBaqayaString,
                           style: pw.TextStyle(
                             font: ttf,
                             color: PdfColors.red,
@@ -335,7 +364,7 @@ class SaleInvoicePdf {
                       color: PdfColor.fromHex("#EFB768"),
                       child: pw.Center(
                         child: pw.Text(
-                          "زور حساب",
+                          "زوڑ حساب",
                           style: pw.TextStyle(
                             font: ttf,
                             color: PdfColors.black,
@@ -354,7 +383,7 @@ class SaleInvoicePdf {
                         width: 50,
                         child: pw.Text(
                           // sale[0].recievedCash.toString(),
-                          totalReceivedCash.toString(),
+                          totalReceivedCashString,
                           style: pw.TextStyle(
                               font: ttf,
                               fontWeight: pw.FontWeight.bold,
@@ -386,7 +415,7 @@ class SaleInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          "${(totalBaqaya < 0 ? -(totalPrice) : totalPrice) + double.parse(totalBaqaya.toString()) + (totalBaqaya < 0 ? totalReceivedCash : -totalReceivedCash)}",
+                          remainingAmountString,
                           style: pw.TextStyle(
                             font: ttf,
                             fontWeight: pw.FontWeight.bold,
@@ -475,7 +504,7 @@ class SaleInvoicePdf {
                       color: PdfColor.fromHex("#EFB768"),
                       child: pw.Center(
                         child: pw.Text(
-                          "کارتن تعداد",
+                          "کارٹن تعداد",
                           style: pw.TextStyle(
                             font: ttf,
                             color: PdfColors.black,
