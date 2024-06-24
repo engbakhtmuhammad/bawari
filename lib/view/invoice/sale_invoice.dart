@@ -15,14 +15,11 @@ class SaleInvoicePdf {
 
     CreditController creditController = Get.put(CreditController());
     CustomerController customerController = Get.put(CustomerController());
-    double totalBaqaya = 0;
 
-    for (var saleItem in sale) {
-      final baqaya = await creditController
-          .getTotalDuesByName(saleItem.customerName.toString());
-      totalBaqaya += baqaya;
-    }
-     String totalBaqayaString=totalBaqaya.toStringAsFixed(0);
+    final int previousBaqaya = creditController.getTotalCredits(
+        await creditController.getTransactionsList(
+            sale[0].customerId.toString(),
+            date: DateTime.now()));
     double totalPrice = 0;
 
     for (var saleItem in sale) {
@@ -34,17 +31,17 @@ class SaleInvoicePdf {
     for (var saleItem in sale) {
       totalCartonCount += saleItem.cartonCount ?? 0;
     }
-    double totalReceivedCash = 0;
-
-    for (var saleItem in sale) {
-      totalReceivedCash += saleItem.recievedCash ?? 0;
-    }
+    final int totalReceivedCash = creditController.getTotalReceived(
+        await creditController.getTransactionsList(
+            sale[0].customerId.toString(),
+            date: DateTime.now())); 
     String totalReceivedCashString = totalReceivedCash.toStringAsFixed(0);
 
     // Calculate the remaining amount
-    final remainingAmount = (totalBaqaya < 0 ? -(totalPrice) : totalPrice) +
-        double.parse(totalBaqayaString) +
-        (totalBaqaya < 0 ? totalReceivedCash : -totalReceivedCash);
+    final remainingAmount = (previousBaqaya < 0 ? -(totalPrice) : totalPrice) +
+        previousBaqaya +
+        (previousBaqaya < 0 ? totalReceivedCash : -totalReceivedCash);
+
     final remainingAmountString = remainingAmount.toStringAsFixed(0);
 
     print('Total Received Cash: $totalReceivedCash');
@@ -53,7 +50,7 @@ class SaleInvoicePdf {
 
     print('Total Price: $totalPrice');
 
-    print('Total Baqaya: $totalBaqaya');
+    print('Total Baqaya: $previousBaqaya');
 
     var customer = await customerController
         .getCustomerByName(sale[0].customerName.toString());
@@ -245,7 +242,7 @@ class SaleInvoicePdf {
                   color: PdfColors.white),
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#023047")),
-                  columnWidths: {
+              columnWidths: {
                 0: pw.FlexColumnWidth(1),
                 1: pw.FlexColumnWidth(1),
                 2: pw.FlexColumnWidth(1),
@@ -349,7 +346,7 @@ class SaleInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          totalBaqayaString,
+                          previousBaqaya.toString(),
                           style: pw.TextStyle(
                             font: ttf,
                             color: PdfColors.red,
@@ -415,7 +412,7 @@ class SaleInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          remainingAmountString,
+                          previousBaqaya.toString(),
                           style: pw.TextStyle(
                             font: ttf,
                             fontWeight: pw.FontWeight.bold,

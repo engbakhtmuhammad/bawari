@@ -5,7 +5,6 @@ import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/purchase_controller.dart';
 import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/controller/savings_controller.dart';
-import 'package:bawari/model/sale_model.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/view/invoice/sale_invoice.dart';
 import 'package:flutter/material.dart';
@@ -126,6 +125,9 @@ class _SellScreenState extends State<SellScreen> {
                         creditController.customerId.text =
                             creditModel!.id.toString();
                         customerId = creditModel.id.toString();
+                        transactionsList = await creditController
+                        .getTransactionsList(customerId,
+                            date: DateTime.now());
                         saleController.customerId = creditModel.id.toString();
                         saleController.customerName = value;
                       }),
@@ -158,7 +160,7 @@ class _SellScreenState extends State<SellScreen> {
                       imgPath: "assets/icons/cortons.png",
                       inputType: TextInputType.number,
                       controller: saleController.cartonCount,
-                      prefixTextColor: Colors.red,
+                      // prefixTextColor: Colors.red,
                       onChange: (value) async {
                         print("Received value: $value");
                         var goodsModel = await goodsController
@@ -194,7 +196,8 @@ class _SellScreenState extends State<SellScreen> {
                           print("Error parsing values: $e");
                         }
                       },
-                      prefixText: "$cartonCount  :کارٹن تعداد"),
+                      // prefixText: "$cartonCount  :کارٹن تعداد"
+                      ),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/corton_count.png",
@@ -279,15 +282,12 @@ class _SellScreenState extends State<SellScreen> {
                 isBaqaya: true,
                 cortonCount: customerId == ''
                     ? 0
-                    : creditController
-                        .calculateDuesAmountById(customerId)
-                        .toInt(),
+                    : creditController.getTotalCredits(transactionsList).toInt(),
                 bill: customerId == '' ? 0 : totalBill! - received,
                 remaining: customerId == ''
                     ? 0
                     : (totalBill! +
-                            creditController
-                                .calculateDuesAmountById(customerId)) -
+                            creditController.getTotalCredits(transactionsList).toInt()) -
                         received,
               ),
             ),

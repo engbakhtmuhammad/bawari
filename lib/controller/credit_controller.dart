@@ -50,22 +50,24 @@ class CreditController extends GetxController {
               billNo: billNumberController.billNumber),
         );
         existingCustomer.received!.add(
-            Credit(
-                price: int.parse("-${received.text}"),
-                date: _parseDate(date.text),
-                address: address.text,
-                billNo: billNumberController.billNumber),
+          Credit(
+              price: int.parse("-${received.text}"),
+              date: _parseDate(date.text),
+              address: address.text,
+              billNo: billNumberController.billNumber),
         );
 
         // Update the existing document in Firestore
         await db.collection("credits").doc(existingCustomer.id!).update({
-          'received': existingCustomer.received!.map((d) => d.toJson()).toList(),
+          'received':
+              existingCustomer.received!.map((d) => d.toJson()).toList(),
         });
-         await db.collection("credits").doc(existingCustomer.id!).update({
+        await db.collection("credits").doc(existingCustomer.id!).update({
           'credits': existingCustomer.credits!.map((d) => d.toJson()).toList(),
         });
         // autoBillNo + 10;
-        billNumberController.saveBillNumber(billNumberController.billNumber+10);
+        billNumberController
+            .saveBillNumber(billNumberController.billNumber + 10);
       } else {
         // If customer name doesn't exist, add a new entry
         var creditEntry = CreditModel(
@@ -97,7 +99,8 @@ class CreditController extends GetxController {
         creditEntry.id = creditId;
 
         await db.collection("credits").doc(creditId).update({'id': creditId});
-        billNumberController.saveBillNumber(billNumberController.billNumber+10);
+        billNumberController
+            .saveBillNumber(billNumberController.billNumber + 10);
       }
 
       // Clear the text editing controllers after adding/updating the entry
@@ -157,7 +160,8 @@ class CreditController extends GetxController {
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
         // autoBillNo + 10;
-        billNumberController.saveBillNumber(billNumberController.billNumber+10);
+        billNumberController
+            .saveBillNumber(billNumberController.billNumber + 10);
       } else {
         Get.snackbar('Error', 'Customer Not Found!',
             snackPosition: SnackPosition.BOTTOM,
@@ -186,29 +190,29 @@ class CreditController extends GetxController {
     return total;
   }
 
- int getTotalCreditsForAllCustomers() {
-  int total=0;
-  for (var creditModel in creditList) {
-    // Calculate the total credits for each customer
-    int totalCredits = getTotalCredits(creditModel.credits ?? []);
+  int getTotalCreditsForAllCustomers() {
+    int total = 0;
+    for (var creditModel in creditList) {
+      // Calculate the total credits for each customer
+      int totalCredits = getTotalCredits(creditModel.credits ?? []);
 
-    // Calculate the total received for each customer
-    int totalReceived = getTotalCredits(creditModel.received ?? []);
+      // Calculate the total received for each customer
+      int totalReceived = getTotalCredits(creditModel.received ?? []);
 
-    // Calculate the net credits for each customer
-    int netCredits = totalCredits - totalReceived;
+      // Calculate the net credits for each customer
+      int netCredits = totalCredits - totalReceived;
 
-    // Add the net credits to the total net credits
-    total += netCredits;
+      // Add the net credits to the total net credits
+      total += netCredits;
+    }
+
+    return total;
   }
 
-  return total;
-}
- void updateTotalCredits() {
+  void updateTotalCredits() {
     totalNetCredits = getTotalCreditsForAllCustomers();
     update();
   }
-
 
   int getTotalCredits(List transactionsList) {
     int totalDues = 0;
@@ -222,75 +226,90 @@ class CreditController extends GetxController {
     return totalDues;
   }
 
-Future<List<Credit>> getTransactionsList(String customerId, {DateTime? date}) async {
-  List<Credit> transactionsList = [];
-  
-  // Iterate through each credit entry in the credit list
-  for (var creditModel in creditList) {
-    // Check if the credit entry belongs to the specified customer
-    if (creditModel.customerId == customerId) {
-      // Add the credits and received amounts to the transactions list
-      if (creditModel.credits != null) {
-        transactionsList.addAll(creditModel.credits!);
-      }
-      if (creditModel.received != null) {
-        transactionsList.addAll(creditModel.received!);
+  int getTotalReceived(List transactionsList) {
+  int totalReceived = 0;
+
+  for (var transaction in transactionsList) {
+    if (transaction is Credit && transaction.price != null) {
+      if (transaction.price! < 0) { // Assuming received amounts are stored as negative prices
+        totalReceived += transaction.price!;
       }
     }
   }
 
-  // If date is provided, filter transactions by date
-  if (date != null) {
-    transactionsList = transactionsList.where((transaction) =>
-        transaction.date != null &&
-        transaction.date!.year == date.year &&
-        transaction.date!.month == date.month &&
-        transaction.date!.day == date.day).toList();
-  }
-
-  // Sort transactions by date in descending order
-  transactionsList.sort((a, b) {
-    if (a.date == null || b.date == null) {
-      return 0;
-    }
-    return b.date!.compareTo(a.date!); // Compare in descending order
-  });
-
-  return transactionsList;
+  return totalReceived.abs(); // Return the absolute value to get the total received amount
 }
 
 
+  Future<List<Credit>> getTransactionsList(String customerId,
+      {DateTime? date}) async {
+    List<Credit> transactionsList = [];
 
+    // Iterate through each credit entry in the credit list
+    for (var creditModel in creditList) {
+      // Check if the credit entry belongs to the specified customer
+      if (creditModel.customerId == customerId) {
+        // Add the credits and received amounts to the transactions list
+        if (creditModel.credits != null) {
+          transactionsList.addAll(creditModel.credits!);
+        }
+        if (creditModel.received != null) {
+          transactionsList.addAll(creditModel.received!);
+        }
+      }
+    }
 
-Future<void> getCreditEntries({DateTime? date}) async {
-  var duesEntries = await db.collection("credits").get();
-  creditList.clear();
-  for (var creditEntry in duesEntries.docs) {
-    var creditModel = CreditModel.fromJson(creditEntry.data());
-    if (date == null) {
-      // If date is null, add all credit entries
-      creditList.add(creditModel);
-    } else {
-      // If date is not null, add credit entries that match the specified date
-      if (creditModel.credits != null &&
-          creditModel.credits!.any((credit) => isCreditOnDate(credit, date)) ||
-          creditModel.received != null &&
-          creditModel.received!.any((credit) => isCreditOnDate(credit, date))) {
+    // If date is provided, filter transactions by date
+    if (date != null) {
+      transactionsList = transactionsList
+          .where((transaction) =>
+              transaction.date != null &&
+              transaction.date!.year == date.year &&
+              transaction.date!.month == date.month &&
+              transaction.date!.day == date.day)
+          .toList();
+    }
+
+    // Sort transactions by date in descending order
+    transactionsList.sort((a, b) {
+      if (a.date == null || b.date == null) {
+        return 0;
+      }
+      return b.date!.compareTo(a.date!); // Compare in descending order
+    });
+
+    return transactionsList;
+  }
+
+  Future<void> getCreditEntries({DateTime? date}) async {
+    var duesEntries = await db.collection("credits").get();
+    creditList.clear();
+    for (var creditEntry in duesEntries.docs) {
+      var creditModel = CreditModel.fromJson(creditEntry.data());
+      if (date == null) {
+        // If date is null, add all credit entries
         creditList.add(creditModel);
+      } else {
+        // If date is not null, add credit entries that match the specified date
+        if (creditModel.credits != null &&
+                creditModel.credits!
+                    .any((credit) => isCreditOnDate(credit, date)) ||
+            creditModel.received != null &&
+                creditModel.received!
+                    .any((credit) => isCreditOnDate(credit, date))) {
+          creditList.add(creditModel);
+        }
       }
     }
+    update();
   }
-  update();
-}
 
-bool isCreditOnDate(Credit credit, DateTime date) {
-  return credit.date != null &&
-      credit.date!.year == date.year &&
-      credit.date!.month == date.month &&
-      credit.date!.day == date.day;
-}
-
-
+  bool isCreditOnDate(Credit credit, DateTime date) {
+    return credit.date != null &&
+        credit.date!.year == date.year &&
+        credit.date!.month == date.month &&
+        credit.date!.day == date.day;
+  }
 
   CreditModel? getCreditByName(String name) {
     for (var credits in creditList) {
@@ -334,9 +353,11 @@ bool isCreditOnDate(Credit credit, DateTime date) {
 
     return total;
   }
-   int calculateDuesAmountById(String customerId) {
-    return getTotalCreditsById(customerId).toInt()-getTotalReceivedById(customerId).toInt();
-    }
+
+  int calculateDuesAmountById(String customerId) {
+    return getTotalCreditsById(customerId).toInt() -
+        getTotalReceivedById(customerId).toInt();
+  }
 
   int calculateNetAmountById(String customerId) {
     var creditModel = creditList.firstWhere(
@@ -389,7 +410,8 @@ bool isCreditOnDate(Credit credit, DateTime date) {
     // Return the total dues
     return totalDues;
   }
-   void filterCredits(String query) {
+
+  void filterCredits(String query) {
     if (query.isEmpty) {
       // If the search query is empty, show all purchases
       filterCreditList.assignAll(creditList);
