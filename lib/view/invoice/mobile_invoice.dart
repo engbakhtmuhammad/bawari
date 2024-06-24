@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -10,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:screenshot/screenshot.dart';
 
+// ignore: must_be_immutable
 class InvoiceScreen extends StatefulWidget {
   var tableColumns;
   var tableData;

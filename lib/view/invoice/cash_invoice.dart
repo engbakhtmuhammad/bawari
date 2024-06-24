@@ -20,9 +20,9 @@ class CashInvoicePdf {
             date: DateTime.now()));
     final topImage =
         (await rootBundle.load('assets/images/top.png')).buffer.asUint8List();
-    final bottomImage = (await rootBundle.load('assets/images/address.png'))
-        .buffer
-        .asUint8List();
+    // final bottomImage = (await rootBundle.load('assets/images/address.png'))
+    //     .buffer
+    //     .asUint8List();
     // Load the font file for 'Noto Naskh Arabic'
     final fontData = await rootBundle.load('assets/fonts/Almarai-Regular.ttf');
     final ttf = pw.Font.ttf(fontData.buffer.asByteData());
