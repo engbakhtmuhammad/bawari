@@ -55,7 +55,7 @@ Widget drawerWidget() {
           color: primaryColor,
           child: Center(
             child: Text(
-              "Logo Here",
+              "Bawari",
               style: boldTextStyle(size: 24, color: whiteColor),
             ),
           ),

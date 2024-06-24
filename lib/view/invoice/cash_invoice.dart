@@ -9,24 +9,20 @@ import 'package:pdf/widgets.dart' as pw;
 
 class CashInvoicePdf {
   static Future<File> generate(
-      {required List cash, required String name}) async {
+      {required List cash,
+      required String customerName,
+      required String customerId}) async {
     final pdf = pw.Document();
     CreditController creditController = Get.put(CreditController());
-    double totalBaqaya = 0;
-    double lastRecieved = 0;
 
-    for (var cashItem in cash) {
-      final baqaya = await creditController
-          .getTotalDuesByName(cashItem.customerName.toString());
-      totalBaqaya += baqaya;
-    }
-    lastRecieved+=cash.last.price;
-
+    final previousBaqaya = await creditController.getTotalCredits(
+        await creditController.getTransactionsList(customerId,
+            date: DateTime.now()));
     final topImage =
         (await rootBundle.load('assets/images/top.png')).buffer.asUint8List();
-    final bottomImage = (await rootBundle.load('assets/images/address.png'))
-        .buffer
-        .asUint8List();
+    // final bottomImage = (await rootBundle.load('assets/images/address.png'))
+    //     .buffer
+    //     .asUint8List();
     // Load the font file for 'Noto Naskh Arabic'
     final fontData = await rootBundle.load('assets/fonts/Almarai-Regular.ttf');
     final ttf = pw.Font.ttf(fontData.buffer.asByteData());
@@ -126,7 +122,7 @@ class CashInvoicePdf {
                   pw.SizedBox(width: 10),
                   pw.Column(children: [
                     pw.Text(
-                      "     ${name.toString()}     ",
+                      "     ${customerName.toString()}     ",
                       style: pw.TextStyle(
                         font: ttf,
                       ),
@@ -203,7 +199,7 @@ class CashInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          "${totalBaqaya+ cash.last.price}",
+                          "$previousBaqaya",
                           style: pw.TextStyle(
                             font: ttf,
                             fontWeight: pw.FontWeight.bold,
@@ -259,7 +255,7 @@ class CashInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          totalBaqaya.toString(),
+                          "${previousBaqaya > cash.last.price ? previousBaqaya - cash.last.price : cash.last.price - previousBaqaya}",
                           style: pw.TextStyle(
                             font: ttf,
                             color: PdfColors.red,
@@ -285,7 +281,7 @@ class CashInvoicePdf {
                       ),
                     ),
                   ])),
-              pw.SizedBox(height: 10),
+              pw.SizedBox(height: 30),
               pw.Directionality(
                   textDirection: pw.TextDirection.ltr,
                   child: pw.Row(children: [

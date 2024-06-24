@@ -1,7 +1,6 @@
 import 'package:bawari/controller/bill_controller.dart';
 import 'package:bawari/controller/goods_controller.dart';
 import 'package:bawari/controller/purchase_controller.dart';
-import 'package:bawari/controller/sale_controller.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:bawari/utils/common.dart';
 import 'package:bawari/utils/text_styles.dart';

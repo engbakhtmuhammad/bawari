@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../controller/credit_controller.dart';
 import '../../utils/constants.dart';
 
+// ignore: must_be_immutable
 class ShowCreditScreen extends StatefulWidget {
   var transactionsList;
    ShowCreditScreen({super.key, this.transactionsList});

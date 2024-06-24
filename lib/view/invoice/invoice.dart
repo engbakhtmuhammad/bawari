@@ -1,8 +1,8 @@
 import 'package:bawari/utils/colors.dart';
-import 'package:bawari/utils/constants.dart';
 import 'package:bawari/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class InvoiceScreen extends StatefulWidget {
   String? customerName;
   String? customerPhone;

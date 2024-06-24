@@ -23,7 +23,8 @@ class _CreditScreenState extends State<CreditScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   CreditController creditController = Get.put(CreditController());
   BillNumberController billNumberController = Get.put(BillNumberController());
-  var _searchController = TextEditingController();
+  // var _searchController = TextEditingController();
+  String customerId='';
 
   List<String> tableColumns = [
     "بل نمبر",
@@ -151,6 +152,7 @@ class _CreditScreenState extends State<CreditScreen> {
                     transactionsList = await creditController
                         .getTransactionsList(duesModel!.customerId.toString(),
                             date: DateTime.now());
+                            customerId=duesModel.customerId.toString();
                     creditController.customerId.text = duesModel.id.toString();
                     creditController.address.text =
                         duesModel.credits![0].address.toString();
@@ -173,219 +175,6 @@ class _CreditScreenState extends State<CreditScreen> {
                     imgPath: "assets/icons/income.png",
                     controller: creditController.received,
                     inputType: TextInputType.number),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     SizedBox(
-                //       width: MediaQuery.of(context).size.width * .25,
-                //       child: CustomButton(
-                //         onPressed: () {},
-                //         icon: "assets/icons/print.png",
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       width: MediaQuery.of(context).size.width * .25,
-                //       child: CustomButton(
-                //         onPressed: () {
-                //           creditController.addRecieveEntry();
-                //         },
-                //         icon: "assets/icons/file_sync.png",
-                //       ),
-                //     ),
-                //     Text(
-                //       "Total: ${creditController.getTotalCredits(transactionsList)}",
-                //       style: boldTextStyle(),
-                //     )
-                //   ],
-                // ),
-
-                // Container(
-                //     height: 50,
-                //     width: double.infinity,
-                //     color: secondaryColor,
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //       children: [
-                //         SizedBox(
-                //           width: MediaQuery.of(context).size.width * .7,
-                //           child: Row(
-                //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //             children: [
-                //               Text(
-                //                 "پیسے",
-                //                 style: boldTextStyle(color: whiteColor),
-                //               ),
-                //               Text(
-                //                 "بل نمبر",
-                //                 style: boldTextStyle(color: whiteColor),
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //         SizedBox(
-                //           width: defaultIconsSize,
-                //         )
-                //       ],
-                //     )),
-                // Padding(
-                //   padding: EdgeInsets.only(top: defaultPadding),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //     children: [
-                //       SizedBox(
-                //         width: MediaQuery.of(context).size.width * .7,
-                //         child: Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //           children: [
-                //             Container(
-                //               height: 30,
-                //               width: MediaQuery.of(context).size.width * .3,
-                //               decoration: BoxDecoration(
-                //                   borderRadius:
-                //                       BorderRadius.circular(defaultRadius),
-                //                   border: Border.all(color: greyColor)),
-                //               child: Center(
-                //                   child: TextField(
-                //                 textAlign: TextAlign.center,
-                //                 controller: creditController.received,
-                //                 keyboardType: TextInputType.number,
-                //                 decoration: InputDecoration(
-                //                   border: InputBorder.none,
-                //                 ),
-                //               )),
-                //             ),
-                //             Container(
-                //               height: 30,
-                //               width: MediaQuery.of(context).size.width * .3,
-                //               decoration: BoxDecoration(
-                //                   borderRadius:
-                //                       BorderRadius.circular(defaultRadius),
-                //                   border: Border.all(color: greyColor)),
-                //               child: Center(
-                //                   child: TextField(
-                //                 textAlign: TextAlign.center,
-                //                 controller: billController,
-                //                 keyboardType: TextInputType.number,
-                //                 decoration: InputDecoration(
-                //                   border: InputBorder.none,
-                //                 ),
-                //               )),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //       GestureDetector(
-                //         onTap: () =>alertDialog(title: "ایا تاسو ډاډه یاست چې ساحې پاکې کړئ",onPressed: () {
-                //           billController.clear();
-                //           creditController.received.clear();
-                //           Get.back();
-                //         }),
-                //         child: Image.asset(
-                //           "assets/icons/trash.png",
-                //           width: defaultIconsSize,
-                //           height: defaultIconsSize,
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
-                // Divider(),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     SizedBox(
-                //       width: MediaQuery.of(context).size.width * .25,
-                //       child: CustomButton(
-                //         onPressed: () async {
-                //           final invoice = Invoice(
-                //       supplier: Supplier(
-                //         name: 'Sarah Field',
-                //         address: 'Sarah Street 9, Beijing, China',
-                //         paymentInfo: 'https://paypal.me/sarahfieldzz',
-                //       ),
-                //       customer: Customer(
-                //         name: 'Apple Inc.',
-                //         address: 'Apple Street, Cupertino, CA 95014',
-                //       ),
-                //       info: InvoiceInfo(
-                //         date: DateTime.now(),
-                //         // dueDate: dueDate,
-                //         description: 'My description...',
-                //         number: '${DateTime.now().year}-9999', dueDate: DateTime.now(),
-                //       ),
-                //       items: [
-                //         InvoiceItem(
-                //           description: 'Coffee',
-                //           date: DateTime.now(),
-                //           quantity: 3,
-                //           vat: 0.19,
-                //           unitPrice: 5.99,
-                //         ),
-                //         InvoiceItem(
-                //           description: 'Water',
-                //           date: DateTime.now(),
-                //           quantity: 8,
-                //           vat: 0.19,
-                //           unitPrice: 0.99,
-                //         ),
-                //         InvoiceItem(
-                //           description: 'Orange',
-                //           date: DateTime.now(),
-                //           quantity: 3,
-                //           vat: 0.19,
-                //           unitPrice: 2.99,
-                //         ),
-                //         InvoiceItem(
-                //           description: 'Apple',
-                //           date: DateTime.now(),
-                //           quantity: 8,
-                //           vat: 0.19,
-                //           unitPrice: 3.99,
-                //         ),
-                //         InvoiceItem(
-                //           description: 'Mango',
-                //           date: DateTime.now(),
-                //           quantity: 1,
-                //           vat: 0.19,
-                //           unitPrice: 1.59,
-                //         ),
-                //         InvoiceItem(
-                //           description: 'Blue Berries',
-                //           date: DateTime.now(),
-                //           quantity: 5,
-                //           vat: 0.19,
-                //           unitPrice: 0.99,
-                //         ),
-                //         InvoiceItem(
-                //           description: 'Lemon',
-                //           date: DateTime.now(),
-                //           quantity: 4,
-                //           vat: 0.19,
-                //           unitPrice: 1.29,
-                //         ),
-                //       ],
-                //     );
-
-                //     final pdfFile = await PdfInvoiceApi.generate(invoice);
-
-                //     PdfApi.openFile(pdfFile);
-                //         },
-                //         icon: "assets/icons/print.png",
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       width: MediaQuery.of(context).size.width * .25,
-                //       child: CustomButton(
-                //         onPressed: () {creditController.addRecieveEntry();},
-                //         icon: "assets/icons/file_sync.png",
-                //       ),
-                //     ),
-                //     Text(
-                //       "Total: ${creditController.getTotalCredits(transactionsList)}",
-                //       style: boldTextStyle(),
-                //     )
-                //   ],
-                // ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -399,7 +188,7 @@ class _CreditScreenState extends State<CreditScreen> {
                 CustomButton(
                   onPressed: () async {
                     final pdfFile = await CashInvoicePdf.generate(
-                        cash: transactionsList, name: creditController.customerName);
+                        cash: transactionsList, customerName: creditController.customerName,customerId: customerId);
                     // opening the pdf file
                     FileHandleApi.openFile(pdfFile);
                     // Get.to(InvoiceScreen());
