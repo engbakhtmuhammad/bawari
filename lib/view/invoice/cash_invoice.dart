@@ -169,7 +169,16 @@ class CashInvoicePdf {
               headerDecoration:
                   pw.BoxDecoration(color: PdfColor.fromHex("#EFB768")),
               cellHeight: 30.0,
-
+               columnWidths: {
+                0: pw.FlexColumnWidth(1),
+                1: pw.FlexColumnWidth(1),
+                2: pw.FlexColumnWidth(1),
+                3: pw.FlexColumnWidth(1),
+                4: pw.FlexColumnWidth(1),
+                5: pw.FlexColumnWidth(1),
+                6: pw.FlexColumnWidth(1),
+                7: pw.FlexColumnWidth(1),
+              },
               cellAlignments: {
                 0: pw.Alignment.center,
                 1: pw.Alignment.center,
