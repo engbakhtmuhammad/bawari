@@ -9,6 +9,7 @@ import 'package:bawari/utils/common.dart';
 import 'package:bawari/view/invoice/sale_invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:bawari/utils/text_styles.dart';
+import '../../model/sale_model.dart';
 import '../invoice/file_handle_api.dart';
 import '../widgets/custom_btn.dart';
 import 'package:get/get.dart';
@@ -56,6 +57,7 @@ class _SellScreenState extends State<SellScreen> {
 
   List<DropdownMenuItem<String>> goodsDropDownList = [];
   List<DropdownMenuItem<String>> customerDropDownList = [];
+  List<SaleModel> selectedSales = [];
   var transactionsList = [];
 
   @override
@@ -126,8 +128,8 @@ class _SellScreenState extends State<SellScreen> {
                             creditModel!.id.toString();
                         customerId = creditModel.id.toString();
                         transactionsList = await creditController
-                        .getTransactionsList(customerId,
-                            date: DateTime.now());
+                            .getTransactionsList(customerId,
+                                date: DateTime.now());
                         saleController.customerId = creditModel.id.toString();
                         saleController.customerName = value;
                       }),
@@ -160,7 +162,7 @@ class _SellScreenState extends State<SellScreen> {
                       imgPath: "assets/icons/cortons.png",
                       inputType: TextInputType.number,
                       controller: saleController.cartonCount,
-                      // prefixTextColor: Colors.red,
+                      prefixTextColor: Colors.red,
                       onChange: (value) async {
                         print("Received value: $value");
                         var goodsModel = await goodsController
@@ -196,8 +198,7 @@ class _SellScreenState extends State<SellScreen> {
                           print("Error parsing values: $e");
                         }
                       },
-                      // prefixText: "$cartonCount  :کارٹن تعداد"
-                      ),
+                      prefixText: "$cartonCount  :کارٹن تعداد"),
                   textFieldWidget(
                       label: "فی کارٹن تعداد",
                       imgPath: "assets/icons/corton_count.png",
@@ -254,7 +255,7 @@ class _SellScreenState extends State<SellScreen> {
                         creditController.addCreditEntry();
 
                         saleController.addSale();
-                        
+                        selectedSales.clear();
                       },
                     ),
                   )
@@ -282,12 +283,16 @@ class _SellScreenState extends State<SellScreen> {
                 isBaqaya: true,
                 cortonCount: customerId == ''
                     ? 0
-                    : creditController.getTotalCredits(transactionsList).toInt(),
+                    : creditController
+                        .getTotalCredits(transactionsList)
+                        .toInt(),
                 bill: customerId == '' ? 0 : totalBill! - received,
                 remaining: customerId == ''
                     ? 0
                     : (totalBill! +
-                            creditController.getTotalCredits(transactionsList).toInt()) -
+                            creditController
+                                .getTotalCredits(transactionsList)
+                                .toInt()) -
                         received,
               ),
             ),
@@ -296,151 +301,168 @@ class _SellScreenState extends State<SellScreen> {
             ),
 
             Obx(() {
+              print(
+                  ">>>>>>>>>>>>>> PRINT: ${saleController.filteredSaleList.length}");
               saleController.filterSales(_searchController.text,
                   selectedCustomerId: customerId, date: DateTime.now());
               return SizedBox(
-                  height: saleController.filteredSaleList.length * 50 + 60,
-                  width: double.infinity,
-                  child: ListView(
-                    shrinkWrap: true,
-                    reverse: true,
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.all(5.0),
-                    children: <Widget>[
-                      DataTable(
-                        headingRowColor: MaterialStateColor.resolveWith(
-                            (states) => greyColor),
-                        columnSpacing: 10.0,
-                        columns: [
-                          for (var i = tableColumns.length; i > 0; i--)
-                            DataColumn(
-                              numeric: true,
-                              label: GestureDetector(
-                                onTap: () async {
-                                  if (i == 1) {
-                                    final pdfFile =
-                                        await SaleInvoicePdf.generate(
-                                            sale: saleController
-                                                .filteredSaleList);
-                                    // opening the pdf file
-                                    FileHandleApi.openFile(pdfFile);
-                                    // Get.to(InvoiceScreen());
-                                  }
-                                },
-                                child: Text(
-                                  "${tableColumns[i - 1]}   ",
+                height: saleController.filteredSaleList.length * 50 + 60,
+                width: double.infinity,
+                child: ListView(
+                  shrinkWrap: true,
+                  reverse: true,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.all(5.0),
+                  children: <Widget>[
+                    DataTable(
+                      onSelectAll: (isSelectedAll) {
+                        setState(() => selectedSales = isSelectedAll!
+                            ? saleController.filteredSaleList
+                            : []);
+                      },
+                      headingRowColor:
+                          MaterialStateColor.resolveWith((states) => greyColor),
+                      columnSpacing: 10.0,
+                      columns: [
+                        for (var i = tableColumns.length; i > 0; i--)
+                          DataColumn(
+                            numeric: true,
+                            label: GestureDetector(
+                              onTap: () async {
+                                if (i == 1) {
+                                  final pdfFile = await SaleInvoicePdf.generate(
+                                      sale: saleController.filteredSaleList);
+                                  // opening the pdf file
+                                  FileHandleApi.openFile(pdfFile);
+                                  // Get.to(InvoiceScreen());
+                                }
+                              },
+                              child: Text(
+                                "${tableColumns[i - 1]}   ",
+                                textAlign: TextAlign.center,
+                                style: boldTextStyle(color: whiteColor),
+                              ),
+                            ),
+                          ),
+                      ],
+                      rows: [
+                        for (var row = 0;
+                            row < saleController.filteredSaleList.length;
+                            row++)
+                          DataRow(
+                            selected: selectedSales
+                                .contains(saleController.filteredSaleList[row]),
+                            onSelectChanged: (isSelected) => setState(() {
+                              final isAdding = isSelected != null && isSelected;
+
+                              isAdding
+                                  ? selectedSales
+                                      .add(saleController.filteredSaleList[row])
+                                  : selectedSales.remove(
+                                      saleController.filteredSaleList[row]);
+                            }),
+                            color: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.08);
+                                }
+                                return Colors.transparent;
+                              },
+                            ),
+                            cells: [
+                              //8
+                              DataCell(
+                                Text(
+                                  saleController
+                                      .filteredSaleList[row].totalPrice
+                                      .toString(),
                                   textAlign: TextAlign.center,
-                                  style: boldTextStyle(color: whiteColor),
+                                  style: primaryTextStyle(size: 14),
                                 ),
                               ),
-                            ),
-                        ],
-                        rows: [
-                          for (var row = 0;
-                              row < saleController.filteredSaleList.length;
-                              row++)
-                            DataRow(
-                              color: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                                  if (states.contains(MaterialState.selected)) {
-                                    return Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.08);
-                                  }
-                                  return Colors.transparent;
-                                },
+                              DataCell(
+                                Text(
+                                  saleController.filteredSaleList[row].price
+                                      .toString(),
+                                  textAlign: TextAlign.center,
+                                  style: primaryTextStyle(size: 14),
+                                ),
                               ),
-                              cells: [
-                                //8
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .filteredSaleList[row].totalPrice
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
+                              DataCell(
+                                Text(
+                                  saleController
+                                      .filteredSaleList[row].totalCount
+                                      .toString(),
+                                  textAlign: TextAlign.center,
+                                  style: primaryTextStyle(size: 14),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  saleController
+                                      .filteredSaleList[row].perCartonCount
+                                      .toString(),
+                                  textAlign: TextAlign.center,
+                                  style: primaryTextStyle(size: 14),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  saleController
+                                      .filteredSaleList[row].cartonCount
+                                      .toString(),
+                                  textAlign: TextAlign.center,
+                                  style: primaryTextStyle(size: 14),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  saleController
+                                      .filteredSaleList[row].pieceCount
+                                      .toString(),
+                                  textAlign: TextAlign.center,
+                                  style: primaryTextStyle(size: 14),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  saleController.filteredSaleList[row].name
+                                      .toString(),
+                                  textAlign: TextAlign.center,
+                                  style: primaryTextStyle(size: 14),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: GestureDetector(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(left: defaultPadding),
+                                      child:
+                                          Image.asset("assets/icons/print.png"),
+                                    ),
+                                    onTap: () async {
+                                      final pdfFile =
+                                          await SaleInvoicePdf.generate(sale: [
+                                        saleController.filteredSaleList[row]
+                                      ]);
+                                      // opening the pdf file
+                                      FileHandleApi.openFile(pdfFile);
+                                      // Get.to(InvoiceScreen());
+                                    },
                                   ),
                                 ),
-                                DataCell(
-                                  Text(
-                                    saleController.filteredSaleList[row].price
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .filteredSaleList[row].totalCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .filteredSaleList[row].perCartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .filteredSaleList[row].cartonCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    saleController
-                                        .filteredSaleList[row].pieceCount
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    saleController.filteredSaleList[row].name
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: primaryTextStyle(size: 14),
-                                  ),
-                                ),
-                                DataCell(
-                                  Center(
-                                      child: GestureDetector(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: defaultPadding),
-                                            child: Image.asset(
-                                                "assets/icons/print.png"),
-                                          ),
-                                          onTap: () async {
-                                            final pdfFile =
-                                                await SaleInvoicePdf.generate(
-                                                    sale: [
-                                                  saleController
-                                                      .filteredSaleList[row]
-                                                ]);
-                                            // opening the pdf file
-                                            FileHandleApi.openFile(pdfFile);
-                                            // Get.to(InvoiceScreen());
-                                          })),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ],
-                  ));
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
             }),
 
             Container(
@@ -477,6 +499,19 @@ class _SellScreenState extends State<SellScreen> {
           ],
         ),
       ),
+      floatingActionButton: selectedSales.isNotEmpty
+          ? FloatingActionButton(
+              backgroundColor: primaryColor,
+              child: Image.asset("assets/icons/print.png"),
+              onPressed: () async {
+                final pdfFile =
+                    await SaleInvoicePdf.generate(sale: selectedSales);
+                // opening the pdf file
+                FileHandleApi.openFile(pdfFile);
+                // Get.to(InvoiceScreen());
+              },
+            )
+          : SizedBox(),
     );
   }
 

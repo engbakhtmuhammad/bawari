@@ -62,7 +62,6 @@ class SaleController extends GetxController {
       );
       var documentReference = await db.collection("sales").add(sale.toJson());
       var saleId = documentReference.id;
-      print(">>>>>>>>>>>>>>>>>>>>>>> Reference: $documentReference");
 
       await db
           .collection("sales")
