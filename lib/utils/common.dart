@@ -217,7 +217,7 @@ Widget drawerWidget() {
               )),
           onTap: () {
             Get.back();
-            Get.to(DashboardScrreen());
+            // Get.to(()=>DashboardScrreen());
           },
         ),
         const Divider(),
@@ -275,7 +275,7 @@ PreferredSizeWidget appBarWidget(
                       );
                     },
                   )
-                : Get.to(()=>DashboardScrreen()),
+                : Get.back(),
             icon: Image.asset(
               "assets/icons/back.png",
               width: 24,
