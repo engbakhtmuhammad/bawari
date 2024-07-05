@@ -1,5 +1,7 @@
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class SavingsModel {
   String? id;
   String? customerName;
@@ -9,6 +11,7 @@ class SavingsModel {
   int? totalCount;
   int? perPrice;
   int? totalPrice;
+  DateTime? date;
 
   SavingsModel({
     this.id,
@@ -18,7 +21,8 @@ class SavingsModel {
     this.goodsName,
     this.totalCount,
     this.perPrice,
-    this.totalPrice
+    this.totalPrice,
+    this.date
 
   });
 
@@ -32,6 +36,9 @@ class SavingsModel {
       totalCount: json["totalCount"],
       perPrice: json["perPrice"],
       totalPrice: json["totalPrice"],
+      date: json["date"] != null
+          ? (json["date"] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -45,6 +52,7 @@ class SavingsModel {
     data["totalCount"]=totalCount;
     data["perPrice"]=perPrice;
     data["totalPrice"]=totalPrice;
+    data["date"]=date;
     return data;
   }
 }

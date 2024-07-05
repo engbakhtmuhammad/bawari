@@ -57,9 +57,9 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
               height: defaultPadding,
             ),
             Obx(() {
-              saleController.getSale();
+              saleController.filterSales();
               return SizedBox(
-                  height: saleController.saleList.length * 50 + 60,
+                  height: saleController.filteredSaleList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -88,7 +88,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < saleController.saleList.length;
+                              row < saleController.filteredSaleList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -106,8 +106,8 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    "${int.parse(saleController.saleList[row].price
-                                        .toString())*int.parse(saleController.saleList[row].totalCount
+                                    "${int.parse(saleController.filteredSaleList[row].price
+                                        .toString())*int.parse(saleController.filteredSaleList[row].totalCount
                                         .toString())}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -115,7 +115,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].price
+                                    saleController.filteredSaleList[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -123,7 +123,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].totalCount
+                                    saleController.filteredSaleList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -131,7 +131,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].perCartonCount
+                                    saleController.filteredSaleList[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -139,7 +139,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].cartonCount
+                                    saleController.filteredSaleList[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -147,7 +147,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].pieceCount
+                                    saleController.filteredSaleList[row].pieceCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -155,7 +155,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    saleController.saleList[row].name
+                                    saleController.filteredSaleList[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -169,7 +169,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                                         child: Image.asset("assets/icons/print.png"),
                                       ),
                                       onTap: () async {
-                                            final pdfFile = await SaleInvoicePdf.generate(sale: [saleController.saleList[row]]);
+                                            final pdfFile = await SaleInvoicePdf.generate(sale: [saleController.filteredSaleList[row]]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());
@@ -200,6 +200,7 @@ class _SaleInfoScreenState extends State<SaleInfoScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
+                        controller: saleController.searchController,
                           label: "search", imgPath: "", isSearch: true)),
                   Spacer(),
                   Text(

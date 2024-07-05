@@ -240,6 +240,7 @@ class _SellScreenState extends State<SellScreen> {
                         var goods = await goodsController
                             .getGoodsByName(saleController.name);
                         purchasePrice = goods!.purchasePrice!;
+                        calculateTotal();
                         savingsController.addSavings(
                             customerName: saleController.customerName,
                             billNo: int.parse(saleController.bill.text),
@@ -303,7 +304,7 @@ class _SellScreenState extends State<SellScreen> {
             Obx(() {
               print(
                   ">>>>>>>>>>>>>> PRINT: ${saleController.filteredSaleList.length}");
-              saleController.filterSales(_searchController.text,
+              saleController.filteredSales(_searchController.text,
                   selectedCustomerId: customerId, date: DateTime.now());
               return SizedBox(
                 height: saleController.filteredSaleList.length * 50 + 60,
@@ -486,7 +487,7 @@ class _SellScreenState extends State<SellScreen> {
                           isSearch: true,
                           controller: _searchController,
                           onChange: (value) =>
-                              saleController.filterSales(value))),
+                              saleController.filteredSales(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",
@@ -522,7 +523,7 @@ class _SellScreenState extends State<SellScreen> {
       int total = price * totalCount;
       setState(() {
         saleController.totalPrice.text = total.toString();
-        savings = total - purchasePrice * totalCount;
+        savings = total - (purchasePrice * totalCount);
         print(">>>>>>>>>>>>>>>>>>>>SAVINGS: $savings");
       });
       return "$total :ٹوٹل";

@@ -56,9 +56,9 @@ class _SavingScreenState extends State<SavingScreen> {
               height: defaultPadding,
             ),
             Obx(() {
-              savingsController.getSavings();
+              savingsController.filterSavings();
               return SizedBox(
-                  height: savingsController.savingsList.length * 50 + 60,
+                  height: savingsController.filteredSavingsList.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -83,7 +83,7 @@ class _SavingScreenState extends State<SavingScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < savingsController.savingsList.length;
+                              row < savingsController.filteredSavingsList.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -101,7 +101,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                    savingsController.savingsList[row].totalPrice
+                                    savingsController.filteredSavingsList[row].totalPrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -109,7 +109,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    savingsController.savingsList[row].perPrice
+                                    savingsController.filteredSavingsList[row].perPrice
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -117,7 +117,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    savingsController.savingsList[row].totalCount
+                                    savingsController.filteredSavingsList[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -125,7 +125,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    savingsController.savingsList[row].goodsName
+                                    savingsController.filteredSavingsList[row].goodsName
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -133,7 +133,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    savingsController.savingsList[row].customerName
+                                    savingsController.filteredSavingsList[row].customerName
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -141,7 +141,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    savingsController.savingsList[row].savings
+                                    savingsController.filteredSavingsList[row].savings
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14,color: Colors.green),
@@ -149,7 +149,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    savingsController.savingsList[row].billNo
+                                    savingsController.filteredSavingsList[row].billNo
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -178,6 +178,7 @@ class _SavingScreenState extends State<SavingScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
+                        controller: savingsController.searchController,
                           label: "search", imgPath: "", isSearch: true)),
                   Spacer(),
                   Text(

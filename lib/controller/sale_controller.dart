@@ -9,11 +9,12 @@ import 'package:intl/intl.dart';
 
 class SaleController extends GetxController {
   TextEditingController bill = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   BillNumberController billNumberController= Get.put(BillNumberController());
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController endDate = TextEditingController(
-      text: DateFormat('yyyy-MM-dd').format(DateTime(2024, 3, 3)));
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController date = TextEditingController(
       text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
   String name = "سامان نوم";
@@ -38,7 +39,12 @@ class SaleController extends GetxController {
     billNumberController.getBillNumber();
     bill.text = billNumberController.billNumber.toString(); // Assign autoBillNo to bill controller
     getSale();
-    filterSales('');
+    filterSales();
+    filteredSales('');
+    startDate.addListener(filterSales);
+    endDate.addListener(filterSales);
+    searchController.addListener(filterSales);
+
     super.onInit();
   }
 
@@ -71,7 +77,7 @@ class SaleController extends GetxController {
 
         // Show GetX Snackbar
         Get.snackbar('Success', 'Sale added successfully!',
-            snackPosition: SnackPosition.BOTTOM,
+            snackPosition: SnackPosition.BOTTOM,colorText: whiteColor,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
 
@@ -96,7 +102,7 @@ class SaleController extends GetxController {
       // Handle the error
       Get.snackbar('Error', 'Failed to add sale. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 3),colorText: whiteColor,
           backgroundColor: Colors.red);
     }
   }
@@ -138,7 +144,40 @@ class SaleController extends GetxController {
 
     return totalPieceCount;
   }
-  void filterSales(String query, {String? selectedCustomerId, DateTime? date}) {
+ 
+   void filterSales() {
+    var query = searchController.text.toLowerCase();
+    var tempList = saleList;
+
+    if (query.isNotEmpty) {
+      tempList = tempList.where((sale) {
+        return sale.name!.toLowerCase().contains(query);
+      }).toList().obs;
+    }
+
+    filterSalesByDateRange(tempList);
+  }
+
+  void filterSalesByDateRange(RxList<SaleModel> tempList) {
+    print('>>>>>>>>> Start Date ${startDate.text}');
+    print('>>>>>>>>> End Date ${endDate.text}');
+    if (startDate.text.isEmpty || endDate.text.isEmpty) {
+      filteredSaleList.assignAll(tempList);
+      return;
+    }
+    DateTime start = DateFormat('yyyy-MM-dd').parse(startDate.text);
+    DateTime end = DateFormat('yyyy-MM-dd').parse(endDate.text);
+
+    filteredSaleList.assignAll(
+      tempList.where(
+        (sale) =>
+            (sale.date!.isAfter(start) || sale.date!.isAtSameMomentAs(start)) &&
+            (sale.date!.isBefore(end) || sale.date!.isAtSameMomentAs(end)),
+      ).toList().obs,
+    );
+    print(">>>>>>>>>>>>>>>>>> $filteredSaleList");
+  }
+   void filteredSales(String query, {String? selectedCustomerId, DateTime? date}) {
   if (query.isEmpty && date == null && selectedCustomerId == null) {
     // If query, date, and selectedCustomerId are all null, show all sales
     filteredSaleList.assignAll(saleList);
@@ -164,43 +203,5 @@ class SaleController extends GetxController {
     );
   }
 }
-
-
-//    void filterSales(String query, {DateTime? date}) {
-//   if (query.isEmpty && date == null) {
-//     // If both query and date are null, show all purchases
-//     filteredSaleList.assignAll(saleList);
-//   } else if (query.isEmpty) {
-//     // If only query is null, filter purchases by date
-//     filteredSaleList.assignAll(
-//       saleList.where(
-//         (sale) =>
-//             sale.date != null &&
-//             sale.date!.year == date!.year &&
-//             sale.date!.month == date.month &&
-//             sale.date!.day == date.day,
-//       ),
-//     );
-//   } else if (date == null) {
-//     // If only date is null, filter purchases by name
-//     filteredSaleList.assignAll(
-//       saleList.where(
-//         (sale) => sale.name!.toLowerCase().contains(query.toLowerCase()),
-//       ),
-//     );
-//   } else {
-//     // If both query and date are not null, filter purchases by name and date
-//     filteredSaleList.assignAll(
-//       saleList.where(
-//         (sale) =>
-//             sale.name!.toLowerCase().contains(query.toLowerCase()) &&
-//             sale.date != null &&
-//             sale.date!.year == date.year &&
-//             sale.date!.month == date.month &&
-//             sale.date!.day == date.day,
-//       ),
-//     );
-//   }
-// }
-
 }
+

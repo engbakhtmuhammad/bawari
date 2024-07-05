@@ -1,5 +1,4 @@
 import 'package:bawari/controller/bill_controller.dart';
-import 'package:bawari/utils/common.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -59,9 +58,9 @@ class ExpenseController extends GetxController {
 
       Get.snackbar('Success', 'Expense added successfully!',
           snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 3),colorText: whiteColor,
           backgroundColor: primaryColor);
-      billNumberController.saveBillNumber(billNumberController.billNumber + 10);
+      billNumberController.saveBillNumber(billNumberController.billNumber + 1);
 
       price.clear();
       expenseType = "خرچه";
@@ -73,7 +72,7 @@ class ExpenseController extends GetxController {
 
       Get.snackbar('Error', 'Failed to add expense. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 3),colorText: whiteColor,
           backgroundColor: Colors.red);
     }
   }
@@ -99,14 +98,14 @@ class ExpenseController extends GetxController {
 
       Get.snackbar('Success', 'Expense deleted successfully!',
           snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 3),colorText: whiteColor,
           backgroundColor: primaryColor);
     } catch (e) {
       print('Error deleting expense: $e');
 
       Get.snackbar('Error', 'Failed to delete expense. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 3),colorText: whiteColor,
           backgroundColor: Colors.red);
     }
     getExpenses();
@@ -118,7 +117,6 @@ class ExpenseController extends GetxController {
   }
 
   void filterExpense(String query) {
-    print(">>>>>>>>>>>>>>>>>> $filterExpenseList");
     if (query.isEmpty) {
       // If the search query is empty, show all purchases
       filterExpenseList.assignAll(expenseList);
@@ -135,16 +133,20 @@ class ExpenseController extends GetxController {
   }
 
   void filterExpenseByDateRange() {
-    if (startDate == null || endDate == null) return;
-    DateTime start = DateFormat('yyyy-MM-dd').parse(startDate.text);
-    DateTime end = DateFormat('yyyy-MM-dd').parse(endDate.text);
-    filterExpenseList.assignAll(
-      expenseList.where(
-        (expense) =>
-            expense.date!.isAfter(start) && expense.date!.isBefore(end),
-      ),
-    );
-    print(">>>>>>>>>>>>>>>>>> $filterExpenseList");
-  }
+  print('>>>>>>>>> Start Date ${startDate.text}');
+  print('>>>>>>>>> End Date ${endDate.text}');
+  if (startDate.text.isEmpty || endDate.text.isEmpty) return;
+  DateTime start = DateFormat('yyyy-MM-dd').parse(startDate.text);
+  DateTime end = DateFormat('yyyy-MM-dd').parse(endDate.text);
+  filterExpenseList.assignAll(
+    expenseList.where(
+      (expense) =>
+          (expense.date!.isAfter(start) || expense.date!.isAtSameMomentAs(start)) &&
+          (expense.date!.isBefore(end) || expense.date!.isAtSameMomentAs(end)),
+    ),
+  );
+  print(">>>>>>>>>>>>>>>>>> $filterExpenseList");
+}
+
   
 }

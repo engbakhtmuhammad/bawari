@@ -196,7 +196,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               ),
             ),
             Obx(() {
-              purchaseController.filterPurchases(_searchController.text,date: DateTime.now());
+              purchaseController.filterdPurchases(_searchController.text,date: DateTime.now());
               return SizedBox(
                   height: purchaseController.filteredPurchases.length * 50 + 60,
                   width: double.infinity,
@@ -353,7 +353,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           isSearch: true,
                           controller: _searchController,
                           onChange: (value) =>
-                              purchaseController.filterPurchases(value))),
+                              purchaseController.filterdPurchases(value))),
                   Spacer(),
                   Text(
                     "1-3 of 6 Columns",

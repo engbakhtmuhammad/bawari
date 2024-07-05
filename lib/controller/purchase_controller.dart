@@ -9,11 +9,12 @@ import 'package:intl/intl.dart';
 
 class PurchaseController extends GetxController {
   TextEditingController bill = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   BillNumberController billNumberController = Get.put(BillNumberController());
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController endDate = TextEditingController(
-      text: DateFormat('yyyy-MM-dd').format(DateTime(2040, 3, 3)));
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController date = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   String name = "";
@@ -38,8 +39,9 @@ class PurchaseController extends GetxController {
     getTotalBill();
     getTotalCartonCount();
     getTotalPrice();
-    getPurchasesBetweenDates();
-    filterPurchases('');
+    filterPurchases();
+    startDate.addListener(filterPurchases);
+    endDate.addListener(filterPurchases);
     super.onInit();
   }
 
@@ -76,7 +78,7 @@ class PurchaseController extends GetxController {
 
       // Show GetX Snackbar for success
       Get.snackbar('Success', 'Purchase added successfully!',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.BOTTOM,colorText: whiteColor,
           duration: const Duration(seconds: 3),
           backgroundColor: primaryColor);
 
@@ -91,7 +93,7 @@ class PurchaseController extends GetxController {
 
       // Update bill controller value by adding 1
       // autoBillNo+10;
-      billNumberController.saveBillNumber(billNumberController.billNumber+10);
+      billNumberController.saveBillNumber(billNumberController.billNumber+1);
       bill.text = billNumberController.billNumber.toString();
     } catch (e) {
       print('Error adding purchase: $e');
@@ -99,7 +101,7 @@ class PurchaseController extends GetxController {
       // Show GetX Snackbar for error
       Get.snackbar('Error', 'Failed to add purchase. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 3),colorText: whiteColor,
           backgroundColor: Colors.red);
     }
   }
@@ -134,17 +136,40 @@ class PurchaseController extends GetxController {
     return purchaseList.fold(0, (sum, purchase) => sum + purchase.price!);
   }
 
-  List<PurchaseModel> getPurchasesBetweenDates() {
-    return purchaseList
-        .where((purchase) =>
-            purchase.date!
-                .isAfter(DateFormat('yyyy-MM-dd').parse(startDate.text)) &&
-            purchase.date!
-                .isBefore(DateFormat('yyyy-MM-dd').parse(endDate.text)))
-        .toList();
+void filterPurchases() {
+    var query = searchController.text.toLowerCase();
+    var tempList = purchaseList;
+
+    if (query.isNotEmpty) {
+      tempList = tempList.where((purchase) {
+        return purchase.name!.toLowerCase().contains(query);
+      }).toList().obs;
+    }
+
+    filterPurchasesByDateRange(tempList);
   }
 
-void filterPurchases(String query, {DateTime? date}) {
+  void filterPurchasesByDateRange(RxList<PurchaseModel> tempList) {
+    print('>>>>>>>>> Start Date ${startDate.text}');
+    print('>>>>>>>>> End Date ${endDate.text}');
+    if (startDate.text.isEmpty || endDate.text.isEmpty) {
+      filteredPurchases.assignAll(tempList);
+      return;
+    }
+    DateTime start = DateFormat('yyyy-MM-dd').parse(startDate.text);
+    DateTime end = DateFormat('yyyy-MM-dd').parse(endDate.text);
+
+    filteredPurchases.assignAll(
+      tempList.where(
+        (purchase) =>
+            (purchase.date!.isAfter(start) || purchase.date!.isAtSameMomentAs(start)) &&
+            (purchase.date!.isBefore(end) || purchase.date!.isAtSameMomentAs(end)),
+      ).toList().obs,
+    );
+    print(">>>>>>>>>>>>>>>>>> $filteredPurchases");
+  }
+
+  void filterdPurchases(String query, {DateTime? date}) {
   if (query.isEmpty && date == null) {
     // If both query and date are null, show all purchases
     filteredPurchases.assignAll(purchaseList);
@@ -182,4 +207,7 @@ void filterPurchases(String query, {DateTime? date}) {
   }
 }
 
+
 }
+
+

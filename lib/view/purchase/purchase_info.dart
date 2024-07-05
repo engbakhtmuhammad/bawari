@@ -54,9 +54,9 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
             ),
             
             Obx(() {
-              purchaseController.getPurchasesBetweenDates();
+              purchaseController.filterPurchases();
               return SizedBox(
-                  height: purchaseController.purchaseList.length * 50 + 60,
+                  height: purchaseController.filteredPurchases.length * 50 + 60,
                   width: double.infinity,
                   child: ListView(
                     shrinkWrap: true,
@@ -85,7 +85,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                         ],
                         rows: [
                           for (var row = 0;
-                              row < purchaseController.purchaseList.length;
+                              row < purchaseController.filteredPurchases.length;
                               row++)
                             DataRow(
                               color: MaterialStateProperty.resolveWith<Color>(
@@ -103,7 +103,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //8
                                 DataCell(
                                   Text(
-                                   "${ DateFormat('yyyy-MM-dd').format(purchaseController.purchaseList[row].date!
+                                   "${ DateFormat('yyyy-MM-dd').format(purchaseController.filteredPurchases[row].date!
                                         )}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -112,7 +112,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //7
                                 DataCell(
                                   Text(
-                                    "${int.parse(purchaseController.purchaseList[row].price.toString())*int.parse(purchaseController.purchaseList[row].totalCount.toString())}",
+                                    "${int.parse(purchaseController.filteredPurchases[row].price.toString())*int.parse(purchaseController.filteredPurchases[row].totalCount.toString())}",
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
                                   ),
@@ -120,7 +120,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //6
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].price
+                                    purchaseController.filteredPurchases[row].price
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -130,7 +130,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 DataCell(
                                   Text(
                                     purchaseController
-                                        .purchaseList[row].totalCount
+                                        .filteredPurchases[row].totalCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -140,7 +140,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 DataCell(
                                   Text(
                                     purchaseController
-                                        .purchaseList[row].perCartonCount
+                                        .filteredPurchases[row].perCartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -149,7 +149,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 //3
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].cartonCount
+                                    purchaseController.filteredPurchases[row].cartonCount
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -157,7 +157,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                 ),
                                 DataCell(
                                   Text(
-                                    purchaseController.purchaseList[row].name
+                                    purchaseController.filteredPurchases[row].name
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: primaryTextStyle(size: 14),
@@ -171,7 +171,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                                         child: Image.asset("assets/icons/print.png"),
                                       ),
                                       onTap: () async {
-                                            final pdfFile = await PurchaseInvoicePdf.generate(purchase: purchaseController.purchaseList[row]);
+                                            final pdfFile = await PurchaseInvoicePdf.generate(purchase: purchaseController.filteredPurchases[row]);
                                             // opening the pdf file
                                             FileHandleApi.openFile(pdfFile);
                                             // Get.to(InvoiceScreen());
@@ -222,6 +222,7 @@ class _PurchaseInfoScreenState extends State<PurchaseInfoScreen> {
                         borderRadius: BorderRadius.circular(defaultRadius),
                       ),
                       child: textFieldWidget(
+                        controller: purchaseController.searchController,
                           label: "search", imgPath: "", isSearch: true)),
                   Spacer(),
                   Text(
