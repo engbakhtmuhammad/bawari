@@ -16,7 +16,7 @@ class SaleInvoicePdf {
     CreditController creditController = Get.put(CreditController());
     CustomerController customerController = Get.put(CustomerController());
 
-    final int previousBaqaya = creditController.getTotalCredits(
+     int previousBaqaya = creditController.getTotalCredits(
         await creditController.getTransactionsList(
             sale[0].customerId.toString(),
             date: DateTime.now()));
@@ -31,10 +31,12 @@ class SaleInvoicePdf {
     for (var saleItem in sale) {
       totalCartonCount += saleItem.cartonCount ?? 0;
     }
-    final int totalReceivedCash = creditController.getTotalReceived(
+     int totalReceivedCash = creditController.getTotalReceived(
         await creditController.getTransactionsList(
             sale[0].customerId.toString(),
             date: DateTime.now())); 
+
+            // previousBaqaya= previousBaqaya.toInt() > totalPrice.toInt()?previousBaqaya.toInt() - totalPrice.toInt():totalPrice.toInt() - previousBaqaya.toInt();;
     String totalReceivedCashString = totalReceivedCash.toStringAsFixed(0);
 
     // // Calculate the remaining amount
