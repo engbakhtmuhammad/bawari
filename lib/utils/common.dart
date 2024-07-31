@@ -7,6 +7,7 @@ import 'package:bawari/view/credit/credit_info.dart';
 import 'package:bawari/view/dashboard/dashboard.dart';
 import 'package:bawari/view/dues/loan_info.dart';
 import 'package:bawari/view/purchase/purchase_info.dart';
+import 'package:bawari/view/sell/old_sale_info.dart';
 import 'package:bawari/view/sell/sale_info.dart';
 import 'package:bawari/view/stock/stock.dart';
 import 'package:flutter/foundation.dart';
@@ -169,6 +170,24 @@ Widget drawerWidget() {
         const Divider(),
         ListTile(
           trailing: Image.asset(
+            "assets/icons/sell_info.png",
+            width: 35,
+            height: 35,
+          ),
+          title: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "زوڑ فروخت معلومات",
+                style: boldTextStyle(),
+              )),
+          onTap: () {
+            Get.back();
+            Get.to(()=>OldSaleInfoScreen());
+          },
+        ),
+        const Divider(),
+        ListTile(
+          trailing: Image.asset(
             "assets/icons/budget.png",
             width: 35,
             height: 35,
@@ -222,6 +241,170 @@ Widget drawerWidget() {
         ),
         const Divider(),
       ],
+    ),
+  );
+}
+Container customerAndDateWidget({
+  TextEditingController? startDateController,
+  TextEditingController? endDateController,
+  required String label,
+  required List<DropdownMenuItem<String>> dropDownList,
+  Function(String)? onChanged, // Pass a callback function
+  VoidCallback? onStartDatePressed,
+  VoidCallback? onEndDatePressed,
+}) {
+  return Container(
+    height: 150,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(defaultRadius),
+          bottomRight: Radius.circular(defaultRadius)),
+      color: primaryColor,
+    ),
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: defaultHorizontalPadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: Get.width * .44,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(defaultRadius * 2),
+                  ),
+                  child: TextField(
+                    keyboardType: TextInputType.datetime,
+                    controller: endDateController,
+                    style: primaryTextStyle(size: 12),
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                      suffixIcon: SizedBox(
+                        width: 70,
+                        child: GestureDetector(
+                          onTap: onEndDatePressed ?? () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "اختتامي",
+                                style: primaryTextStyle(size: 10),
+                              ),
+                              const SizedBox(
+                                width: 3,
+                              ),
+                              Image.asset(
+                                "assets/icons/calendar.png",
+                                width: defaultIconsSize,
+                                height: defaultIconsSize,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(defaultRadius * 2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: Get.width * .44,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(defaultRadius * 2),
+                  ),
+                  child: TextField(
+                    keyboardType: TextInputType.datetime,
+                    controller: startDateController,
+                    style: primaryTextStyle(size: 12),
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                      suffixIcon: SizedBox(
+                        width: 70,
+                        child: GestureDetector(
+                          onTap: onStartDatePressed ?? () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "ابتدائی",
+                                style: primaryTextStyle(size: 10),
+                              ),
+                              const SizedBox(
+                                width: 3,
+                              ),
+                              Image.asset(
+                                "assets/icons/calendar.png",
+                                width: defaultIconsSize,
+                                height: defaultIconsSize,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(defaultRadius * 2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: defaultPadding,
+          ),
+          Container(
+            decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(defaultRadius * 2),
+                  ),
+            child: DropdownButtonFormField(
+              alignment: Alignment.centerRight,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(defaultRadius * 2),
+                      ),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(
+                    "assets/icons/name.png",
+                    width: defaultIconsSize,
+                    height: defaultIconsSize,
+                  ),
+                ),
+                alignLabelWithHint: true,
+                hintText: label,
+                // hintTextDirection: TextDirection.rtl,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              ),
+              items: dropDownList,
+              onChanged: (Object? value) {
+                // Call the callback function with the selected value
+                onChanged!(value.toString());
+              },
+            ),
+          )
+        ],
+      ),
     ),
   );
 }

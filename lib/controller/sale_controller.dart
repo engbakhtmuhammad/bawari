@@ -1,4 +1,5 @@
 import 'package:bawari/controller/bill_controller.dart';
+import 'package:bawari/controller/goods_controller.dart'; // Import the GoodsController
 import 'package:bawari/model/sale_model.dart';
 import 'package:bawari/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,11 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-
 class SaleController extends GetxController {
   TextEditingController bill = TextEditingController();
   TextEditingController searchController = TextEditingController();
-  BillNumberController billNumberController= Get.put(BillNumberController());
+  TextEditingController searchOldController = TextEditingController();
+  BillNumberController billNumberController = Get.put(BillNumberController());
+  GoodsController goodsController = Get.put(GoodsController()); // Create an instance of GoodsController
   TextEditingController startDate = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController endDate = TextEditingController(
@@ -18,7 +20,7 @@ class SaleController extends GetxController {
   TextEditingController date = TextEditingController(
       text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
   String name = "سامان نوم";
-  String customerId="";
+  String customerId = "";
   String customerName = "";
   TextEditingController note = TextEditingController();
   TextEditingController goodsNo = TextEditingController();
@@ -27,7 +29,7 @@ class SaleController extends GetxController {
   TextEditingController perCartonCount = TextEditingController();
   TextEditingController totalCount = TextEditingController();
   TextEditingController totalPrice = TextEditingController();
-  TextEditingController receivedPrice= TextEditingController();
+  TextEditingController receivedPrice = TextEditingController();
   TextEditingController price = TextEditingController();
 
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -41,9 +43,11 @@ class SaleController extends GetxController {
     getSale();
     filterSales();
     filteredSales('');
+    filterOldSales();
     startDate.addListener(filterSales);
     endDate.addListener(filterSales);
     searchController.addListener(filterSales);
+    searchOldController.addListener(filterOldSales);
 
     super.onInit();
   }
@@ -69,15 +73,12 @@ class SaleController extends GetxController {
       var documentReference = await db.collection("sales").add(sale.toJson());
       var saleId = documentReference.id;
 
-      await db
-          .collection("sales")
-          .doc(saleId)
-          .update({'id': saleId}).then((value) async {
+      await db.collection("sales").doc(saleId).update({'id': saleId}).then((value) async {
         getSale();
 
         // Show GetX Snackbar
         Get.snackbar('Success', 'Sale added successfully!',
-            snackPosition: SnackPosition.BOTTOM,colorText: whiteColor,
+            snackPosition: SnackPosition.BOTTOM, colorText: whiteColor,
             duration: const Duration(seconds: 3),
             backgroundColor: primaryColor);
 
@@ -93,8 +94,7 @@ class SaleController extends GetxController {
         receivedPrice.clear();
 
         // Update bill controller value by adding 1
-        // autoBillNo+10;
-        billNumberController.saveBillNumber(billNumberController.billNumber+10);
+        billNumberController.saveBillNumber(billNumberController.billNumber + 10);
         bill.text = billNumberController.billNumber.toString();
       });
     } catch (e) {
@@ -102,7 +102,7 @@ class SaleController extends GetxController {
       // Handle the error
       Get.snackbar('Error', 'Failed to add sale. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),colorText: whiteColor,
+          duration: const Duration(seconds: 3), colorText: whiteColor,
           backgroundColor: Colors.red);
     }
   }
@@ -144,8 +144,8 @@ class SaleController extends GetxController {
 
     return totalPieceCount;
   }
- 
-   void filterSales() {
+
+  void filterSales() {
     var query = searchController.text.toLowerCase();
     var tempList = saleList;
 
@@ -157,10 +157,22 @@ class SaleController extends GetxController {
 
     filterSalesByDateRange(tempList);
   }
+    void filterOldSales() {
+    var query = searchOldController.text.toLowerCase();
+    print('>>>>>>>>>>>>>>> Querry: $query');
+    var tempList = saleList;
+
+    if (query.isNotEmpty) {
+      tempList = tempList.where((sale) {
+        return sale.customerName!.toLowerCase().contains(query);
+      }).toList().obs;
+    }
+    print('>>>>>>>>>>>>>>> Filtered Old sales: ${tempList}');
+
+    filterSalesByDateRange(tempList);
+  }
 
   void filterSalesByDateRange(RxList<SaleModel> tempList) {
-    print('>>>>>>>>> Start Date ${startDate.text}');
-    print('>>>>>>>>> End Date ${endDate.text}');
     if (startDate.text.isEmpty || endDate.text.isEmpty) {
       filteredSaleList.assignAll(tempList);
       return;
@@ -175,33 +187,82 @@ class SaleController extends GetxController {
             (sale.date!.isBefore(end) || sale.date!.isAtSameMomentAs(end)),
       ).toList().obs,
     );
-    print(">>>>>>>>>>>>>>>>>> $filteredSaleList");
   }
-   void filteredSales(String query, {String? selectedCustomerId, DateTime? date}) {
-  if (query.isEmpty && date == null && selectedCustomerId == null) {
-    // If query, date, and selectedCustomerId are all null, show all sales
-    filteredSaleList.assignAll(saleList);
-  } else {
-    // Filter sales based on query, date, and selectedCustomerId
-    filteredSaleList.assignAll(
-      saleList.where((sale) {
-        // Filter by name (query)
-        final bool matchesName = query.isEmpty || sale.name!.toLowerCase().contains(query.toLowerCase());
-        
-        // Filter by date
-        final bool matchesDate = date == null || (sale.date != null &&
-            sale.date!.year == date.year &&
-            sale.date!.month == date.month &&
-            sale.date!.day == date.day);
-        
-        // Filter by customer ID
-        final bool matchesCustomerId = selectedCustomerId == null || sale.customerId == selectedCustomerId;
 
-        // Return true if all conditions are met
-        return matchesName && matchesDate && matchesCustomerId;
-      }),
-    );
+  void filteredSales(String query, {String? selectedCustomerId, DateTime? date}) {
+    if (query.isEmpty && date == null && selectedCustomerId == null) {
+      // If query, date, and selectedCustomerId are all null, show all sales
+      filteredSaleList.assignAll(saleList);
+    } else {
+      // Filter sales based on query, date, and selectedCustomerId
+      filteredSaleList.assignAll(
+        saleList.where((sale) {
+          // Filter by name (query)
+          final bool matchesName = query.isEmpty || sale.name!.toLowerCase().contains(query.toLowerCase());
+
+          // Filter by date
+          final bool matchesDate = date == null || (sale.date != null &&
+              sale.date!.year == date.year &&
+              sale.date!.month == date.month &&
+              sale.date!.day == date.day);
+
+          // Filter by customer ID
+          final bool matchesCustomerId = selectedCustomerId == null || sale.customerId == selectedCustomerId;
+
+          // Return true if all conditions are met
+          return matchesName && matchesDate && matchesCustomerId;
+        }),
+      );
+    }
+  }
+
+  Future<void> removeSaleByBillNo(int billNo) async {
+    try {
+      // Fetch the sale data by bill number
+      var saleQuery = await db.collection("sales").where('billNo', isEqualTo: billNo).get();
+
+      if (saleQuery.docs.isEmpty) {
+        Get.snackbar('Error', 'No sale found with the provided bill number.',
+            snackPosition: SnackPosition.BOTTOM, colorText: whiteColor,
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.red);
+        return;
+      }
+
+      var saleDoc = saleQuery.docs.first;
+      var sale = SaleModel.fromJson(saleDoc.data());
+
+      // Fetch the goods by sale name
+      var goods = goodsController.getGoodsByName(sale.name!);
+
+      if (goods == null) {
+        Get.snackbar('Error', 'No goods found with the provided sale name.',
+            snackPosition: SnackPosition.BOTTOM, colorText: whiteColor,
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.red);
+        return;
+      }
+
+      // Update the goods count by adding the carton count from the sale
+      await goodsController.updateGoodsCount(goods.id!, sale.cartonCount!);
+
+      // Remove the sale by bill number
+      await db.collection("sales").doc(saleDoc.id).delete();
+
+      // Update local state
+      saleList.removeWhere((s) => s.billNo == billNo);
+      filteredSaleList.removeWhere((s) => s.billNo == billNo);
+
+      Get.snackbar('Success', 'Sale removed successfully!',
+          snackPosition: SnackPosition.BOTTOM, colorText: whiteColor,
+          duration: const Duration(seconds: 3),
+          backgroundColor: primaryColor);
+    } catch (e) {
+      print('Error removing sale: $e');
+      Get.snackbar('Error', 'Failed to remove sale. Please try again.',
+          snackPosition: SnackPosition.BOTTOM, colorText: whiteColor,
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red);
+    }
   }
 }
-}
-
