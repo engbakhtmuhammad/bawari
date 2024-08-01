@@ -7,8 +7,6 @@ import 'package:bawari/view/invoice/cash_invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import '../../controller/customer_controller.dart';
 import '../../utils/constants.dart';
 import '../invoice/file_handle_api.dart';
 import '../widgets/custom_btn.dart';
@@ -22,11 +20,9 @@ class CreditScreen extends StatefulWidget {
 
 class _CreditScreenState extends State<CreditScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
   BillNumberController billNumberController = Get.put(BillNumberController());
   TextEditingController dateController= TextEditingController();
-  // var _searchController = TextEditingController();
   String customerId='';
 
   List<String> tableColumns = [
@@ -50,7 +46,7 @@ class _CreditScreenState extends State<CreditScreen> {
 // Inside a method where you fetch customers, such as in the initState method
   void fetchCredits() async {
     billNumberController.getBillNumber();
-    List<String?> customerNames = await customerController.getCustomerNames();
+    List<String?> customerNames = await creditController.getCreditNames();
     // Update the dropDownList based on the fetched customer names
     dropDownList = customerNames.map((customerName) {
       return DropdownMenuItem(
@@ -214,11 +210,9 @@ class _CreditScreenState extends State<CreditScreen> {
                     style: boldTextStyle(),
                   ),
                 )),
-            // Obx(() {
-            // creditController.getDuesEntries();
             StreamBuilder(
                 stream: creditController
-                    .getCreditEntries(date: DateTime.now())
+                    .getCreditEntries(date: dateController.text.isNotEmpty?DateFormat('yyyy-MM-dd').parse(dateController.text):null)
                     .asStream(),
                 builder: (context, snapshot) {
                   return SizedBox(
