@@ -413,10 +413,10 @@ class CreditController extends GetxController {
 
   void filterCredits(String query) {
     if (query.isEmpty) {
-      // If the search query is empty, show all purchases
+      // If the search query is empty, show all credits
       filterCreditList.assignAll(creditList);
     } else {
-      // If the search query is not empty, filter purchases by name
+      // If the search query is not empty, filter credits by name
       filterCreditList.assignAll(
         creditList.where(
           (credit) =>

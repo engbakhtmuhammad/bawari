@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../controller/customer_controller.dart';
 import '../../utils/constants.dart';
 import '../invoice/file_handle_api.dart';
 import '../widgets/custom_btn.dart';
@@ -21,8 +22,10 @@ class CreditScreen extends StatefulWidget {
 
 class _CreditScreenState extends State<CreditScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  CustomerController customerController = Get.put(CustomerController());
   CreditController creditController = Get.put(CreditController());
   BillNumberController billNumberController = Get.put(BillNumberController());
+  TextEditingController dateController= TextEditingController();
   // var _searchController = TextEditingController();
   String customerId='';
 
@@ -47,7 +50,7 @@ class _CreditScreenState extends State<CreditScreen> {
 // Inside a method where you fetch customers, such as in the initState method
   void fetchCredits() async {
     billNumberController.getBillNumber();
-    List<String?> customerNames = await creditController.getCreditNames();
+    List<String?> customerNames = await customerController.getCustomerNames();
     // Update the dropDownList based on the fetched customer names
     dropDownList = customerNames.map((customerName) {
       return DropdownMenuItem(
@@ -139,7 +142,9 @@ class _CreditScreenState extends State<CreditScreen> {
                 textFieldWidget(
                     label: "تاریخ",
                     imgPath: "assets/icons/calendar.png",
-                    controller: creditController.date),
+                    controller: dateController,
+                    onPressed: () => selectDate(dateController),
+                    ),
                 dropDownTextFieldWidget(
                   label: "گراک نوم غوره کړئ",
                   imgPath: "assets/icons/id.png",
@@ -151,7 +156,8 @@ class _CreditScreenState extends State<CreditScreen> {
                         await creditController.getCreditByName(value);
                     transactionsList = await creditController
                         .getTransactionsList(duesModel!.customerId.toString(),
-                            date: DateTime.now());
+                             date: dateController.text.isNotEmpty?DateFormat('yyyy-MM-dd').parse(dateController.text):null
+                            );
                             customerId=duesModel.customerId.toString();
                     creditController.customerId.text = duesModel.id.toString();
                     creditController.address.text =

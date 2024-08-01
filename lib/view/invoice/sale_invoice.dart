@@ -19,7 +19,8 @@ class SaleInvoicePdf {
      int previousBaqaya = creditController.getTotalCredits(
         await creditController.getTransactionsList(
             sale[0].customerId.toString(),
-            date: DateTime.now()));
+            // date: DateTime.now()
+            ));
     double totalPrice = 0;
 
     for (var saleItem in sale) {
@@ -27,6 +28,7 @@ class SaleInvoicePdf {
     }
     String totalPriceString = totalPrice.toStringAsFixed(0);
     int totalCartonCount = 0;
+    int totalBaqaya=0;
 
     for (var saleItem in sale) {
       totalCartonCount += saleItem.cartonCount ?? 0;
@@ -34,9 +36,18 @@ class SaleInvoicePdf {
      int totalReceivedCash = creditController.getTotalReceived(
         await creditController.getTransactionsList(
             sale[0].customerId.toString(),
-            date: DateTime.now())); 
+            // date: DateTime.now()
+            )); 
 
-            // previousBaqaya= previousBaqaya.toInt() > totalPrice.toInt()?previousBaqaya.toInt() - totalPrice.toInt():totalPrice.toInt() - previousBaqaya.toInt();;
+            // previousBaqaya= previousBaqaya.toInt() > totalPrice.toInt()?previousBaqaya.toInt() - totalPrice.toInt():totalPrice.toInt() - previousBaqaya.toInt();
+            if(sale.length<2){
+              previousBaqaya=previousBaqaya.toInt()-totalPrice.toInt()+sale[0].recievedCash!.toInt();
+              totalReceivedCash=sale[0].recievedCash??0;
+              totalBaqaya=(totalPrice.toInt()-sale[0].recievedCash!.toInt())+previousBaqaya;
+            }
+            else{
+              totalBaqaya=previousBaqaya;
+            }
     String totalReceivedCashString = totalReceivedCash.toStringAsFixed(0);
 
     // // Calculate the remaining amount
@@ -414,7 +425,7 @@ class SaleInvoicePdf {
                     pw.SizedBox(
                         width: 50,
                         child: pw.Text(
-                          previousBaqaya.toString(),
+                          totalBaqaya.toString(),
                           style: pw.TextStyle(
                             font: ttf,
                             fontWeight: pw.FontWeight.bold,
