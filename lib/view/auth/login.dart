@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         "assets/images/logo.png",
                         fit: BoxFit.cover,
                       )),
-                  Text("ښه راغلاست",
+                  Text("شه راغلاست",
                     style: boldTextStyle(color: secondaryColor,size: 20),textAlign: TextAlign.center,
                   ),
                   Text("د ننه کیدل",
