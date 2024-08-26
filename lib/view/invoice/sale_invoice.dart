@@ -40,14 +40,17 @@ class SaleInvoicePdf {
             )); 
 
             // previousBaqaya= previousBaqaya.toInt() > totalPrice.toInt()?previousBaqaya.toInt() - totalPrice.toInt():totalPrice.toInt() - previousBaqaya.toInt();
-            if(sale.length<2){
-              previousBaqaya=previousBaqaya.toInt()-totalPrice.toInt()+sale[0].recievedCash!.toInt();
+            // if(sale.length<=2){
+            //   previousBaqaya=previousBaqaya.toInt()-(totalPrice.toInt()+sale[0].recievedCash!.toInt());
+            //   totalReceivedCash=sale[0].recievedCash??0;
+            //   totalBaqaya=(totalPrice.toInt()-sale[0].recievedCash!.toInt())+previousBaqaya;
+            // }
+            // else{
+            //   totalBaqaya=previousBaqaya;
+            // }
+            previousBaqaya=previousBaqaya.toInt()-(totalPrice.toInt()+sale[0].recievedCash!.toInt());
               totalReceivedCash=sale[0].recievedCash??0;
               totalBaqaya=(totalPrice.toInt()-sale[0].recievedCash!.toInt())+previousBaqaya;
-            }
-            else{
-              totalBaqaya=previousBaqaya;
-            }
     String totalReceivedCashString = totalReceivedCash.toStringAsFixed(0);
 
     // // Calculate the remaining amount
