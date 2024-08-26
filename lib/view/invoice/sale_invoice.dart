@@ -16,11 +16,11 @@ class SaleInvoicePdf {
     CreditController creditController = Get.put(CreditController());
     CustomerController customerController = Get.put(CustomerController());
 
-     int previousBaqaya = creditController.getTotalCredits(
-        await creditController.getTransactionsList(
-            sale[0].customerId.toString(),
-            // date: DateTime.now()
-            ));
+    int previousBaqaya = creditController
+        .getTotalCredits(await creditController.getTransactionsList(
+      sale[0].customerId.toString(),
+      // date: DateTime.now()
+    ));
     double totalPrice = 0;
 
     for (var saleItem in sale) {
@@ -28,29 +28,31 @@ class SaleInvoicePdf {
     }
     String totalPriceString = totalPrice.toStringAsFixed(0);
     int totalCartonCount = 0;
-    int totalBaqaya=0;
+    int totalBaqaya = 0;
 
     for (var saleItem in sale) {
       totalCartonCount += saleItem.cartonCount ?? 0;
     }
-     int totalReceivedCash = creditController.getTotalReceived(
-        await creditController.getTransactionsList(
-            sale[0].customerId.toString(),
-            // date: DateTime.now()
-            )); 
+    int totalReceivedCash = creditController
+        .getTotalReceived(await creditController.getTransactionsList(
+      sale[0].customerId.toString(),
+      // date: DateTime.now()
+    ));
 
-            // previousBaqaya= previousBaqaya.toInt() > totalPrice.toInt()?previousBaqaya.toInt() - totalPrice.toInt():totalPrice.toInt() - previousBaqaya.toInt();
-            // if(sale.length<=2){
-            //   previousBaqaya=previousBaqaya.toInt()-(totalPrice.toInt()+sale[0].recievedCash!.toInt());
-            //   totalReceivedCash=sale[0].recievedCash??0;
-            //   totalBaqaya=(totalPrice.toInt()-sale[0].recievedCash!.toInt())+previousBaqaya;
-            // }
-            // else{
-            //   totalBaqaya=previousBaqaya;
-            // }
-            previousBaqaya=previousBaqaya.toInt()-(totalPrice.toInt()+sale[0].recievedCash!.toInt());
-              totalReceivedCash=sale[0].recievedCash??0;
-              totalBaqaya=(totalPrice.toInt()-sale[0].recievedCash!.toInt())+previousBaqaya;
+    // previousBaqaya= previousBaqaya.toInt() > totalPrice.toInt()?previousBaqaya.toInt() - totalPrice.toInt():totalPrice.toInt() - previousBaqaya.toInt();
+    // if(sale.length<=2){
+    //   previousBaqaya=previousBaqaya.toInt()-(totalPrice.toInt()+sale[0].recievedCash!.toInt());
+    //   totalReceivedCash=sale[0].recievedCash??0;
+    //   totalBaqaya=(totalPrice.toInt()-sale[0].recievedCash!.toInt())+previousBaqaya;
+    // }
+    // else{
+    //   totalBaqaya=previousBaqaya;
+    // }
+    previousBaqaya = previousBaqaya.toInt() -
+        (totalPrice.toInt() + sale[0].recievedCash!.toInt());
+    totalReceivedCash = sale[0].recievedCash ?? 0;
+    totalBaqaya =
+        (totalPrice.toInt() - sale[0].recievedCash!.toInt()) + previousBaqaya;
     String totalReceivedCashString = totalReceivedCash.toStringAsFixed(0);
 
     // // Calculate the remaining amount
